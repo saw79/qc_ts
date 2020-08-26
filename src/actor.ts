@@ -85,11 +85,11 @@ export class Actor {
       this.vision_dist_max = PLAYER_VISION;
 
       // TODO remove vvv
-      this.health = 50;
-      this.max_health = 50;
-      this.cognition = 50;
-      this.max_cognition = 50;
-      this.damage = 3;
+      //this.health = 50;
+      //this.max_health = 50;
+      //this.cognition = 50;
+      //this.max_cognition = 50;
+      //this.damage = 3;
       // TODO remove ^^^
     } else {
       this.vision_dist = ENEMY_VISION;
@@ -110,7 +110,7 @@ export class Actor {
     };
 
     for (let key in this.alert_comps) {
-      this.alert_comps[key].setScale(0.5);
+      this.alert_comps[key].setScale(0.3);
       this.alert_comps[key].visible = false;
     }
 

@@ -142,6 +142,7 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
 
       if (actors[curr_turn].is_player) {
         scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
+        scene.update_entity_visibility();
       }
 
       return;

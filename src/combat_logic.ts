@@ -8,6 +8,9 @@ export function calc_combat(scene: MainScene, actors: Array<Actor>, id0: number,
   // apply damage
   actors[id1].health -= dmg;
   actors[id1].cognition -= dmg;
+  if (actors[id1].cognition < 0) {
+    actors[id1].cognition = 0;
+  }
 
   // update visuals
 

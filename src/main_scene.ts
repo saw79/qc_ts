@@ -5,7 +5,7 @@ import {NinePatch} from "@koreez/phaser3-ninepatch";
 
 import {TILE_SIZE} from "./constants";
 import {load_all, create_anims} from "./resource_manager";
-import {TileType, TileGrid} from "./tile_grid";
+import {TileGrid} from "./tile_grid";
 import {Actor} from "./actor";
 import {mouse_click} from "./handle_input";
 import {move_actors} from "./movement";
@@ -15,6 +15,10 @@ import {FloatingText} from "./floating_text";
 import {Item} from "./item";
 
 export class MainScene extends Phaser.Scene {
+  wiw: number;
+  wih: number;
+  dpr: number;
+
   controls: Phaser.Cameras.Controls.FixedKeyControl;
   actors: Array<Actor>;
   curr_turn: number;
@@ -26,8 +30,11 @@ export class MainScene extends Phaser.Scene {
 
   floating_texts: Array<FloatingText>;
 
-  constructor() {
+  constructor(wiw: number, wih: number, dpr: number) {
     super({ key: "MainScene"});
+    this.wiw = wiw;
+    this.wih = wih;
+    this.dpr = dpr;
   }
 
   preload(): void {
@@ -35,7 +42,30 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
+    let debug_str =
+      this.wiw.toString() + ", " +
+      this.wih.toString() + ", " +
+      this.dpr.toString() + "\n" +
+      this.game.config.width.toString() + ", " +
+      this.game.config.height.toString();
+    let dbx = +(this.game.config.width) - 150;
+    let dby = 10
+    let debug_txt = this.add.text(
+      dbx, dby, debug_str,
+      {color:"cyan", stroke: "cyan", strokeThickness:3});
+    debug_txt.depth = 10;
+    debug_txt.setScrollFactor(0);
+
     create_anims(this);
+
+    // set scale so there's 14 tiles vertically
+    let curr_tiles = +(this.game.config.height) / TILE_SIZE;
+    let aspect = +(this.game.config.width) / +(this.game.config.height);
+    let desired_height = +(this.game.config.height) * 14/curr_tiles;
+    let desired_width = desired_height * aspect;
+    this.scale.setGameSize(desired_width, desired_height);
+    //this.scale.setZoom(14 / curr_tiles);
+    //this.scale.setZoom(curr_tiles / 14);
 
     let level_width = 30;
     let level_height = 20;
@@ -51,8 +81,8 @@ export class MainScene extends Phaser.Scene {
     this.actors = [];
 
     let player = new Actor(this, "player_none", 1, 1);
-    this.grid.update_visibility(1, 1, player.vision_dist);
     player.camera = this.cameras.main;
+    player.camera.centerOn(player.rx, player.ry);
     this.actors.push(player);
 
     let num_enemies = 4;
@@ -65,7 +95,7 @@ export class MainScene extends Phaser.Scene {
         y = rand_int(level_height-2) + 1;
       } while (actor_at(this.actors, x, y) != null);
       let actor = new Actor(this, "prison_guard", x, y);
-      actor.update_visible(this.grid);
+      //actor.update_visible(this.grid);
       this.actors.push(actor);
     }
 
@@ -112,6 +142,11 @@ export class MainScene extends Phaser.Scene {
       orb.render_comp.anims.play(orb.name);
       this.items.push(orb);
     }
+
+    // ----- updates -------
+
+    this.grid.update_visibility(1, 1, player.vision_dist);
+    this.update_entity_visibility();
 
     // ----- extras -------
 
@@ -286,7 +321,16 @@ export class MainScene extends Phaser.Scene {
     }
   }
 
-  update(time: number, delta_ms: number): void {
+  update_entity_visibility() {
+    for (let actor of this.actors) {
+      actor.update_visible(this.grid);
+    }
+    for (let item of this.items) {
+      item.update_visible(this.grid);
+    }
+  }
+
+  update(_time: number, delta_ms: number): void {
     // input - note we have a callback defined in create
     this.controls.update(delta_ms)
 
