@@ -1,0 +1,26 @@
+{
+  "name": "qc_ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack --watch & live-server --port=8000"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.1",
+    "pathfinding": "^0.4.18",
+    "phaser": "^3.24.1",
+    "ts-loader": "^8.0.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {
+    "@koreez/phaser3-ninepatch": "^2.0.2",
+    "phaser3-rex-plugins": "^1.1.25"
+  }
+}

@@ -1,0 +1,1921 @@
+
+gameatlas.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+EM_receptor
+  rotate: false
+  xy: 906, 12
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+active_circle
+  rotate: false
+  xy: 2, 90
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+advanced_research_facility_stairs
+  rotate: false
+  xy: 434, 16
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+armory_stairs
+  rotate: false
+  xy: 500, 16
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+attracting_emitter
+  rotate: false
+  xy: 2, 24
+  size: 192, 64
+  orig: 192, 64
+  offset: 0, 0
+  index: -1
+blood
+  rotate: false
+  xy: 904, 924
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+blue_circle
+  rotate: false
+  xy: 196, 56
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+blue_liquid_sheet
+  rotate: false
+  xy: 388, 440
+  size: 384, 64
+  orig: 384, 64
+  offset: 0, 0
+  index: -1
+bottom_bar
+  rotate: false
+  xy: 852, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 970, 694
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bullet_old
+  rotate: false
+  xy: 260, 308
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+character_sprites
+  rotate: false
+  xy: 2, 348
+  size: 384, 672
+  orig: 384, 672
+  offset: 0, 0
+  index: -1
+chief_executive_officer
+  rotate: false
+  xy: 776, 54
+  size: 128, 256
+  orig: 128, 256
+  offset: 0, 0
+  index: -1
+cog_fill
+  rotate: false
+  xy: 776, 12
+  size: 74, 40
+  orig: 74, 40
+  offset: 0, 0
+  index: -1
+dark_lab_stairs
+  rotate: false
+  xy: 566, 16
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+em_beam
+  rotate: false
+  xy: 970, 660
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+emitter_circle
+  rotate: false
+  xy: 388, 764
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+empty_bar
+  rotate: false
+  xy: 260, 326
+  size: 100, 20
+  orig: 100, 20
+  offset: 0, 0
+  index: -1
+health_background
+  rotate: false
+  xy: 260, 326
+  size: 100, 20
+  orig: 100, 20
+  offset: 0, 0
+  index: -1
+enemy_vision_circle
+  rotate: false
+  xy: 388, 506
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+enemy_vision_wedge
+  rotate: false
+  xy: 646, 764
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+energy_bar
+  rotate: false
+  xy: 2, 2
+  size: 100, 20
+  orig: 100, 20
+  offset: 0, 0
+  index: -1
+executive_offices_stairs
+  rotate: false
+  xy: 632, 16
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+experience_bar
+  rotate: false
+  xy: 1002, 1000
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+explosion
+  rotate: false
+  xy: 646, 506
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+green_circle
+  rotate: false
+  xy: 970, 626
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+green_liquid_sheet
+  rotate: false
+  xy: 388, 374
+  size: 384, 64
+  orig: 384, 64
+  offset: 0, 0
+  index: -1
+grey_liquid_sheet
+  rotate: false
+  xy: 388, 308
+  size: 384, 64
+  orig: 384, 64
+  offset: 0, 0
+  index: -1
+health_bar
+  rotate: false
+  xy: 104, 2
+  size: 100, 20
+  orig: 100, 20
+  offset: 0, 0
+  index: -1
+health_fill
+  rotate: false
+  xy: 206, 8
+  size: 74, 40
+  orig: 74, 40
+  offset: 0, 0
+  index: -1
+machine_parts
+  rotate: false
+  xy: 904, 826
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+megabot
+  rotate: false
+  xy: 904, 728
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+mind_transfer_device
+  rotate: false
+  xy: 774, 312
+  size: 128, 192
+  orig: 128, 192
+  offset: 0, 0
+  index: -1
+mine_circle
+  rotate: false
+  xy: 260, 50
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+mine_timed1
+  rotate: false
+  xy: 904, 598
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+mine_timed2
+  rotate: false
+  xy: 904, 468
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+mine_timed3
+  rotate: false
+  xy: 904, 338
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+mine_timed4
+  rotate: false
+  xy: 906, 208
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+mine_timed5
+  rotate: false
+  xy: 906, 78
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+motion_field
+  rotate: false
+  xy: 970, 592
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+particle
+  rotate: false
+  xy: 970, 558
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+particle_beam
+  rotate: false
+  xy: 970, 524
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+pre_particle
+  rotate: false
+  xy: 970, 490
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+prison_stairs
+  rotate: false
+  xy: 698, 16
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+red_circle
+  rotate: false
+  xy: 970, 456
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+respawn_flash
+  rotate: false
+  xy: 970, 422
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+sound_wave
+  rotate: false
+  xy: 518, 50
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+status_bg
+  rotate: false
+  xy: 282, 8
+  size: 74, 40
+  orig: 74, 40
+  offset: 0, 0
+  index: -1
+status_cover
+  rotate: false
+  xy: 358, 8
+  size: 74, 40
+  orig: 74, 40
+  offset: 0, 0
+  index: -1
+yellow_circle
+  rotate: false
+  xy: 970, 388
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+gameatlas2.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+SS_agent
+  rotate: false
+  xy: 454, 198
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+SS_gunner
+  rotate: false
+  xy: 584, 198
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+ability_chip
+  rotate: false
+  xy: 2, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+advanced_research_facility_tiles
+  rotate: false
+  xy: 68, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+armored_droid
+  rotate: false
+  xy: 714, 198
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+armored_marine
+  rotate: false
+  xy: 844, 198
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+armored_prison_warden
+  rotate: false
+  xy: 2, 132
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+armored_security_officer
+  rotate: false
+  xy: 132, 132
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+armored_special_operative
+  rotate: false
+  xy: 262, 132
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+armory_tiles
+  rotate: false
+  xy: 134, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+assault_rifle
+  rotate: false
+  xy: 200, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+atomic_mine
+  rotate: false
+  xy: 266, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+auto_turret
+  rotate: false
+  xy: 332, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+barrel
+  rotate: false
+  xy: 398, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+barrel_advanced_research_facility
+  rotate: false
+  xy: 464, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+barrel_armory
+  rotate: false
+  xy: 530, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+barrel_dark_lab
+  rotate: false
+  xy: 596, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+barrel_executive_offices
+  rotate: false
+  xy: 662, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+barrel_toxic
+  rotate: false
+  xy: 728, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+baton
+  rotate: false
+  xy: 794, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+battle_axe
+  rotate: false
+  xy: 860, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+bed
+  rotate: false
+  xy: 2, 890
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1
+black_square
+  rotate: false
+  xy: 926, 956
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+blue_vial
+  rotate: false
+  xy: 132, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+boot
+  rotate: false
+  xy: 198, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+boot_blue
+  rotate: false
+  xy: 264, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+boot_green
+  rotate: false
+  xy: 330, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+boot_red
+  rotate: false
+  xy: 396, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+boot_yellow
+  rotate: false
+  xy: 462, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+caution_sign
+  rotate: false
+  xy: 528, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+center_camera
+  rotate: false
+  xy: 594, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+chief_technical_officer
+  rotate: false
+  xy: 392, 100
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+combat_suit
+  rotate: false
+  xy: 660, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+confusing_emitter
+  rotate: false
+  xy: 726, 890
+  size: 192, 64
+  orig: 192, 64
+  offset: 0, 0
+  index: -1
+dark_lab_tiles
+  rotate: false
+  xy: 920, 890
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+door_closed
+  rotate: false
+  xy: 2, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+door_open
+  rotate: false
+  xy: 68, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+double_em_rod
+  rotate: false
+  xy: 134, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+droid
+  rotate: false
+  xy: 522, 100
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+electrified_railgun
+  rotate: false
+  xy: 200, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+electroblade
+  rotate: false
+  xy: 266, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+em_rod
+  rotate: false
+  xy: 332, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+emitter
+  rotate: false
+  xy: 398, 824
+  size: 192, 64
+  orig: 192, 64
+  offset: 0, 0
+  index: -1
+emitter_cracked
+  rotate: false
+  xy: 592, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+emitter_dead
+  rotate: false
+  xy: 658, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+enforcer
+  rotate: false
+  xy: 652, 100
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+engineer
+  rotate: false
+  xy: 782, 100
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+executive_offices_tiles
+  rotate: false
+  xy: 724, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+eyeball
+  rotate: false
+  xy: 790, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+faraday_pole
+  rotate: false
+  xy: 856, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+fission_cell
+  rotate: false
+  xy: 922, 824
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+fist
+  rotate: false
+  xy: 2, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+force_field_suit
+  rotate: false
+  xy: 68, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+gamma_gun
+  rotate: false
+  xy: 134, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+glove
+  rotate: false
+  xy: 200, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+green_vial
+  rotate: false
+  xy: 266, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+grenade_flash
+  rotate: false
+  xy: 332, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+grenade_smoke
+  rotate: false
+  xy: 398, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+high_power_emitter
+  rotate: false
+  xy: 464, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_adaptive_skin
+  rotate: false
+  xy: 530, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_aware
+  rotate: false
+  xy: 596, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_bend_light
+  rotate: false
+  xy: 662, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_blinded
+  rotate: false
+  xy: 728, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_burning
+  rotate: false
+  xy: 794, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_chemical_immunity
+  rotate: false
+  xy: 860, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_chilled
+  rotate: false
+  xy: 926, 758
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_double_strike
+  rotate: false
+  xy: 2, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_enhanced_absorption
+  rotate: false
+  xy: 68, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_enhanced_damage
+  rotate: false
+  xy: 134, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_enhanced_dodge
+  rotate: false
+  xy: 200, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_enhanced_speed
+  rotate: false
+  xy: 266, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_error_correction
+  rotate: false
+  xy: 332, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_flee
+  rotate: false
+  xy: 398, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_fragile
+  rotate: false
+  xy: 464, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_hack
+  rotate: false
+  xy: 530, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_heat_shield
+  rotate: false
+  xy: 596, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_leech
+  rotate: false
+  xy: 662, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_light_feet
+  rotate: false
+  xy: 728, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_light_speed
+  rotate: false
+  xy: 794, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_machine_learning
+  rotate: false
+  xy: 860, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_meditate
+  rotate: false
+  xy: 926, 692
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_mind_reading
+  rotate: false
+  xy: 2, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_momentum
+  rotate: false
+  xy: 68, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_nauseous
+  rotate: false
+  xy: 134, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_noise_cancellation
+  rotate: false
+  xy: 200, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_optimization
+  rotate: false
+  xy: 266, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_overclock
+  rotate: false
+  xy: 332, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_overheat
+  rotate: false
+  xy: 398, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_perpetual_motion
+  rotate: false
+  xy: 464, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_pipeline
+  rotate: false
+  xy: 530, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_placebo
+  rotate: false
+  xy: 596, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_question
+  rotate: false
+  xy: 662, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_quickness
+  rotate: false
+  xy: 728, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_radar
+  rotate: false
+  xy: 794, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_rebound
+  rotate: false
+  xy: 860, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_rewire
+  rotate: false
+  xy: 926, 626
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_searching
+  rotate: false
+  xy: 2, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_superposition
+  rotate: false
+  xy: 68, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_supersonic
+  rotate: false
+  xy: 134, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_unaware
+  rotate: false
+  xy: 200, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icon_wormhole
+  rotate: false
+  xy: 266, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+iris_scanner
+  rotate: false
+  xy: 332, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+katana
+  rotate: false
+  xy: 398, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+key_card
+  rotate: false
+  xy: 464, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+knife
+  rotate: false
+  xy: 530, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+laser_blade
+  rotate: false
+  xy: 596, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+laser_gun
+  rotate: false
+  xy: 662, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+mace
+  rotate: false
+  xy: 728, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+mad_scientist
+  rotate: false
+  xy: 2, 34
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+marine
+  rotate: false
+  xy: 132, 34
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+minibot
+  rotate: false
+  xy: 262, 34
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+notes
+  rotate: false
+  xy: 794, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orb_cube_cognition
+  rotate: false
+  xy: 860, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orb_cube_empty
+  rotate: false
+  xy: 926, 560
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orb_cube_health
+  rotate: false
+  xy: 2, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orb_cube_rejuvination
+  rotate: false
+  xy: 68, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+painful_emitter
+  rotate: false
+  xy: 134, 494
+  size: 192, 64
+  orig: 192, 64
+  offset: 0, 0
+  index: -1
+pistol
+  rotate: false
+  xy: 328, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+pistol_btn
+  rotate: false
+  xy: 394, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+player_combat_suit
+  rotate: false
+  xy: 392, 2
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+player_force_field_suit
+  rotate: false
+  xy: 522, 2
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+player_none
+  rotate: false
+  xy: 652, 2
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+player_quark_suit
+  rotate: false
+  xy: 782, 2
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+post_it
+  rotate: false
+  xy: 460, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+prison_tiles
+  rotate: false
+  xy: 526, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quantum_tunneler
+  rotate: false
+  xy: 592, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quark_blade
+  rotate: false
+  xy: 658, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quark_halberd
+  rotate: false
+  xy: 724, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quark_rod
+  rotate: false
+  xy: 790, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quark_spear
+  rotate: false
+  xy: 856, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quark_spike
+  rotate: false
+  xy: 922, 494
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quark_staff
+  rotate: false
+  xy: 2, 428
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+quark_suit
+  rotate: false
+  xy: 68, 428
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+radiation_absorber
+  rotate: false
+  xy: 134, 428
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+railgun
+  rotate: false
+  xy: 200, 428
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+red_liquid_sheet
+  rotate: false
+  xy: 266, 428
+  size: 384, 64
+  orig: 384, 64
+  offset: 0, 0
+  index: -1
+red_vial
+  rotate: false
+  xy: 652, 428
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+reinforced_combat_suit
+  rotate: false
+  xy: 718, 428
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+repelling_emitter
+  rotate: false
+  xy: 784, 428
+  size: 192, 64
+  orig: 192, 64
+  offset: 0, 0
+  index: -1
+rigid_vest
+  rotate: false
+  xy: 2, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+rigid_vest_btn
+  rotate: false
+  xy: 68, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+safe
+  rotate: false
+  xy: 134, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+safe_open
+  rotate: false
+  xy: 200, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+shatterproof_vial_blue
+  rotate: false
+  xy: 266, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+shatterproof_vial_empty
+  rotate: false
+  xy: 332, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+shatterproof_vial_green
+  rotate: false
+  xy: 398, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+shatterproof_vial_red
+  rotate: false
+  xy: 464, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+shatterproof_vial_yellow
+  rotate: false
+  xy: 530, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+shotgun
+  rotate: false
+  xy: 596, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+spare_parts
+  rotate: false
+  xy: 662, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+spear
+  rotate: false
+  xy: 728, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+special_syringe
+  rotate: false
+  xy: 794, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+spooky_gun
+  rotate: false
+  xy: 860, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+stairs_down
+  rotate: false
+  xy: 926, 362
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+stairs_up
+  rotate: false
+  xy: 2, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+steel_sheets
+  rotate: false
+  xy: 68, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+stunner
+  rotate: false
+  xy: 134, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+stunning_emitter
+  rotate: false
+  xy: 200, 296
+  size: 192, 64
+  orig: 192, 64
+  offset: 0, 0
+  index: -1
+subatomic_bonding
+  rotate: false
+  xy: 394, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+syringe_absorption
+  rotate: false
+  xy: 460, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+syringe_damage
+  rotate: false
+  xy: 526, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+syringe_dodge
+  rotate: false
+  xy: 592, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+syringe_speed
+  rotate: false
+  xy: 658, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+target
+  rotate: false
+  xy: 724, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+white_square
+  rotate: false
+  xy: 790, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+x
+  rotate: false
+  xy: 856, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+x_ray_gun
+  rotate: false
+  xy: 922, 296
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+yellow_liquid_sheet
+  rotate: false
+  xy: 2, 230
+  size: 384, 64
+  orig: 384, 64
+  offset: 0, 0
+  index: -1
+yellow_vial
+  rotate: false
+  xy: 388, 230
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+
+gameatlas3.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+cognition_orb
+  rotate: false
+  xy: 260, 844
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+drone
+  rotate: false
+  xy: 2, 392
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+fist_btn
+  rotate: false
+  xy: 390, 844
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+health_orb
+  rotate: false
+  xy: 2, 262
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mainframe
+  rotate: false
+  xy: 520, 844
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_proximity1
+  rotate: false
+  xy: 2, 132
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_proximity2
+  rotate: false
+  xy: 650, 844
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_proximity3
+  rotate: false
+  xy: 2, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_proximity4
+  rotate: false
+  xy: 780, 844
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_proximity5
+  rotate: false
+  xy: 132, 586
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_remote1
+  rotate: false
+  xy: 132, 456
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_remote2
+  rotate: false
+  xy: 132, 326
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_remote3
+  rotate: false
+  xy: 132, 196
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_remote4
+  rotate: false
+  xy: 132, 66
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+mine_remote5
+  rotate: false
+  xy: 262, 616
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+motion_detector
+  rotate: false
+  xy: 2, 522
+  size: 128, 192
+  orig: 128, 192
+  offset: 0, 0
+  index: -1
+player_reinforced_combat_suit
+  rotate: false
+  xy: 260, 746
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+player_rigid_vest
+  rotate: false
+  xy: 390, 746
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+prison_guard
+  rotate: false
+  xy: 262, 388
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+prison_soldier
+  rotate: false
+  xy: 520, 746
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+prison_warden
+  rotate: false
+  xy: 392, 648
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+rejuvination_orb
+  rotate: false
+  xy: 262, 486
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+security_officer
+  rotate: false
+  xy: 262, 290
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+senior_engineer
+  rotate: false
+  xy: 650, 746
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+senior_technician
+  rotate: false
+  xy: 392, 550
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+special_operative
+  rotate: false
+  xy: 522, 648
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+technician
+  rotate: false
+  xy: 262, 192
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+turret
+  rotate: false
+  xy: 780, 746
+  size: 128, 96
+  orig: 128, 96
+  offset: 0, 0
+  index: -1
+workbench
+  rotate: false
+  xy: 2, 716
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+
+gameatlas4.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+UIImages/btn_bag_skin
+  rotate: false
+  xy: 390, 392
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_default_checked
+  rotate: false
+  xy: 904, 906
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_default_down
+  rotate: false
+  xy: 2, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_default_up
+  rotate: false
+  xy: 262, 262
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_detonate_skin
+  rotate: false
+  xy: 516, 516
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_equipped_checked
+  rotate: false
+  xy: 2, 198
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/btn_equipped_up
+  rotate: false
+  xy: 260, 328
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/btn_equipped_work_checked
+  rotate: false
+  xy: 516, 712
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/btn_grab_skin
+  rotate: false
+  xy: 646, 646
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_inventory_checked
+  rotate: false
+  xy: 774, 842
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/btn_inventory_up
+  rotate: false
+  xy: 2, 68
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/btn_inventory_work_checked
+  rotate: false
+  xy: 132, 198
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/btn_target_checked
+  rotate: false
+  xy: 776, 776
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_target_skin
+  rotate: false
+  xy: 68, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/btn_wait_skin
+  rotate: false
+  xy: 262, 196
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+UIImages/button_small_checked
+  rotate: false
+  xy: 516, 582
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/button_small_down
+  rotate: false
+  xy: 646, 712
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/button_small_up
+  rotate: false
+  xy: 132, 68
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+UIImages/button_wide_down
+  rotate: false
+  xy: 2, 328
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+UIImages/button_wide_up
+  rotate: false
+  xy: 516, 842
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+UIImages/label_bg
+  rotate: false
+  xy: 2, 458
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+UIImages/label_bg_inside
+  rotate: false
+  xy: 390, 358
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+UIImages/settings
+  rotate: false
+  xy: 134, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

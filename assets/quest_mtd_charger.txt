@@ -1,0 +1,8 @@
+Special Memo
+QuarkTech Industries
+
+To: RSI Prototyping Team
+
+An enhancement to the MTD storage system has been discovered! We're not at the point of infinite reloads yet, but we know how to replenish a previously depleted cell now.
+
+The mainframe on floor #### was set up for testing - feel free to take your dev-MTD and try it out.
