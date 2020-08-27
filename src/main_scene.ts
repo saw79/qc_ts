@@ -48,7 +48,7 @@ export class MainScene extends Phaser.Scene {
       this.dpr.toString() + "\n" +
       this.game.config.width.toString() + ", " +
       this.game.config.height.toString();
-    let dbx = +(this.game.config.width) - 180;
+    let dbx = +(this.game.config.width) - 240;
     let dby = 10
     console.log(dbx);
     let debug_txt = this.add.text(
