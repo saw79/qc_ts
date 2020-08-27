@@ -15,10 +15,6 @@ import {FloatingText} from "./floating_text";
 import {Item} from "./item";
 
 export class MainScene extends Phaser.Scene {
-  wiw: number;
-  wih: number;
-  dpr: number;
-
   controls: Phaser.Cameras.Controls.FixedKeyControl;
   actors: Array<Actor>;
   curr_turn: number;
@@ -30,11 +26,8 @@ export class MainScene extends Phaser.Scene {
 
   floating_texts: Array<FloatingText>;
 
-  constructor(wiw: number, wih: number, dpr: number) {
+  constructor() {
     super({ key: "MainScene"});
-    this.wiw = wiw;
-    this.wih = wih;
-    this.dpr = dpr;
   }
 
   preload(): void {
@@ -42,28 +35,16 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-    let debug_str =
-      this.wiw.toString() + ", " +
-      this.wih.toString() + ", " +
-      this.dpr.toString() + "\n" +
-      this.game.config.width.toString() + ", " +
-      this.game.config.height.toString();
-    let debug_txt = this.add.text(
-      20, 20, debug_str,
-      {color:"cyan", stroke: "cyan", strokeThickness:1, fontSize:10});
-    debug_txt.depth = 10;
-    debug_txt.setScrollFactor(0);
-
     create_anims(this);
 
     // set scale so there's 14 tiles vertically
+    /*
     let curr_tiles = +(this.game.config.height) / TILE_SIZE;
     let aspect = +(this.game.config.width) / +(this.game.config.height);
     let desired_height = +(this.game.config.height) * 14/curr_tiles;
     let desired_width = desired_height * aspect;
     this.scale.setGameSize(desired_width, desired_height);
-
-    debug_txt.x *= 14/curr_tiles;
+    */
 
     let level_width = 30;
     let level_height = 20;
@@ -93,7 +74,6 @@ export class MainScene extends Phaser.Scene {
         y = rand_int(level_height-2) + 1;
       } while (actor_at(this.actors, x, y) != null);
       let actor = new Actor(this, "prison_guard", x, y);
-      //actor.update_visible(this.grid);
       this.actors.push(actor);
     }
 
@@ -296,6 +276,7 @@ export class MainScene extends Phaser.Scene {
         this.new_floating_text(cog_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "cognition");
         player.update_vision_size();
         this.grid.update_visibility(player.tx, player.ty, player.vision_dist);
+        this.update_entity_visibility();
         return true;
       }
       else if (this.items[id].name == "rejuvination_orb") {
@@ -314,6 +295,7 @@ export class MainScene extends Phaser.Scene {
         this.new_floating_text(cog_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "cognition", 0.3);
         player.update_vision_size();
         this.grid.update_visibility(player.tx, player.ty, player.vision_dist);
+        this.update_entity_visibility();
         return true;
       }
       else {

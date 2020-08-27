@@ -4,19 +4,17 @@ import {MainScene} from "./main_scene";
 //import NinePatchPlugin from "phaser3-rex-plugins/plugins/ninepatch-plugin.js";
 import {NinePatchPlugin} from "@koreez/phaser3-ninepatch";
 
-//console.log(window.innerWidth, window.innerHeight, window.devicePixelRatio);
+let aspect = window.innerWidth / window.innerHeight;
 
 const config = {
   title: "Quantum Cortex",
-  width: window.innerWidth*window.devicePixelRatio,
-  height: 800, //window.innerHeight*window.devicePixelRatio * 0.75,
+  width: 448 * aspect,
+  height: 448,
   parent: "game",
   scale: {
     mode: Phaser.Scale.FIT,
   },
-  scene: [() => {
-    return new MainScene(window.innerWidth, window.innerHeight, window.devicePixelRatio);
-  }],//MainScene],
+  scene: [MainScene],
   backgroundColor: "#000000",
   plugins: {
     global: [
