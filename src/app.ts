@@ -9,7 +9,7 @@ import {NinePatchPlugin} from "@koreez/phaser3-ninepatch";
 const config = {
   title: "Quantum Cortex",
   width: window.innerWidth*window.devicePixelRatio,
-  height: window.innerHeight*window.devicePixelRatio * 0.75,
+  height: 800, //window.innerHeight*window.devicePixelRatio * 0.75,
   parent: "game",
   scale: {
     mode: Phaser.Scale.FIT,
