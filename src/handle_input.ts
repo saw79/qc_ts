@@ -3,11 +3,13 @@ import "phaser";
 import * as PF from "pathfinding";
 
 import {TILE_SIZE} from "./constants";
+import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {TileGrid, TileType, Visibility} from "./tile_grid";
 import {actor_at} from "./util";
 
 export function mouse_click(
+  scene: MainScene,
   pointer: Phaser.Input.Pointer,
   camera: Phaser.Cameras.Scene2D.Camera,
   actors: Array<Actor>,
@@ -21,7 +23,9 @@ export function mouse_click(
   let player_y = actors[0].ty;
 
   if (click_tile_x == player_x && click_tile_y == player_y) {
-    actors[0].actions = [{type: "wait"}];
+    if (!scene.pickup_item()) {
+      actors[0].actions = [{type: "wait"}];
+    }
   }
   else if (actors[0].path.length > 0) {
     actors[0].target = null;

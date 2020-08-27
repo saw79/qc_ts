@@ -48,12 +48,9 @@ export class MainScene extends Phaser.Scene {
       this.dpr.toString() + "\n" +
       this.game.config.width.toString() + ", " +
       this.game.config.height.toString();
-    let dbx = +(this.game.config.width) - 240;
-    let dby = 10
-    console.log(dbx);
     let debug_txt = this.add.text(
-      dbx, dby, debug_str,
-      {color:"cyan", stroke: "cyan", strokeThickness:2, fontSize:10});
+      20, 20, debug_str,
+      {color:"cyan", stroke: "cyan", strokeThickness:1, fontSize:10});
     debug_txt.depth = 10;
     debug_txt.setScrollFactor(0);
 
@@ -193,7 +190,7 @@ export class MainScene extends Phaser.Scene {
       this.pickup_item();
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      mouse_click(pointer, this.cameras.main, this.actors, this.grid);
+      mouse_click(this, pointer, this.cameras.main, this.actors, this.grid);
     });
 
     // ----- UI -----
@@ -272,7 +269,7 @@ export class MainScene extends Phaser.Scene {
     this.floating_texts.push(new FloatingText(this, text, x, y, style, delay));
   }
 
-  pickup_item(): void {
+  pickup_item(): boolean {
     let tx = this.actors[0].tx;
     let ty = this.actors[0].ty;
     let id = item_at(this.items, tx, ty);
@@ -286,6 +283,7 @@ export class MainScene extends Phaser.Scene {
         this.items[id].alive = false;
         this.update_bars();
         this.new_floating_text(heal_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "health");
+        return true;
       }
       else if (this.items[id].name == "cognition_orb") {
         let player = this.actors[0];
@@ -298,6 +296,7 @@ export class MainScene extends Phaser.Scene {
         this.new_floating_text(cog_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "cognition");
         player.update_vision_size();
         this.grid.update_visibility(player.tx, player.ty, player.vision_dist);
+        return true;
       }
       else if (this.items[id].name == "rejuvination_orb") {
         let player = this.actors[0];
@@ -315,9 +314,11 @@ export class MainScene extends Phaser.Scene {
         this.new_floating_text(cog_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "cognition", 0.3);
         player.update_vision_size();
         this.grid.update_visibility(player.tx, player.ty, player.vision_dist);
+        return true;
       }
       else {
         console.log("unknown item " + this.items[id].name + "!");
+        return false;
       }
     }
   }
