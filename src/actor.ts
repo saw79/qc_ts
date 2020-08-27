@@ -84,16 +84,14 @@ export class Actor {
       this.vision_dist = PLAYER_VISION;
       this.vision_dist_max = PLAYER_VISION;
 
-      // TODO remove vvv
-      //this.health = 50;
-      //this.max_health = 50;
-      //this.cognition = 50;
-      //this.max_cognition = 50;
-      //this.damage = 3;
-      // TODO remove ^^^
     } else {
       this.vision_dist = ENEMY_VISION;
       this.vision_dist_max = ENEMY_VISION;
+
+      this.health = 5;
+      this.max_health = 5;
+      this.cognition = 5;
+      this.max_cognition = 5;
     }
 
     this.update_health_bar_width();

@@ -26,6 +26,8 @@ export class MainScene extends Phaser.Scene {
 
   floating_texts: Array<FloatingText>;
 
+  scrolled: boolean;
+
   constructor() {
     super({ key: "MainScene"});
   }
@@ -138,7 +140,6 @@ export class MainScene extends Phaser.Scene {
       speed: 0.5
     });
 
-    // dragstart, dragend
     this.input.keyboard.on("keydown_W", () => {
       this.actors[0].actions = [{type: "wait"}];
     });
@@ -169,8 +170,22 @@ export class MainScene extends Phaser.Scene {
     this.input.keyboard.on("keydown_G", () => {
       this.pickup_item();
     });
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      this.scrolled = false;
+    });
+    this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+      if (!pointer.isDown) {
+        return;
+      }
+
+      this.cameras.main.scrollX -= pointer.x - pointer.prevPosition.x; // () / zoom
+      this.cameras.main.scrollY -= pointer.y - pointer.prevPosition.y;
+      this.scrolled = true;
+    });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      mouse_click(this, pointer, this.cameras.main, this.actors, this.grid);
+      if (!this.scrolled) {
+        mouse_click(this, pointer, this.cameras.main, this.actors, this.grid);
+      }
     });
 
     // ----- UI -----
@@ -221,10 +236,11 @@ export class MainScene extends Phaser.Scene {
 
   update_bars() {
     let max_width = +(this.game.config.width) - TILE_SIZE;
+    const full_width_hps = 50;
 
     // health
-    let hb_w_max = this.actors[0].max_health * max_width / 100;
-    let hb_w_cur = this.actors[0].health * max_width / 100;
+    let hb_w_max = this.actors[0].max_health * max_width / full_width_hps;
+    let hb_w_cur = this.actors[0].health * max_width / full_width_hps;
 
     this.health_comps["bg"].displayWidth = hb_w_max;
     this.health_comps["bg"].x = hb_w_max/2 + TILE_SIZE/2;
@@ -234,8 +250,8 @@ export class MainScene extends Phaser.Scene {
     this.health_comps["cover"].x = hb_w_max/2 + TILE_SIZE/2;
 
     // cognition
-    let cb_w_max = this.actors[0].max_cognition * max_width / 100;
-    let cb_w_cur = this.actors[0].cognition * max_width / 100;
+    let cb_w_max = this.actors[0].max_cognition * max_width / full_width_hps;
+    let cb_w_cur = this.actors[0].cognition * max_width / full_width_hps;
 
     this.cog_comps["bg"].displayWidth = cb_w_max;
     this.cog_comps["bg"].x = cb_w_max/2 + TILE_SIZE/2;
