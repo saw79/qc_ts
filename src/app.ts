@@ -8,8 +8,8 @@ let aspect = window.innerWidth / window.innerHeight;
 
 const config = {
   title: "Quantum Cortex",
-  width: 448 * aspect,
-  height: 448,
+  width: 640 * aspect,
+  height: 640,
   parent: "game",
   scale: {
     mode: Phaser.Scale.FIT,
