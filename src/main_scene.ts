@@ -48,11 +48,12 @@ export class MainScene extends Phaser.Scene {
       this.dpr.toString() + "\n" +
       this.game.config.width.toString() + ", " +
       this.game.config.height.toString();
-    let dbx = +(this.game.config.width) - 150;
+    let dbx = +(this.game.config.width) - 180;
     let dby = 10
+    console.log(dbx);
     let debug_txt = this.add.text(
       dbx, dby, debug_str,
-      {color:"cyan", stroke: "cyan", strokeThickness:3});
+      {color:"cyan", stroke: "cyan", strokeThickness:2, fontSize:10});
     debug_txt.depth = 10;
     debug_txt.setScrollFactor(0);
 
@@ -64,8 +65,8 @@ export class MainScene extends Phaser.Scene {
     let desired_height = +(this.game.config.height) * 14/curr_tiles;
     let desired_width = desired_height * aspect;
     this.scale.setGameSize(desired_width, desired_height);
-    //this.scale.setZoom(14 / curr_tiles);
-    //this.scale.setZoom(curr_tiles / 14);
+
+    debug_txt.x *= 14/curr_tiles;
 
     let level_width = 30;
     let level_height = 20;
