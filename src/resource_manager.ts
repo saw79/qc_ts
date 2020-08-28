@@ -24,6 +24,15 @@ export function load_all(scene: Phaser.Scene) {
   load_actor_spritesheet(scene, "prison_guard");
   load_actor_spritesheet(scene, "prison_soldier");
   load_actor_spritesheet(scene, "prison_warden");
+
+  load_image(scene, "UIImages/button_small_up");
+  load_image(scene, "UIImages/button_small_down");
+  load_image(scene, "UIImages/button_small_checked");
+
+  load_image(scene, "UIImages/btn_wait_skin");
+  load_image(scene, "UIImages/btn_bag_skin");
+  load_image(scene, "UIImages/btn_grab_skin");
+  load_image(scene, "UIImages/btn_target_skin");
 }
 
 export function create_anims(scene: Phaser.Scene) {

@@ -28,6 +28,9 @@ export class MainScene extends Phaser.Scene {
 
   scrolled: boolean;
 
+  buttons_base: Array<Phaser.GameObjects.Image>;
+  buttons_skin: Array<Phaser.GameObjects.Image>;
+
   constructor() {
     super({ key: "MainScene"});
   }
@@ -144,28 +147,7 @@ export class MainScene extends Phaser.Scene {
       this.actors[0].actions = [{type: "wait"}];
     });
     this.input.keyboard.on("keydown_A", () => {
-      let tx = this.actors[0].tx;
-      let ty = this.actors[0].ty;
-      let id = null;
-      for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) {
-          if (dx == 0 && dy == 0) {
-            continue;
-          }
-
-          id = actor_at(this.actors, tx + dx, ty + dy);
-          if (id != null) {
-            break;
-          }
-        }
-        if (id != null) {
-          break;
-        }
-      }
-
-      if (id != null) {
-        this.actors[0].actions = [{type: "attack", id: id}];
-      }
+      this.attack();
     });
     this.input.keyboard.on("keydown_G", () => {
       this.pickup_item();
@@ -232,6 +214,88 @@ export class MainScene extends Phaser.Scene {
     this.update_bars();
 
     this.floating_texts = [];
+
+    // ----- buttons ------
+
+    let button_size = 2*TILE_SIZE;
+    let pad_size = TILE_SIZE/2;
+    let game_width = +(this.game.config.width);
+    let hud_width = 5*button_size + 6*pad_size;
+
+    if (game_width < hud_width) {
+      console.log("fixing buttons");
+      button_size *= game_width/hud_width;
+      pad_size *= game_width/hud_width;
+    }
+
+    let y = +(this.game.config.height) - pad_size - button_size/2;
+    let idx = 0;
+    let names = ["wait", "bag", "grab", "target"];
+    this.buttons_base = [];
+    this.buttons_skin = [];
+    for (let i = -2; i <= 2; i++) {
+      let x = game_width/2 +  i*(pad_size + button_size);
+      let btn_base = this.add.image(x, y, "UIImages/button_small_up");
+      btn_base.displayWidth = button_size;
+      btn_base.displayHeight = button_size;
+      btn_base.depth = 100;
+      btn_base.setScrollFactor(0);
+      btn_base.setInteractive()
+
+      btn_base.on('pointerdown', () => {
+        btn_base.setTexture("UIImages/button_small_down");
+      });
+
+      this.buttons_base.push(btn_base);
+
+      if (idx < 4) {
+        let key = "UIImages/btn_" + names[idx] + "_skin";
+        let btn_skin = this.add.image(x, y, key);
+        btn_skin.displayWidth = button_size/2;
+        btn_skin.displayHeight = button_size/2;
+        btn_skin.depth = 101;
+        btn_skin.setScrollFactor(0);
+
+        this.buttons_skin.push(btn_skin);
+      }
+      idx += 1;
+    }
+
+    this.buttons_base[0].on('pointerup', this.click_wait, this);
+    this.buttons_base[1].on('pointerup', this.click_bag, this);
+    this.buttons_base[2].on('pointerup', this.click_grab, this);
+    this.buttons_base[3].on('pointerup', this.click_target, this);
+    this.buttons_base[4].on('pointerup', this.click_attack, this);
+  }
+
+  click_wait(pointer, localX, localY, event) {
+    this.actors[0].actions = [{type: "wait"}];
+    this.buttons_base[0].setTexture("UIImages/button_small_up");
+    event.stopPropagation();
+  }
+
+  click_bag(pointer, localX, localY, event) {
+    console.log("bag (TODO)");
+    this.buttons_base[1].setTexture("UIImages/button_small_up");
+    event.stopPropagation();
+  }
+
+  click_grab(pointer, localX, localY, event) {
+    this.pickup_item();
+    this.buttons_base[2].setTexture("UIImages/button_small_up");
+    event.stopPropagation();
+  }
+
+  click_target(pointer, localX, localY, event) {
+    console.log("target (TODO)");
+    this.buttons_base[3].setTexture("UIImages/button_small_up");
+    event.stopPropagation();
+  }
+
+  click_attack(pointer, localX, localY, event) {
+    this.attack();
+    this.buttons_base[4].setTexture("UIImages/button_small_up");
+    event.stopPropagation();
   }
 
   update_bars() {
@@ -263,6 +327,31 @@ export class MainScene extends Phaser.Scene {
 
   new_floating_text(text: string, x: number, y: number, style: string, delay = 0) {
     this.floating_texts.push(new FloatingText(this, text, x, y, style, delay));
+  }
+
+  attack(): void {
+    let tx = this.actors[0].tx;
+    let ty = this.actors[0].ty;
+    let id = null;
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        if (dx == 0 && dy == 0) {
+          continue;
+        }
+
+        id = actor_at(this.actors, tx + dx, ty + dy);
+        if (id != null) {
+          break;
+        }
+      }
+      if (id != null) {
+        break;
+      }
+    }
+
+    if (id != null) {
+      this.actors[0].actions = [{type: "attack", id: id}];
+    }
   }
 
   pickup_item(): boolean {
