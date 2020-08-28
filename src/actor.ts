@@ -87,11 +87,6 @@ export class Actor {
     } else {
       this.vision_dist = ENEMY_VISION;
       this.vision_dist_max = ENEMY_VISION;
-
-      this.health = 5;
-      this.max_health = 5;
-      this.cognition = 5;
-      this.max_cognition = 5;
     }
 
     this.update_health_bar_width();

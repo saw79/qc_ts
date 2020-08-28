@@ -20,6 +20,10 @@ export function load_all(scene: Phaser.Scene) {
   load_any_spritesheet(scene, "cognition_orb", 64, 64);
   load_any_spritesheet(scene, "rejuvination_orb", 64, 64);
 
+  load_image(scene, "baton");
+  load_image(scene, "knife");
+  load_image(scene, "pistol");
+
   load_actor_spritesheet(scene, "player_none");
   load_actor_spritesheet(scene, "prison_guard");
   load_actor_spritesheet(scene, "prison_soldier");

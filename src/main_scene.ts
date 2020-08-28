@@ -10,9 +10,10 @@ import {Actor} from "./actor";
 import {mouse_click} from "./handle_input";
 import {move_actors} from "./movement";
 import {process_turns} from "./turn_logic";
-import {rand_int, actor_at, item_at} from "./util";
+import * as util from "./util";
 import {FloatingText} from "./floating_text";
 import {Item} from "./item";
+import * as factory from "./factory";
 
 export class MainScene extends Phaser.Scene {
   controls: Phaser.Cameras.Controls.FixedKeyControl;
@@ -42,15 +43,6 @@ export class MainScene extends Phaser.Scene {
   create(): void {
     create_anims(this);
 
-    // set scale so there's 14 tiles vertically
-    /*
-    let curr_tiles = +(this.game.config.height) / TILE_SIZE;
-    let aspect = +(this.game.config.width) / +(this.game.config.height);
-    let desired_height = +(this.game.config.height) * 14/curr_tiles;
-    let desired_width = desired_height * aspect;
-    this.scale.setGameSize(desired_width, desired_height);
-    */
-
     let level_width = 30;
     let level_height = 20;
 
@@ -65,6 +57,11 @@ export class MainScene extends Phaser.Scene {
     this.actors = [];
 
     let player = new Actor(this, "player_none", 1, 1);
+    player.health = 5;
+    player.max_health = 5;
+    player.cognition = 5;
+    player.max_cognition = 5;
+    player.damage = 1;
     player.camera = this.cameras.main;
     player.camera.centerOn(player.rx, player.ry);
     this.actors.push(player);
@@ -72,14 +69,8 @@ export class MainScene extends Phaser.Scene {
     let num_enemies = 4;
 
     for (let i = 0; i < num_enemies; i++) {
-      let x = 0;
-      let y = 0;
-      do {
-        x = rand_int(level_width-2) + 1;
-        y = rand_int(level_height-2) + 1;
-      } while (actor_at(this.actors, x, y) != null);
-      let actor = new Actor(this, "prison_guard", x, y);
-      this.actors.push(actor);
+      let [x, y] = util.rand_tile_no_actor(this);
+      this.actors.push(factory.create_random_enemy(this, x, y));
     }
 
     this.curr_turn = 0;
@@ -90,40 +81,21 @@ export class MainScene extends Phaser.Scene {
     let num_orbs = 6;
 
     for (let i = 0; i < num_orbs; i++) {
-      let x = 0;
-      let y = 0;
-      do {
-        x = rand_int(level_width-2) + 1;
-        y = rand_int(level_height-2) + 1;
-      } while (item_at(this.items, x, y) != null);
-      let orb = new Item(this, "health_orb", x, y);
-      orb.render_comp.setScale(0.5);
-      orb.render_comp.anims.play(orb.name);
-      this.items.push(orb);
+      let [x, y] = util.rand_tile_no_item(this);
+      this.items.push(factory.create_item(this, "health_orb", x, y));
     }
     for (let i = 0; i < num_orbs; i++) {
-      let x = 0;
-      let y = 0;
-      do {
-        x = rand_int(level_width-2) + 1;
-        y = rand_int(level_height-2) + 1;
-      } while (item_at(this.items, x, y) != null);
-      let orb = new Item(this, "cognition_orb", x, y);
-      orb.render_comp.setScale(0.5);
-      orb.render_comp.anims.play(orb.name);
-      this.items.push(orb);
+      let [x, y] = util.rand_tile_no_item(this);
+      this.items.push(factory.create_item(this, "cognition_orb", x, y));
     }
     for (let i = 0; i < 2; i++) {
-      let x = 0;
-      let y = 0;
-      do {
-        x = rand_int(level_width-2) + 1;
-        y = rand_int(level_height-2) + 1;
-      } while (item_at(this.items, x, y) != null);
-      let orb = new Item(this, "rejuvination_orb", x, y);
-      orb.render_comp.setScale(0.5);
-      orb.render_comp.anims.play(orb.name);
-      this.items.push(orb);
+      let [x, y] = util.rand_tile_no_item(this);
+      this.items.push(factory.create_item(this, "rejuvination_orb", x, y));
+    }
+
+    for (let i = 0; i < 10; i++) {
+      let [x, y] = util.rand_tile_no_item(this);
+      this.items.push(factory.create_random_item(this, x, y));
     }
 
     // ----- updates -------
@@ -339,7 +311,7 @@ export class MainScene extends Phaser.Scene {
           continue;
         }
 
-        id = actor_at(this.actors, tx + dx, ty + dy);
+        id = util.actor_at(this.actors, tx + dx, ty + dy);
         if (id != null) {
           break;
         }
@@ -357,7 +329,7 @@ export class MainScene extends Phaser.Scene {
   pickup_item(): boolean {
     let tx = this.actors[0].tx;
     let ty = this.actors[0].ty;
-    let id = item_at(this.items, tx, ty);
+    let id = util.item_at(this.items, tx, ty);
     if (id != null) {
       if (this.items[id].name == "health_orb") {
         let player = this.actors[0];
@@ -405,6 +377,7 @@ export class MainScene extends Phaser.Scene {
       }
       else {
         console.log("unknown item " + this.items[id].name + "!");
+        console.log("TODO inventory");
         return false;
       }
     }
