@@ -1,7 +1,7 @@
 import "phaser";
 
 import {Direction} from "./util";
-import {TILE_SIZE, PLAYER_VISION, ENEMY_VISION} from "./constants";
+import {TILE_SIZE, ACTOR_DEPTH, PLAYER_VISION, ENEMY_VISION} from "./constants";
 import {tile_to_render_coords} from "./util";
 import {Action} from "./turn_logic";
 import {TileGrid, Visibility} from "./tile_grid";
@@ -55,13 +55,13 @@ export class Actor {
     this.camera = null;
 
     this.render_comp = scene.add.sprite(this.rx, this.ry, name);
-    this.render_comp.depth = 10;
+    this.render_comp.depth = ACTOR_DEPTH;
     this.render_health = null;
     this.vision_comp = null;
     if (!this.is_player) {
       this.render_health = scene.add.image(this.rx, this.ry - TILE_SIZE/2, "health_bar");
       this.render_health.displayHeight = 3;
-      this.render_health.depth = 10;
+      this.render_health.depth = ACTOR_DEPTH;
 
       this.vision_comp = scene.add.image(this.rx, this.ry, "enemy_vision_wedge");
       this.vision_comp.alpha = 0.05;

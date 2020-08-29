@@ -37,6 +37,9 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "UIImages/btn_bag_skin");
   load_image(scene, "UIImages/btn_grab_skin");
   load_image(scene, "UIImages/btn_target_skin");
+
+  load_image(scene, "UIImages/btn_equipped_up");
+  load_image(scene, "UIImages/btn_inventory_up");
 }
 
 export function create_anims(scene: Phaser.Scene) {

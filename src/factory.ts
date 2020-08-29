@@ -3,6 +3,18 @@ import {Actor} from "./actor";
 import {Item} from "./item";
 import {rand_int} from "./util";
 
+export function create_player(scene: MainScene, x: number, y: number): Actor {
+    let player = new Actor(scene, "player_none", 1, 1);
+
+    player.health = 10;
+    player.max_health = 10;
+    player.cognition = 10;
+    player.max_cognition = 10;
+    player.damage = 1;
+
+    return player;
+}
+
 export function create_random_enemy(scene: MainScene, x: number, y: number): Actor {
   let name = "prison_guard";
   switch (rand_int(3)) {
@@ -16,11 +28,13 @@ export function create_random_enemy(scene: MainScene, x: number, y: number): Act
 
 export function create_enemy(scene: MainScene, name: string, x: number, y: number): Actor {
   let actor = new Actor(scene, name, x, y);
+
   actor.health = enemy_stats[name]["H"];
   actor.max_health = enemy_stats[name]["H"];
   actor.cognition = enemy_stats[name]["C"];
   actor.max_cognition = enemy_stats[name]["C"];
   actor.damage = enemy_stats[name]["D"];
+
   return actor;
 }
 
@@ -36,12 +50,15 @@ export function create_random_item(scene: MainScene, x: number, y: number): Item
 }
 
 export function create_item(scene: MainScene, name: string, x: number, y: number): Item {
-  let orb = new Item(scene, name, x, y);
+  let item = new Item(scene, name, x, y);
 
-  orb.render_comp.setScale(0.5);
-  orb.render_comp.anims.play(orb.name);
+  item.render_comp.setScale(0.5);
 
-  return orb;
+  if (item.name.indexOf("orb") != -1) {
+    item.render_comp.anims.play(item.name);
+  }
+
+  return item;
 }
 
 const enemy_stats = {

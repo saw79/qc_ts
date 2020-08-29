@@ -3,7 +3,7 @@ import "phaser";
 import * as PF from "pathfinding";
 import {NinePatch} from "@koreez/phaser3-ninepatch";
 
-import {TILE_SIZE} from "./constants";
+import {TILE_SIZE, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
 import {load_all, create_anims} from "./resource_manager";
 import {TileGrid} from "./tile_grid";
 import {Actor} from "./actor";
@@ -14,6 +14,7 @@ import * as util from "./util";
 import {FloatingText} from "./floating_text";
 import {Item} from "./item";
 import * as factory from "./factory";
+import {Inventory} from "./inventory";
 
 export class MainScene extends Phaser.Scene {
   controls: Phaser.Cameras.Controls.FixedKeyControl;
@@ -31,6 +32,8 @@ export class MainScene extends Phaser.Scene {
 
   buttons_base: Array<Phaser.GameObjects.Image>;
   buttons_skin: Array<Phaser.GameObjects.Image>;
+
+  inventory: Inventory;
 
   constructor() {
     super({ key: "MainScene"});
@@ -56,17 +59,12 @@ export class MainScene extends Phaser.Scene {
 
     this.actors = [];
 
-    let player = new Actor(this, "player_none", 1, 1);
-    player.health = 5;
-    player.max_health = 5;
-    player.cognition = 5;
-    player.max_cognition = 5;
-    player.damage = 1;
+    let player = factory.create_player(this, 1, 1);
     player.camera = this.cameras.main;
     player.camera.centerOn(player.rx, player.ry);
     this.actors.push(player);
 
-    let num_enemies = 4;
+    let num_enemies = 5;
 
     for (let i = 0; i < num_enemies; i++) {
       let [x, y] = util.rand_tile_no_actor(this);
@@ -118,11 +116,16 @@ export class MainScene extends Phaser.Scene {
     this.input.keyboard.on("keydown_W", () => {
       this.actors[0].actions = [{type: "wait"}];
     });
-    this.input.keyboard.on("keydown_A", () => {
-      this.attack();
+    this.input.keyboard.on("keydown_B", () => {
+      this.inventory.toggle();
     });
     this.input.keyboard.on("keydown_G", () => {
       this.pickup_item();
+    });
+    this.input.keyboard.on("keydown_T", () => {
+    });
+    this.input.keyboard.on("keydown_A", () => {
+      this.attack();
     });
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       this.scrolled = false;
@@ -210,7 +213,7 @@ export class MainScene extends Phaser.Scene {
       let btn_base = this.add.image(x, y, "UIImages/button_small_up");
       btn_base.displayWidth = button_size;
       btn_base.displayHeight = button_size;
-      btn_base.depth = 100;
+      btn_base.depth = BUTTONS_DEPTH;
       btn_base.setScrollFactor(0);
       btn_base.setInteractive()
 
@@ -225,7 +228,7 @@ export class MainScene extends Phaser.Scene {
         let btn_skin = this.add.image(x, y, key);
         btn_skin.displayWidth = button_size/2;
         btn_skin.displayHeight = button_size/2;
-        btn_skin.depth = 101;
+        btn_skin.depth = BUTTONS_DEPTH + 1;
         btn_skin.setScrollFactor(0);
 
         this.buttons_skin.push(btn_skin);
@@ -238,6 +241,8 @@ export class MainScene extends Phaser.Scene {
     this.buttons_base[2].on('pointerup', this.click_grab, this);
     this.buttons_base[3].on('pointerup', this.click_target, this);
     this.buttons_base[4].on('pointerup', this.click_attack, this);
+
+    this.inventory = new Inventory(this);
   }
 
   click_wait(pointer, localX, localY, event) {
@@ -247,7 +252,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   click_bag(pointer, localX, localY, event) {
-    console.log("bag (TODO)");
+    this.inventory.toggle();
     this.buttons_base[1].setTexture("UIImages/button_small_up");
     event.stopPropagation();
   }
@@ -376,8 +381,10 @@ export class MainScene extends Phaser.Scene {
         return true;
       }
       else {
-        console.log("unknown item " + this.items[id].name + "!");
-        console.log("TODO inventory");
+        if (this.inventory.try_add(this.items[id])) {
+          let added = this.items.splice(id, 1);
+          return true;
+        }
         return false;
       }
     }

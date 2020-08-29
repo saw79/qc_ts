@@ -1,3 +1,4 @@
+import {ITEM_DEPTH} from "./constants";
 import {tile_to_render_coords} from "./util";
 import {TileGrid, Visibility} from "./tile_grid";
 
@@ -21,6 +22,7 @@ export class Item {
     this.alive = true;
 
     this.render_comp = scene.add.sprite(this.rx, this.ry, name);
+    this.render_comp.depth = ITEM_DEPTH;
   }
 
   update_visible(grid: TileGrid): void {
