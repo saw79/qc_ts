@@ -11,8 +11,9 @@ export function calc_combat(scene: MainScene, actors: Array<Actor>, id0: number,
     return;
   }
 
-  let dmg = actors[id0].damage - actors[id1].absorption;
-
+  let dmg = actors[id0].damage;
+  dmg += rand_int(3) - 1;
+  dmg -= actors[id1].absorption;
   dmg = Math.max(dmg, 0);
 
   // --- APPLY ---

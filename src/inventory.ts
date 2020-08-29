@@ -15,7 +15,7 @@ export class Inventory {
   inv_items: Array<Array<null | Item>>;
   showing: boolean;
 
-  selected: null | [number, number];
+  selected: null | [number, number, boolean];
 
   x0: number;
   y0: number;
@@ -119,6 +119,9 @@ export class Inventory {
       "equip": [
         scene.add.image(0, 0, "UIImages/button_wide_up"),
         scene.add.text(0, 0, "Equip")],
+      "unequip": [
+        scene.add.image(0, 0, "UIImages/button_wide_up"),
+        scene.add.text(0, 0, "Unequip")],
       "use": [
         scene.add.image(0, 0, "UIImages/button_wide_up"),
         scene.add.text(0, 0, "Use")],
@@ -151,6 +154,13 @@ export class Inventory {
         this.menu_buttons[key][0].on("pointerup", (p, lx, ly, ev) => {
           this.menu_buttons[key][0].setTexture("UIImages/button_wide_up");
           this.menu_equip();
+          ev.stopPropagation();
+        }, this);
+      }
+      else if (key == "unequip") {
+        this.menu_buttons[key][0].on("pointerup", (p, lx, ly, ev) => {
+          this.menu_buttons[key][0].setTexture("UIImages/button_wide_up");
+          this.menu_unequip();
           ev.stopPropagation();
         }, this);
       }
@@ -236,7 +246,45 @@ export class Inventory {
     }
 
     this.equip_bgs[r][c].setTexture("UIImages/btn_equipped_checked");
-    this.selected = [r, c];
+    this.selected = [r, c, true];
+
+    let menu_button_names = [];
+    menu_button_names.push("unequip");
+    menu_button_names.push("throw");
+    menu_button_names.push("drop");
+    menu_button_names.push("info");
+
+    let [x0, y0] = this.rc2xy(r, c);
+    x0 += this.slot_size/2;
+    y0 -= this.slot_size/2;
+
+    let bg_w = this.menu_w;
+    let bg_h = this.menu_h * (menu_button_names.length + 1);
+
+    this.menu_bg.x = x0 + bg_w/2;
+    this.menu_bg.y = y0 + bg_h/2;
+    this.menu_bg.displayWidth = bg_w;
+    this.menu_bg.displayHeight = bg_h;
+    this.menu_bg.visible = true;
+
+    this.menu_label.text = this.equip_items[r][c].display_name;
+    this.menu_label.x = x0 + 5;
+    this.menu_label.y = y0 + 10;
+    this.menu_label.visible = true;
+
+    for (let i = 0; i < menu_button_names.length; i++) {
+      let key = menu_button_names[i];
+      this.menu_buttons[key][0].x = x0 + this.menu_w/2;
+      this.menu_buttons[key][0].y = y0 + this.menu_h/2 + (i+1)*this.menu_h;
+      this.menu_buttons[key][0].visible = true;
+
+      this.menu_buttons[key][1].x = x0 + this.menu_w/2;
+      this.menu_buttons[key][1].y = y0 + this.menu_h/2 + (i+1)*this.menu_h;
+      this.menu_buttons[key][1].x -= this.menu_buttons[key][1].displayWidth/2;
+      this.menu_buttons[key][1].y -= this.menu_buttons[key][1].displayHeight/2;
+      this.menu_buttons[key][1].visible = true;
+    }
+
   }
 
   select_inv(r: number, c: number): void {
@@ -245,7 +293,7 @@ export class Inventory {
     }
 
     this.inv_bgs[r][c].setTexture("UIImages/btn_inventory_checked");
-    this.selected = [r, c];
+    this.selected = [r, c, false];
 
     let menu_button_names = [];
     if (this.inv_items[r][c].equippable) {
@@ -317,7 +365,12 @@ export class Inventory {
       return;
     }
 
-    let [ri, ci] = this.selected;
+    let [ri, ci, is_equip] = this.selected;
+    if (is_equip) {
+      console.log("uniequp no tyet implemented");
+      return;
+    }
+
     let re: number;
     let ce: number;
 
@@ -356,6 +409,7 @@ export class Inventory {
       let weapon_name = this.equip_items[re][ce].name;
 
       this.scene.actors[0].damage = item_stats[weapon_name]["D"];
+      this.scene.actors[0].damage_std = item_stats[weapon_name]["S"];
 
       this.scene.buttons_skin[4].setTexture(weapon_name);
     }
@@ -370,6 +424,10 @@ export class Inventory {
 
       this.scene.actors[0].absorption = item_stats[armor_name]["A"];
     }
+  }
+
+  menu_unequip(): void {
+    console.log("menu unequip");
   }
 
   menu_use(): void {

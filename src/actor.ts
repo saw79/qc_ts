@@ -37,6 +37,7 @@ export class Actor {
   cognition: number;
   max_cognition: number;
   damage: number;
+  damage_std: number;
   absorption: number;
   dodge: number;
   vision_dist: number;
@@ -81,6 +82,7 @@ export class Actor {
     this.cognition = 10;
     this.max_cognition = 10;
     this.damage = 1;
+    this.damage_std = 1;
     this.absorption = 0;
     this.dodge = 10;
 
