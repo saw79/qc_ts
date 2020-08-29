@@ -2,9 +2,10 @@ import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {Item} from "./item";
 import {rand_int} from "./util";
+import {enemy_stats, item_stats} from "./stats";
 
 export function create_player(scene: MainScene, x: number, y: number): Actor {
-    let player = new Actor(scene, "player_none", 1, 1);
+    let player = new Actor(scene, "player_none", x, y);
 
     player.health = 10;
     player.max_health = 10;
@@ -39,14 +40,15 @@ export function create_enemy(scene: MainScene, name: string, x: number, y: numbe
 }
 
 export function create_random_item(scene: MainScene, x: number, y: number): Item {
-  let name = "baton";
-  switch (rand_int(3)) {
-    case 0: name = "baton"; break;
-    case 1: name = "knife"; break;
-    case 2: name = "pistol"; break;
-  }
+  let idx = rand_int(Object.keys(item_stats).length);
+  let name = Object.keys(item_stats)[idx];
 
-  return create_item(scene, name, x, y);
+  let item = create_item(scene, name, x, y);
+
+  item.equippable = true;
+  item.type = item_stats[name]["T"];
+
+  return item;
 }
 
 export function create_item(scene: MainScene, name: string, x: number, y: number): Item {
@@ -61,8 +63,3 @@ export function create_item(scene: MainScene, name: string, x: number, y: number
   return item;
 }
 
-const enemy_stats = {
-  "prison_guard"  : { "H": 3, "C": 3, "D": 1 },
-  "prison_soldier": { "H": 3, "C": 2, "D": 1 },
-  "prison_warden" : { "H": 5, "C": 4, "D": 2 },
-};

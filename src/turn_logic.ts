@@ -24,7 +24,7 @@ export type Action = Wait | Move | Attack;
 
 export type ActionResult = [boolean, Action];
 
-const MAX_TURNS = 10;
+const MAX_TURNS = 200;
 
 export function process_turns(scene: MainScene, actors: Array<Actor>, curr_turn: number, grid: TileGrid): number {
   let start_turn = curr_turn;

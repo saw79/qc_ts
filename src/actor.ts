@@ -37,6 +37,8 @@ export class Actor {
   cognition: number;
   max_cognition: number;
   damage: number;
+  absorption: number;
+  dodge: number;
   vision_dist: number;
   vision_dist_max: number;
 
@@ -79,6 +81,8 @@ export class Actor {
     this.cognition = 10;
     this.max_cognition = 10;
     this.damage = 1;
+    this.absorption = 0;
+    this.dodge = 10;
 
     if (this.is_player) {
       this.vision_dist = PLAYER_VISION;

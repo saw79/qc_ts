@@ -20,11 +20,50 @@ export function load_all(scene: Phaser.Scene) {
   load_any_spritesheet(scene, "cognition_orb", 64, 64);
   load_any_spritesheet(scene, "rejuvination_orb", 64, 64);
 
+  load_image(scene, "fist");
   load_image(scene, "baton");
+  load_image(scene, "mace");
+  load_image(scene, "battle_axe");
+  load_image(scene, "em_rod");
+  load_image(scene, "double_em_rod");
+  load_image(scene, "faraday_pole");
+  load_image(scene, "quark_rod");
+  load_image(scene, "quark_staff");
+  load_image(scene, "quark_halberd");
+
   load_image(scene, "knife");
+  load_image(scene, "spear");
+  load_image(scene, "katana");
+  load_image(scene, "stunner");
+  load_image(scene, "electroblade");
+  load_image(scene, "laser_blade");
+  load_image(scene, "quark_spike");
+  load_image(scene, "quark_blade");
+  load_image(scene, "quark_spear");
+
   load_image(scene, "pistol");
+  load_image(scene, "shotgun");
+  load_image(scene, "assault_rifle");
+  load_image(scene, "railgun");
+  load_image(scene, "electrified_railgun");
+  load_image(scene, "laser_gun");
+  load_image(scene, "x_ray_gun");
+  load_image(scene, "gamma_gun");
+  load_image(scene, "spooky_gun");
+
+  load_image(scene, "rigid_vest");
+  load_image(scene, "combat_suit");
+  load_image(scene, "reinforced_combat_suit");
+  load_image(scene, "force_field_suit");
+  load_image(scene, "quark_suit");
 
   load_actor_spritesheet(scene, "player_none");
+  load_actor_spritesheet(scene, "player_rigid_vest");
+  load_actor_spritesheet(scene, "player_combat_suit");
+  load_actor_spritesheet(scene, "player_reinforced_combat_suit");
+  load_actor_spritesheet(scene, "player_force_field_suit");
+  load_actor_spritesheet(scene, "player_quark_suit");
+
   load_actor_spritesheet(scene, "prison_guard");
   load_actor_spritesheet(scene, "prison_soldier");
   load_actor_spritesheet(scene, "prison_warden");
@@ -39,11 +78,24 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "UIImages/btn_target_skin");
 
   load_image(scene, "UIImages/btn_equipped_up");
+  load_image(scene, "UIImages/btn_equipped_checked");
   load_image(scene, "UIImages/btn_inventory_up");
+  load_image(scene, "UIImages/btn_inventory_checked");
+
+  load_image(scene, "UIImages/button_wide_up");
+  load_image(scene, "UIImages/button_wide_down");
+
+  load_image(scene, "UIImages/label_bg");
 }
 
 export function create_anims(scene: Phaser.Scene) {
   create_actor_anims(scene, "player_none");
+  create_actor_anims(scene, "player_rigid_vest");
+  create_actor_anims(scene, "player_combat_suit");
+  create_actor_anims(scene, "player_reinforced_combat_suit");
+  create_actor_anims(scene, "player_force_field_suit");
+  create_actor_anims(scene, "player_quark_suit");
+
   create_actor_anims(scene, "prison_guard");
   create_actor_anims(scene, "prison_soldier");
   create_actor_anims(scene, "prison_warden");

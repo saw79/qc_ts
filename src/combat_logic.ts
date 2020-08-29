@@ -1,18 +1,29 @@
 import {TILE_SIZE} from "./constants";
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
+import {rand_int} from "./util";
 
-export function calc_combat(scene: MainScene, actors: Array<Actor>, id0: number, id1: number) {
-  let dmg = actors[id0].damage;
+export function calc_combat(scene: MainScene, actors: Array<Actor>, id0: number, id1: number): void {
+  // --- CALCULATE ---
 
-  // apply damage
+  if (rand_int(100) < actors[id1].dodge) {
+    scene.new_floating_text("DODGED", actors[id1].rx, actors[id1].ry - TILE_SIZE/2, "dodge");
+    return;
+  }
+
+  let dmg = actors[id0].damage - actors[id1].absorption;
+
+  dmg = Math.max(dmg, 0);
+
+  // --- APPLY ---
+
   actors[id1].health -= dmg;
   actors[id1].cognition -= dmg;
   if (actors[id1].cognition < 0) {
     actors[id1].cognition = 0;
   }
 
-  // update visuals
+  // --- UPDATE VISUALS ---
 
   scene.update_bars();
 

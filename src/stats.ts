@@ -1,0 +1,42 @@
+import {ItemType} from "./item";
+
+export const enemy_stats = {
+  "prison_guard"  : { "H": 3, "C": 3, "D": 1 },
+  "prison_soldier": { "H": 3, "C": 2, "D": 1 },
+  "prison_warden" : { "H": 5, "C": 4, "D": 2 },
+};
+
+export const item_stats = {
+  "baton"                 : { "T": ItemType.WEAPON, "D": 1 },
+  "mace"                  : { "T": ItemType.WEAPON, "D": 2 },
+  "battle_axe"            : { "T": ItemType.WEAPON, "D": 3 },
+  "em_rod"                : { "T": ItemType.WEAPON, "D": 4 },
+  "double_em_rod"         : { "T": ItemType.WEAPON, "D": 5 },
+  "faraday_pole"          : { "T": ItemType.WEAPON, "D": 6 },
+  "quark_rod"             : { "T": ItemType.WEAPON, "D": 7 },
+  "quark_staff"           : { "T": ItemType.WEAPON, "D": 8 },
+  "quark_halberd"         : { "T": ItemType.WEAPON, "D": 9 },
+  "knife"                 : { "T": ItemType.WEAPON, "D": 1 },
+  "spear"                 : { "T": ItemType.WEAPON, "D": 2 },
+  "katana"                : { "T": ItemType.WEAPON, "D": 3 },
+  "stunner"               : { "T": ItemType.WEAPON, "D": 4 },
+  "electroblade"          : { "T": ItemType.WEAPON, "D": 5 },
+  "laser_blade"           : { "T": ItemType.WEAPON, "D": 6 },
+  "quark_spike"           : { "T": ItemType.WEAPON, "D": 7 },
+  "quark_blade"           : { "T": ItemType.WEAPON, "D": 8 },
+  "quark_spear"           : { "T": ItemType.WEAPON, "D": 9 },
+  "pistol"                : { "T": ItemType.WEAPON, "D": 1 },
+  "shotgun"               : { "T": ItemType.WEAPON, "D": 2 },
+  "assault_rifle"         : { "T": ItemType.WEAPON, "D": 3 },
+  "railgun"               : { "T": ItemType.WEAPON, "D": 4 },
+  "electrified_railgun"   : { "T": ItemType.WEAPON, "D": 5 },
+  "laser_gun"             : { "T": ItemType.WEAPON, "D": 6 },
+  "x_ray_gun"             : { "T": ItemType.WEAPON, "D": 7 },
+  "gamma_gun"             : { "T": ItemType.WEAPON, "D": 8 },
+  "spooky_gun"            : { "T": ItemType.WEAPON, "D": 9 },
+  "rigid_vest"            : { "T": ItemType.ARMOR, "A": 1 },
+  "combat_suit"           : { "T": ItemType.ARMOR, "A": 2 },
+  "reinforced_combat_suit": { "T": ItemType.ARMOR, "A": 3 },
+  "force_field_suit"      : { "T": ItemType.ARMOR, "A": 4 },
+  "quark_suit"            : { "T": ItemType.ARMOR, "A": 5 },
+};

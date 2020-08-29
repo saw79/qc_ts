@@ -12,7 +12,7 @@ import {move_actors} from "./movement";
 import {process_turns} from "./turn_logic";
 import * as util from "./util";
 import {FloatingText} from "./floating_text";
-import {Item} from "./item";
+import {Item, make_display_name} from "./item";
 import * as factory from "./factory";
 import {Inventory} from "./inventory";
 
@@ -64,7 +64,9 @@ export class MainScene extends Phaser.Scene {
     player.camera.centerOn(player.rx, player.ry);
     this.actors.push(player);
 
-    let num_enemies = 5;
+    let num_enemies = 10;
+    let num_orbs = 10;
+    let num_items = 30;
 
     for (let i = 0; i < num_enemies; i++) {
       let [x, y] = util.rand_tile_no_actor(this);
@@ -76,7 +78,6 @@ export class MainScene extends Phaser.Scene {
     // ----- create items -----
 
     this.items = [];
-    let num_orbs = 6;
 
     for (let i = 0; i < num_orbs; i++) {
       let [x, y] = util.rand_tile_no_item(this);
@@ -86,12 +87,12 @@ export class MainScene extends Phaser.Scene {
       let [x, y] = util.rand_tile_no_item(this);
       this.items.push(factory.create_item(this, "cognition_orb", x, y));
     }
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < num_orbs; i++) {
       let [x, y] = util.rand_tile_no_item(this);
       this.items.push(factory.create_item(this, "rejuvination_orb", x, y));
     }
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < num_items; i++) {
       let [x, y] = util.rand_tile_no_item(this);
       this.items.push(factory.create_random_item(this, x, y));
     }
@@ -141,7 +142,11 @@ export class MainScene extends Phaser.Scene {
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
       if (!this.scrolled) {
-        mouse_click(this, pointer, this.cameras.main, this.actors, this.grid);
+        if (this.inventory.showing) {
+          this.inventory.hide();
+        } else {
+          mouse_click(this, pointer, this.cameras.main, this.actors, this.grid);
+        }
       }
     });
 
@@ -223,16 +228,22 @@ export class MainScene extends Phaser.Scene {
 
       this.buttons_base.push(btn_base);
 
+
+      let key = idx < 4 ? "UIImages/btn_" + names[idx] + "_skin" : "fist";
+      let btn_skin = this.add.image(x, y, key);
       if (idx < 4) {
-        let key = "UIImages/btn_" + names[idx] + "_skin";
-        let btn_skin = this.add.image(x, y, key);
         btn_skin.displayWidth = button_size/2;
         btn_skin.displayHeight = button_size/2;
-        btn_skin.depth = BUTTONS_DEPTH + 1;
-        btn_skin.setScrollFactor(0);
-
-        this.buttons_skin.push(btn_skin);
+      } else {
+        btn_skin.displayWidth = button_size*0.75;
+        btn_skin.displayHeight = button_size*0.75;
       }
+      btn_skin.depth = BUTTONS_DEPTH + 1;
+      btn_skin.setScrollFactor(0);
+
+      this.buttons_skin.push(btn_skin);
+
+
       idx += 1;
     }
 
