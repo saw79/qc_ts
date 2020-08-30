@@ -182,6 +182,7 @@ export class MainScene extends Phaser.Scene {
         this.health_comps[key].displayHeight = TILE_SIZE / 2;
       }
       this.health_comps[key].setScrollFactor(0);
+      this.health_comps[key].depth = HUD_DEPTH;
     }
     for (let key in this.cog_comps) {
       this.cog_comps[key].y = TILE_SIZE;
@@ -189,6 +190,7 @@ export class MainScene extends Phaser.Scene {
         this.cog_comps[key].displayHeight = TILE_SIZE / 2;
       }
       this.cog_comps[key].setScrollFactor(0);
+      this.cog_comps[key].depth = HUD_DEPTH;
     }
 
     this.update_bars();

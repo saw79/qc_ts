@@ -1,5 +1,5 @@
 import {MainScene} from "./main_scene";
-import {TILE_SIZE, INV_DEPTH} from "./constants";
+import {TILE_SIZE, ACTOR_DEPTH, ITEM_DEPTH, INV_DEPTH} from "./constants";
 import {Item, ItemType} from "./item";
 import {item_stats} from "./stats";
 
@@ -205,23 +205,33 @@ export class Inventory {
   }
 
   try_add(item: Item): boolean {
+    let spot = this.find_inv_spot();
+    if (spot == null) {
+      return false;
+    }
+
+    let [r, c] = spot;
+    this.inv_items[r][c] = item;
+    let [x, y] = this.rc2xy(r + 2, c);
+    item.render_comp.x = x;
+    item.render_comp.y = y;
+    item.render_comp.setScrollFactor(0);
+    item.render_comp.depth = INV_DEPTH + 1;
+    item.render_comp.visible = this.showing;
+
+    return true;
+  }
+
+  find_inv_spot(): null | [number, number] {
     for (let r = 0; r < INV_ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         if (this.inv_items[r][c] == null) {
-          this.inv_items[r][c] = item;
-          let [x, y] = this.rc2xy(r + 2, c);
-          item.render_comp.x = x;
-          item.render_comp.y = y;
-          item.render_comp.setScrollFactor(0);
-          item.render_comp.depth = INV_DEPTH + 1;
-          item.render_comp.visible = this.showing;
-
-          return true;
+          return [r, c];
         }
       }
     }
 
-    return false;
+    return null;
   }
 
   click_equip(r: number, c: number): void {
@@ -359,6 +369,81 @@ export class Inventory {
     }
   }
 
+  move_item(r0: number, c0: number, is_equip0: boolean, r1: number, c1: number, is_equip1: boolean): void {
+    this.put_item(this.remove_item(r0, c0, is_equip0), r1, c1, is_equip1);
+  }
+
+  swap_items(r0: number, c0: number, is_equip0: boolean, r1: number, c1: number, is_equip1: boolean): void {
+    let item0 = this.remove_item(r0, c0, is_equip0);
+    let item1 = this.remove_item(r1, c1, is_equip1);
+
+    this.put_item(item0, r1, c1, is_equip1);
+    this.put_item(item1, r0, c0, is_equip0);
+  }
+
+  put_item(item: Item, r: number, c: number, is_equip: boolean): void {
+    let [x, y] = [0, 0];
+    if (is_equip) {
+      [x, y] = this.rc2xy(r, c);
+    } else {
+      [x, y] = this.rc2xy(r + 2, c);
+    }
+
+    item.render_comp.x = x;
+    item.render_comp.y = y;
+
+    if (is_equip) {
+      this.equip_items[r][c] = item;
+    } else {
+      this.inv_items[r][c] = item;
+    }
+  }
+
+  remove_item(r: number, c: number, is_equip: boolean): Item {
+    let item = null;
+    if (is_equip) {
+      item = this.equip_items[r][c];
+      this.equip_items[r][c] = null;
+      return item;
+    } else {
+      item = this.inv_items[r][c];
+      this.inv_items[r][c] = null;
+      return item;
+    }
+  }
+
+  put_item_on_ground(item: Item): void {
+    item.render_comp.depth = ITEM_DEPTH;
+    item.render_comp.setScrollFactor(1);
+    item.render_comp.x = this.scene.actors[0].rx;
+    item.render_comp.y = this.scene.actors[0].ry;
+    item.tx = this.scene.actors[0].tx;
+    item.ty = this.scene.actors[0].ty;
+    item.rx = this.scene.actors[0].rx;
+    item.ry = this.scene.actors[0].ry;
+
+    this.scene.items.push(item);
+  }
+
+  recalc_weapon_stats(): void {
+    let weapon_name = "fist";
+    if (this.equip_items[0][0] != null) {
+      weapon_name = this.equip_items[0][0].name;
+    }
+
+    this.scene.actors[0].damage = item_stats[weapon_name]["D"];
+    this.scene.actors[0].damage_std = item_stats[weapon_name]["S"];
+  }
+
+  recalc_armor_stats(): void {
+    let armor_name = "none";
+    if (this.equip_items[0][1] != null) {
+      armor_name = this.equip_items[0][1].name;
+    }
+
+    this.scene.actors[0].absorption = item_stats[armor_name]["A"];
+  }
+
   menu_equip(): void {
     if (this.selected == null) {
       console.log("E - shouldn't get here, equipping unselected?");
@@ -367,83 +452,152 @@ export class Inventory {
 
     let [ri, ci, is_equip] = this.selected;
     if (is_equip) {
-      console.log("uniequp no tyet implemented");
+      console.log("ERROR - menu_equip called but is_equip true");
       return;
     }
 
-    let re: number;
-    let ce: number;
-
     if (this.inv_items[ri][ci].type == ItemType.WEAPON) {
-      [re, ce] = [0, 0];
+      if (this.equip_items[0][0] == null) {
+        this.move_item(ri, ci, false, 0, 0, true);
+      } else {
+        this.swap_items(ri, ci, false, 0, 0, true);
+      }
+
+      this.equip_weapon();
     }
     else if (this.inv_items[ri][ci].type == ItemType.ARMOR) {
-      [re, ce] = [0, 1];
+      if (this.equip_items[0][1] == null) {
+        this.move_item(ri, ci, false, 0, 1, true);
+      } else {
+        this.swap_items(ri, ci, false, 0, 1, true);
+      }
+
+      this.equip_armor();
     }
     else {
       console.log("item type " + this.inv_items[ri][ci].type + " equip not implemented");
       return;
     }
 
-    let prev = null;
-    if (this.equip_items[re][ce] != null) {
-      prev = this.equip_items[re][ce];
+    this.unselect_all();
+    this.hide_menu();
+  }
+
+  menu_unequip(): void {
+    if (this.selected == null) {
+      console.log("E - shouldn't get here, unequipping unselected?");
+      return;
     }
 
-    this.equip_items[re][ce] = this.inv_items[ri][ci];
-    this.inv_items[ri][ci] = prev;
-    let [xe, ye] = this.rc2xy(re, ce);
-    this.equip_items[re][ce].render_comp.x = xe;
-    this.equip_items[re][ce].render_comp.y = ye;
+    let [re, ce, is_equip] = this.selected;
+    if (!is_equip) {
+      console.log("ERROR - menu_unequip called but is_equip false");
+      return;
+    }
 
-    if (prev != null) {
-      let [xi, yi] = this.rc2xy(ri + 2, ci);
-      this.inv_items[ri][ci].render_comp.x = xi;
-      this.inv_items[ri][ci].render_comp.y = yi;
+    let item = this.remove_item(re, ce, true);
+
+    let inv_spot = this.find_inv_spot();
+    if (inv_spot == null) {
+      this.put_item_on_ground(item);
+    } else {
+      let [ri, ci] = inv_spot;
+      this.put_item(item, ri, ci, false);
     }
 
     this.unselect_all();
     this.hide_menu();
 
-    if (this.equip_items[re][ce].type == ItemType.WEAPON) {
-      let weapon_name = this.equip_items[re][ce].name;
-
-      this.scene.actors[0].damage = item_stats[weapon_name]["D"];
-      this.scene.actors[0].damage_std = item_stats[weapon_name]["S"];
-
-      this.scene.buttons_skin[4].setTexture(weapon_name);
+    if (re == 0 && ce == 0) {
+      this.unequip_weapon();
     }
-    else if (this.equip_items[re][ce].type == ItemType.ARMOR) {
-      let armor_name = this.equip_items[re][ce].name;
-
-      this.scene.actors[0].name = "player_" + armor_name;
-      this.scene.actors[0].render_comp.destroy();
-      this.scene.actors[0].render_comp = this.scene.add.sprite(
-        this.scene.actors[0].rx, this.scene.actors[0].ry,
-        "player_" + armor_name);
-
-      this.scene.actors[0].absorption = item_stats[armor_name]["A"];
+    else if (re == 0 && ce == 1) {
+      this.unequip_armor();
     }
-  }
-
-  menu_unequip(): void {
-    console.log("menu unequip");
   }
 
   menu_use(): void {
+    if (this.selected == null) {
+      console.log("E - shouldn't get here, using unselected?");
+      return;
+    }
     console.log("menu use");
   }
 
   menu_throw(): void {
+    if (this.selected == null) {
+      console.log("E - shouldn't get here, throwing unselected?");
+      return;
+    }
     console.log("menu throw");
   }
 
   menu_drop(): void {
-    console.log("menu drop");
+    if (this.selected == null) {
+      console.log("E - shouldn't get here, dropping unselected?");
+      return;
+    }
+
+    let [r, c, is_equip] = this.selected;
+    let item = this.remove_item(r, c, is_equip);
+    if (is_equip) {
+      if (r == 0 && c == 0) {
+        this.unequip_weapon();
+      }
+      else if (r == 0 && c == 1) {
+        this.unequip_armor();
+      }
+    } 
+
+    this.put_item_on_ground(item);
+
+    this.unselect_all();
+    this.hide_menu();
   }
 
   menu_info(): void {
+    if (this.selected == null) {
+      console.log("E - shouldn't get here, info unselected?");
+      return;
+    }
     console.log("menu info");
+  }
+
+  equip_weapon(): void {
+    let weapon_name = this.equip_items[0][0].name;
+    this.scene.buttons_skin[4].setTexture(weapon_name);
+
+    this.recalc_weapon_stats();
+  }
+
+  unequip_weapon(): void {
+    this.scene.buttons_skin[4].setTexture("fist");
+
+    this.recalc_weapon_stats();
+  }
+
+  equip_armor(): void {
+    let armor_name = this.equip_items[0][1].name;
+
+    this.scene.actors[0].name = "player_" + armor_name;
+    this.scene.actors[0].render_comp.destroy();
+    this.scene.actors[0].render_comp = this.scene.add.sprite(
+      this.scene.actors[0].rx, this.scene.actors[0].ry,
+      "player_" + armor_name);
+      this.scene.actors[0].render_comp.depth = ACTOR_DEPTH;
+
+    this.recalc_armor_stats();
+  }
+
+  unequip_armor(): void {
+    this.scene.actors[0].name = "player_none";
+    this.scene.actors[0].render_comp.destroy();
+    this.scene.actors[0].render_comp = this.scene.add.sprite(
+      this.scene.actors[0].rx, this.scene.actors[0].ry,
+      "player_none");
+      this.scene.actors[0].render_comp.depth = ACTOR_DEPTH;
+
+    this.recalc_armor_stats();
   }
 
   hide_menu(): void {

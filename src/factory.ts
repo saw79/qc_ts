@@ -43,6 +43,10 @@ export function create_random_item(scene: MainScene, x: number, y: number): Item
   let idx = rand_int(Object.keys(item_stats).length);
   let name = Object.keys(item_stats)[idx];
 
+  if (name == "fist" || name == "none") {
+    return create_random_item(scene, x, y);
+  }
+
   let item = create_item(scene, name, x, y);
 
   item.equippable = true;

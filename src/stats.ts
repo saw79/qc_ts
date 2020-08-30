@@ -7,6 +7,7 @@ export const enemy_stats = {
 };
 
 export const item_stats = {
+  "fist"                  : { "T": ItemType.WEAPON, "D": 1, "S": 1 },
   "baton"                 : { "T": ItemType.WEAPON, "D": 1, "S": 1 },
   "mace"                  : { "T": ItemType.WEAPON, "D": 2, "S": 1 },
   "battle_axe"            : { "T": ItemType.WEAPON, "D": 3, "S": 1 },
@@ -34,6 +35,7 @@ export const item_stats = {
   "x_ray_gun"             : { "T": ItemType.WEAPON, "D": 7, "S": 1 },
   "gamma_gun"             : { "T": ItemType.WEAPON, "D": 8, "S": 1 },
   "spooky_gun"            : { "T": ItemType.WEAPON, "D": 9, "S": 1 },
+  "none"                  : { "T": ItemType.ARMOR, "A": 0 },
   "rigid_vest"            : { "T": ItemType.ARMOR, "A": 1 },
   "combat_suit"           : { "T": ItemType.ARMOR, "A": 2 },
   "reinforced_combat_suit": { "T": ItemType.ARMOR, "A": 3 },
