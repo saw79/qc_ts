@@ -7,14 +7,20 @@ import {TILE_SIZE, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
 import {load_all, create_anims} from "./resource_manager";
 import {TileGrid} from "./tile_grid";
 import {Actor} from "./actor";
-import {mouse_click} from "./handle_input";
-import {move_actors} from "./movement";
+import {mouse_click_normal, mouse_click_throw_tgt} from "./handle_input";
+import {move_actors, move_projectiles} from "./movement";
 import {process_turns} from "./turn_logic";
 import * as util from "./util";
 import {FloatingText} from "./floating_text";
-import {Item, make_display_name} from "./item";
+import {Item} from "./item";
 import * as factory from "./factory";
 import {Inventory} from "./inventory";
+import {Projectile} from "./projectile";
+
+export enum InputMode {
+  NORMAL,
+  THROW_TGT,
+}
 
 export class MainScene extends Phaser.Scene {
   controls: Phaser.Cameras.Controls.FixedKeyControl;
@@ -22,6 +28,7 @@ export class MainScene extends Phaser.Scene {
   curr_turn: number;
   grid: TileGrid;
   items: Array<Item>;
+  projectiles: Array<Projectile>;
 
   health_comps: Record<string, any>;
   cog_comps: Record<string, any>;
@@ -29,6 +36,7 @@ export class MainScene extends Phaser.Scene {
   floating_texts: Array<FloatingText>;
 
   scrolled: boolean;
+  input_mode: InputMode;
 
   buttons_base: Array<Phaser.GameObjects.Image>;
   buttons_skin: Array<Phaser.GameObjects.Image>;
@@ -97,12 +105,16 @@ export class MainScene extends Phaser.Scene {
       this.items.push(factory.create_random_item(this, x, y));
     }
 
+    this.projectiles = [];
+
     // ----- updates -------
 
     this.grid.update_visibility(1, 1, player.vision_dist);
     this.update_entity_visibility();
 
     // ----- extras -------
+
+    this.input_mode = InputMode.NORMAL;
 
     const cursors = this.input.keyboard.createCursorKeys();
     this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
@@ -145,7 +157,15 @@ export class MainScene extends Phaser.Scene {
         if (this.inventory.showing) {
           this.inventory.hide();
         } else {
-          mouse_click(this, pointer, this.cameras.main, this.actors, this.grid);
+          if (this.input_mode == InputMode.NORMAL) {
+            mouse_click_normal(this, pointer, this.cameras.main, this.actors, this.grid);
+          }
+          else if (this.input_mode == InputMode.THROW_TGT) {
+            mouse_click_throw_tgt(this, pointer, this.cameras.main, this.actors, this.grid);
+          }
+          else {
+            console.log("UNIMPLEMNTED INPUT MODE " + this.input_mode);
+          }
         }
       }
     });
@@ -419,6 +439,7 @@ export class MainScene extends Phaser.Scene {
     // logic
     this.curr_turn = process_turns(this, this.actors, this.curr_turn, this.grid);
     move_actors(this.actors, this.grid, delta_ms);
+    move_projectiles(this.projectiles, delta_ms);
     for (let floating_text of this.floating_texts) {
       floating_text.update(delta_ms);
     }
@@ -442,9 +463,15 @@ export class MainScene extends Phaser.Scene {
         item.destroy_textures();
       }
     }
+    for (let proj of this.projectiles) {
+      if (!proj.alive) {
+        proj.destroy_textures();
+      }
+    }
 
     this.actors = this.actors.filter((actor: Actor) => { return actor.alive; });
     this.floating_texts = this.floating_texts.filter((ft: FloatingText) => { return ft.alive; });
     this.items = this.items.filter((item: Item) => { return item.alive; });
+    this.projectiles = this.projectiles.filter((proj: Projectile) => { return proj.alive; });
   }
 }

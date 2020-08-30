@@ -1,4 +1,4 @@
-import {MainScene} from "./main_scene";
+import {MainScene, InputMode} from "./main_scene";
 import {TILE_SIZE, ACTOR_DEPTH, ITEM_DEPTH, INV_DEPTH} from "./constants";
 import {Item, ItemType} from "./item";
 import {item_stats} from "./stats";
@@ -529,7 +529,27 @@ export class Inventory {
       console.log("E - shouldn't get here, throwing unselected?");
       return;
     }
-    console.log("menu throw");
+
+    console.log("click to throw, click on self to cancel!");
+
+    /*
+    let [r, c, is_equip] = this.selected;
+    let item = this.remove_item(r, c, is_equip);
+    if (is_equip) {
+      if (r == 0 && c == 0) {
+        this.unequip_weapon();
+      }
+      else if (r == 0 && c == 1) {
+        this.unequip_armor();
+      }
+    }
+    */
+    
+    this.scene.input_mode = InputMode.THROW_TGT;
+
+    //this.unselect_all();
+    this.hide_menu();
+    this.hide();
   }
 
   menu_drop(): void {
@@ -657,7 +677,6 @@ export class Inventory {
     }
 
     this.showing = false;
-    this.unselect_all();
   }
 
   rc2xy(r: number, c: number): [number, number] {

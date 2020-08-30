@@ -10,6 +10,8 @@ export const INV_DEPTH: number = 110;
 // MOTION
 
 export const MOVE_SPEED: number = 320;
+export const BULLET_SPEED: number = 320;
+export const THROW_SPEED: number = 320;
 
 export const FLOATING_TEXT_TIME: number = 2;
 export const FLOATING_TEXT_SPEED: number = 64;
