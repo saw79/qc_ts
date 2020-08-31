@@ -86,6 +86,11 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "UIImages/button_wide_down");
 
   load_image(scene, "UIImages/label_bg");
+
+  load_image(scene, "target");
+  load_image(scene, "bullet");
+  load_image(scene, "em_beam");
+  load_image(scene, "particle_beam");
 }
 
 export function create_anims(scene: Phaser.Scene) {

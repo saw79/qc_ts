@@ -2,6 +2,7 @@ import {MainScene, InputMode} from "./main_scene";
 import {TILE_SIZE, ACTOR_DEPTH, ITEM_DEPTH, INV_DEPTH} from "./constants";
 import {Item, ItemType} from "./item";
 import {item_stats} from "./stats";
+import {initiate_throw} from "./projectile";
 
 const EQUIP_ROWS: number = 2
 const INV_ROWS: number = 5
@@ -16,6 +17,7 @@ export class Inventory {
   showing: boolean;
 
   selected: null | [number, number, boolean];
+  throw_select: [number, number, boolean];
 
   x0: number;
   y0: number;
@@ -479,7 +481,6 @@ export class Inventory {
       return;
     }
 
-    this.unselect_all();
     this.hide_menu();
   }
 
@@ -505,15 +506,14 @@ export class Inventory {
       this.put_item(item, ri, ci, false);
     }
 
-    this.unselect_all();
-    this.hide_menu();
-
     if (re == 0 && ce == 0) {
       this.unequip_weapon();
     }
     else if (re == 0 && ce == 1) {
       this.unequip_armor();
     }
+
+    this.hide_menu();
   }
 
   menu_use(): void {
@@ -532,23 +532,22 @@ export class Inventory {
 
     console.log("click to throw, click on self to cancel!");
 
-    /*
-    let [r, c, is_equip] = this.selected;
-    let item = this.remove_item(r, c, is_equip);
-    if (is_equip) {
-      if (r == 0 && c == 0) {
-        this.unequip_weapon();
-      }
-      else if (r == 0 && c == 1) {
-        this.unequip_armor();
-      }
-    }
-    */
-    
-    this.scene.input_mode = InputMode.THROW_TGT;
+    this.throw_select = this.selected;
 
-    //this.unselect_all();
-    this.hide_menu();
+    if (this.scene.input_mode == InputMode.TARGET) {
+      initiate_throw(
+        this.scene,
+        this.scene.actors[0].tx,
+        this.scene.actors[0].ty,
+        this.scene.target_x,
+        this.scene.target_y);
+      this.scene.input_mode = InputMode.NORMAL;
+      this.scene.buttons_base[3].setTexture("UIImages/button_small_up");
+      this.scene.target_render.visible = false;
+    } else {
+      this.scene.input_mode = InputMode.THROW_TGT;
+    }
+
     this.hide();
   }
 
@@ -571,7 +570,6 @@ export class Inventory {
 
     this.put_item_on_ground(item);
 
-    this.unselect_all();
     this.hide_menu();
   }
 
@@ -620,6 +618,13 @@ export class Inventory {
     this.recalc_armor_stats();
   }
 
+  get_weapon(): Item {
+    return this.equip_items[0][0];
+  }
+  get_armor(): Item {
+    return this.equip_items[0][1];
+  }
+
   hide_menu(): void {
     this.menu_bg.visible = false;
     this.menu_label.visible = false;
@@ -627,6 +632,8 @@ export class Inventory {
       this.menu_buttons[key][0].visible = false;
       this.menu_buttons[key][1].visible = false;
     }
+
+    this.unselect_all();
   }
 
   toggle(): void {
@@ -677,6 +684,8 @@ export class Inventory {
     }
 
     this.showing = false;
+
+    this.hide_menu();
   }
 
   rc2xy(r: number, c: number): [number, number] {

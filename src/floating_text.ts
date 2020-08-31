@@ -18,6 +18,9 @@ export class FloatingText {
     else if (style == "cognition") {
       config = { color: "blue", stroke: "blue", strokeThickness: 2};
     }
+    else if (style == "dodge") {
+      config = { color: "purple", stroke: "purple", strokeThickness: 2};
+    }
     else {
       console.log("ERROR - Unknown style: " + style + ", using combat");
     }

@@ -3,11 +3,11 @@ import "phaser";
 import * as PF from "pathfinding";
 import {NinePatch} from "@koreez/phaser3-ninepatch";
 
-import {TILE_SIZE, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
+import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
 import {load_all, create_anims} from "./resource_manager";
 import {TileGrid} from "./tile_grid";
 import {Actor} from "./actor";
-import {mouse_click_normal, mouse_click_throw_tgt} from "./handle_input";
+import {mouse_click_normal, mouse_click_target, mouse_click_throw_tgt} from "./handle_input";
 import {move_actors, move_projectiles} from "./movement";
 import {process_turns} from "./turn_logic";
 import * as util from "./util";
@@ -15,10 +15,12 @@ import {FloatingText} from "./floating_text";
 import {Item} from "./item";
 import * as factory from "./factory";
 import {Inventory} from "./inventory";
-import {Projectile} from "./projectile";
+import {Projectile, initiate_shot} from "./projectile";
+import {item_stats} from "./stats";
 
 export enum InputMode {
   NORMAL,
+  TARGET,
   THROW_TGT,
 }
 
@@ -37,6 +39,11 @@ export class MainScene extends Phaser.Scene {
 
   scrolled: boolean;
   input_mode: InputMode;
+  proj_blocking: boolean;
+
+  target_render: Phaser.GameObjects.Image;
+  target_x: number;
+  target_y: number;
 
   buttons_base: Array<Phaser.GameObjects.Image>;
   buttons_skin: Array<Phaser.GameObjects.Image>;
@@ -115,6 +122,13 @@ export class MainScene extends Phaser.Scene {
     // ----- extras -------
 
     this.input_mode = InputMode.NORMAL;
+    this.proj_blocking = false;
+    this.target_render = this.add.image(0, 0, "target");
+    this.target_render.setScale(0.5);
+    this.target_render.depth = TARGET_DEPTH;
+    this.target_render.visible = false;
+    this.target_x = 0;
+    this.target_y = 0;
 
     const cursors = this.input.keyboard.createCursorKeys();
     this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
@@ -136,6 +150,22 @@ export class MainScene extends Phaser.Scene {
       this.pickup_item();
     });
     this.input.keyboard.on("keydown_T", () => {
+      if (this.input_mode == InputMode.NORMAL) {
+        this.buttons_base[3].setTexture("UIImages/button_small_checked");
+        this.input_mode = InputMode.TARGET;
+        this.target_render.visible = true;
+      }
+      else if (this.input_mode == InputMode.TARGET) {
+        this.buttons_base[3].setTexture("UIImages/button_small_up");
+        this.input_mode = InputMode.NORMAL;
+        this.target_render.visible = false;
+      }
+      else if (this.input_mode == InputMode.THROW_TGT) {
+        console.log("I don't know what to do with throw tgt mode -> target click");
+      }
+      else {
+        console.log("UNKNOWN INPUT MODE!!! " + this.input_mode);
+      }
     });
     this.input.keyboard.on("keydown_A", () => {
       this.attack();
@@ -159,6 +189,9 @@ export class MainScene extends Phaser.Scene {
         } else {
           if (this.input_mode == InputMode.NORMAL) {
             mouse_click_normal(this, pointer, this.cameras.main, this.actors, this.grid);
+          }
+          else if (this.input_mode == InputMode.TARGET) {
+            mouse_click_target(this, pointer);
           }
           else if (this.input_mode == InputMode.THROW_TGT) {
             mouse_click_throw_tgt(this, pointer, this.cameras.main, this.actors, this.grid);
@@ -297,13 +330,29 @@ export class MainScene extends Phaser.Scene {
   }
 
   click_target(pointer, localX, localY, event) {
-    console.log("target (TODO)");
-    this.buttons_base[3].setTexture("UIImages/button_small_up");
+    if (this.input_mode == InputMode.NORMAL) {
+      this.buttons_base[3].setTexture("UIImages/button_small_checked");
+      this.input_mode = InputMode.TARGET;
+      this.target_render.visible = true;
+    }
+    else if (this.input_mode == InputMode.TARGET) {
+      this.buttons_base[3].setTexture("UIImages/button_small_up");
+      this.input_mode = InputMode.NORMAL;
+      this.target_render.visible = false;
+    }
+    else if (this.input_mode == InputMode.THROW_TGT) {
+      console.log("I don't know what to do with throw tgt mode -> target click");
+    }
+    else {
+      console.log("UNKNOWN INPUT MODE!!! " + this.input_mode);
+    }
+
     event.stopPropagation();
   }
 
   click_attack(pointer, localX, localY, event) {
     this.attack();
+
     this.buttons_base[4].setTexture("UIImages/button_small_up");
     event.stopPropagation();
   }
@@ -340,6 +389,37 @@ export class MainScene extends Phaser.Scene {
   }
 
   attack(): void {
+    let weapon = this.inventory.get_weapon();
+    let weapon_name = "fist";
+    if (weapon != null) {
+      weapon_name = weapon.name;
+    }
+
+    if (item_stats[weapon_name]["R"]) {
+      if (this.input_mode == InputMode.NORMAL) {
+        this.buttons_base[3].setTexture("UIImages/button_small_checked");
+        this.input_mode = InputMode.TARGET;
+        this.target_render.visible = true;
+      }
+      else if (this.input_mode == InputMode.TARGET) {
+        initiate_shot(
+          this,
+          this.actors[0],
+          this.target_x,
+          this.target_y);
+        this.input_mode = InputMode.NORMAL;
+        this.buttons_base[3].setTexture("UIImages/button_small_up");
+        this.target_render.visible = false;
+      }
+      else {
+        console.log("cannot perform attack, we're in throw mode!!!");
+      }
+    } else {
+      this.melee_attack();
+    }
+  }
+
+  melee_attack(): void {
     let tx = this.actors[0].tx;
     let ty = this.actors[0].ty;
     let id = null;
@@ -437,7 +517,10 @@ export class MainScene extends Phaser.Scene {
     this.controls.update(delta_ms)
 
     // logic
-    this.curr_turn = process_turns(this, this.actors, this.curr_turn, this.grid);
+    if (!this.proj_blocking) {
+      this.curr_turn = process_turns(this, this.actors, this.curr_turn, this.grid);
+    }
+
     move_actors(this.actors, this.grid, delta_ms);
     move_projectiles(this.projectiles, delta_ms);
     for (let floating_text of this.floating_texts) {

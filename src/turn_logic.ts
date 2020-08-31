@@ -147,7 +147,7 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
 
       return;
     case "attack":
-      calc_combat(scene, actors, curr_turn, action.id);
+      calc_combat(scene, actors[curr_turn], actors[action.id]);
       actors[curr_turn].energy -= 100;
       scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
       return;
