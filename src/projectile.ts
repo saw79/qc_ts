@@ -3,7 +3,7 @@ import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {Item} from "./item";
 import {calc_combat, damage_actor} from "./combat_logic";
-import {line} from "./bresenham";
+import {line, line_to_wall} from "./bresenham";
 import {tile_to_render_coords, actor_at} from "./util";
 import {TileType} from "./tile_grid";
 
@@ -166,7 +166,8 @@ export function initiate_shot(
   tgt_x: number,
   tgt_y: number
 ): void {
-  let pts = line(src_actor.tx, src_actor.ty, tgt_x, tgt_y);
+  //let pts = line(src_actor.tx, src_actor.ty, tgt_x, tgt_y);
+  let pts = line_to_wall(scene.grid, src_actor.tx, src_actor.ty, tgt_x, tgt_y);
   let dest = pts[pts.length-1];
   let dst_actor = null;
 

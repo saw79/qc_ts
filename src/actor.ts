@@ -188,6 +188,8 @@ export class Actor {
           this.alert_comps[key].visible = false;
         }
         this.alert_comps[this.alert_state].visible = true;
+
+        grid.sees_enemy = true;
       } else {
         this.render_comp.visible = false;
         this.render_health.visible = false;

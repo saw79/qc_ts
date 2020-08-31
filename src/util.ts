@@ -1,5 +1,6 @@
 import {TILE_SIZE} from "./constants";
 import {MainScene} from "./main_scene";
+import {TileGrid, Visibility} from "./tile_grid";
 import {Actor} from "./actor";
 import {Item} from "./item";
 
@@ -60,4 +61,25 @@ export function item_at(items: Array<Item>, tile_x: number, tile_y: number): num
   }
 
   return null;
+}
+
+export function closest_actor(grid: TileGrid, actors: Array<Actor>, pl_x: number, pl_y: number): Actor | null {
+  let best_actor = null;
+  let best_dist = 1000;
+
+  for (let i = 1; i < actors.length; i++) {
+    if (grid.get_visibility(actors[i].tx, actors[i].ty) != Visibility.VISIBLE) {
+      continue;
+    }
+
+    let dx = actors[i].tx - pl_x;
+    let dy = actors[i].ty - pl_y;
+    let dist = dx*dx + dy*dy;
+    if (dist < best_dist) {
+      best_dist = dist;
+      best_actor = actors[i];
+    }
+  }
+
+  return best_actor;
 }

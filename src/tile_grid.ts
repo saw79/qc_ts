@@ -25,6 +25,9 @@ export class TileGrid {
   visibility: Array<Array<Visibility>>;
   vis_layer: Phaser.Tilemaps.DynamicTilemapLayer;
 
+  sees_enemy: boolean;
+  prev_sees_enemy: boolean;
+
   constructor(width: number, height: number, generator_name: string) {
     this.width = width;
     this.height = height;
@@ -47,6 +50,9 @@ export class TileGrid {
         this.visibility[y][x] = Visibility.UNSEEN;
       }
     }
+
+    this.sees_enemy = false;
+    this.prev_sees_enemy = false;
   }
 
   at(x: number, y: number): TileType | null {

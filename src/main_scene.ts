@@ -151,9 +151,7 @@ export class MainScene extends Phaser.Scene {
     });
     this.input.keyboard.on("keydown_T", () => {
       if (this.input_mode == InputMode.NORMAL) {
-        this.buttons_base[3].setTexture("UIImages/button_small_checked");
-        this.input_mode = InputMode.TARGET;
-        this.target_render.visible = true;
+        this.enter_target_mode();
       }
       else if (this.input_mode == InputMode.TARGET) {
         this.buttons_base[3].setTexture("UIImages/button_small_up");
@@ -331,9 +329,7 @@ export class MainScene extends Phaser.Scene {
 
   click_target(pointer, localX, localY, event) {
     if (this.input_mode == InputMode.NORMAL) {
-      this.buttons_base[3].setTexture("UIImages/button_small_checked");
-      this.input_mode = InputMode.TARGET;
-      this.target_render.visible = true;
+      this.enter_target_mode();
     }
     else if (this.input_mode == InputMode.TARGET) {
       this.buttons_base[3].setTexture("UIImages/button_small_up");
@@ -355,6 +351,28 @@ export class MainScene extends Phaser.Scene {
 
     this.buttons_base[4].setTexture("UIImages/button_small_up");
     event.stopPropagation();
+  }
+
+  enter_target_mode(): void {
+    this.buttons_base[3].setTexture("UIImages/button_small_checked");
+    this.input_mode = InputMode.TARGET;
+    this.target_render.visible = true;
+
+    let pl_x = this.actors[0].tx;
+    let pl_y = this.actors[0].ty;
+    let actor = util.closest_actor(this.grid, this.actors, pl_x, pl_y);
+
+    if (actor == null) {
+      this.target_x = pl_x + 1;
+      this.target_y = pl_y;
+    } else {
+      this.target_x = actor.tx;
+      this.target_y = actor.ty;
+    }
+
+    let [rx, ry] = util.tile_to_render_coords(this.target_x, this.target_y);
+    this.target_render.x = rx;
+    this.target_render.y = ry;
   }
 
   update_bars() {
@@ -397,9 +415,7 @@ export class MainScene extends Phaser.Scene {
 
     if (item_stats[weapon_name]["R"]) {
       if (this.input_mode == InputMode.NORMAL) {
-        this.buttons_base[3].setTexture("UIImages/button_small_checked");
-        this.input_mode = InputMode.TARGET;
-        this.target_render.visible = true;
+        this.enter_target_mode();
       }
       else if (this.input_mode == InputMode.TARGET) {
         initiate_shot(

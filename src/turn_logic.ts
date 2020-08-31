@@ -143,6 +143,29 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       if (actors[curr_turn].is_player) {
         scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
         scene.update_entity_visibility();
+
+        // if we see NEW enemy, remove rest of path
+        if (scene.grid.sees_enemy && !scene.grid.prev_sees_enemy) {
+          actors[0].path = [];
+        }
+
+        scene.grid.prev_sees_enemy = scene.grid.sees_enemy;
+        scene.grid.sees_enemy = false;
+
+        // if in enemy vision, remove rest of path
+        let player_x = actors[0].tx;
+        let player_y = actors[0].ty;
+        for (let i = 1; i < actors.length; i++) {
+          let enemy_x = actors[i].tx;
+          let enemy_y = actors[i].ty;
+          let vision_dist = actors[i].vision_dist;
+          let dir = actors[i].dir;
+
+          if (scene.grid.visible_from_to(enemy_x, enemy_y, player_x, player_y, vision_dist, dir)) {
+            actors[0].path = [];
+            break;
+          }
+        }
       }
 
       return;
