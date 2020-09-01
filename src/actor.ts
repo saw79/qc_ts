@@ -23,7 +23,9 @@ export class Actor {
   render_health: null | any;
   vision_comp: null | any;
   is_player: boolean;
-  camera: Phaser.Cameras.Scene2D.Camera;
+  camera: Phaser.Cameras.Scene2D.Camera | null;
+  ranged: boolean;
+  type: number;
 
   actions: Array<Action>;
   motions: Array<[number, number]>;
@@ -116,6 +118,8 @@ export class Actor {
     if (!this.is_player) {
       this.alert_comps[this.alert_state].visible = true;
     }
+
+    this.ranged = false;
   }
 
   destroy_textures(): void {

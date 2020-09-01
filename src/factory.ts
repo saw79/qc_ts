@@ -17,12 +17,8 @@ export function create_player(scene: MainScene, x: number, y: number): Actor {
 }
 
 export function create_random_enemy(scene: MainScene, x: number, y: number): Actor {
-  let name = "prison_guard";
-  switch (rand_int(3)) {
-    case 0: name = "prison_guard"; break;
-    case 1: name = "prison_soldier"; break;
-    case 2: name = "prison_warden"; break;
-  }
+  let idx = rand_int(Object.keys(enemy_stats).length);
+  let name = Object.keys(enemy_stats)[idx];
 
   return create_enemy(scene, name, x, y);
 }
@@ -30,11 +26,21 @@ export function create_random_enemy(scene: MainScene, x: number, y: number): Act
 export function create_enemy(scene: MainScene, name: string, x: number, y: number): Actor {
   let actor = new Actor(scene, name, x, y);
 
+  actor.type = enemy_stats[name]["T"];
   actor.health = enemy_stats[name]["H"];
   actor.max_health = enemy_stats[name]["H"];
   actor.cognition = enemy_stats[name]["C"];
   actor.max_cognition = enemy_stats[name]["C"];
   actor.damage = enemy_stats[name]["D"];
+
+  // 0 = normal, 1 = ranged, 2 = tough, 3 = boss
+
+  if (actor.type == 1) {
+    actor.ranged = true;
+  }
+  else if (actor.type == 2 && rand_int(2) == 0) {
+    actor.ranged = true;
+  }
 
   return actor;
 }

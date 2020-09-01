@@ -67,6 +67,23 @@ export function load_all(scene: Phaser.Scene) {
   load_actor_spritesheet(scene, "prison_guard");
   load_actor_spritesheet(scene, "prison_soldier");
   load_actor_spritesheet(scene, "prison_warden");
+  load_actor_spritesheet(scene, "enforcer");
+  load_actor_spritesheet(scene, "technician");
+  load_actor_spritesheet(scene, "engineer");
+  load_actor_spritesheet(scene, "security_officer");
+  load_actor_spritesheet(scene, "mad_scientist");
+  load_actor_spritesheet(scene, "minibot");
+  load_actor_spritesheet(scene, "turret");
+  load_actor_spritesheet(scene, "droid");
+  load_actor_spritesheet(scene, "megabot");
+  load_actor_spritesheet(scene, "senior_technician");
+  load_actor_spritesheet(scene, "senior_engineer");
+  load_actor_spritesheet(scene, "marine");
+  load_actor_spritesheet(scene, "chief_technical_officer");
+  load_actor_spritesheet(scene, "SS_agent");
+  load_actor_spritesheet(scene, "SS_gunner");
+  load_actor_spritesheet(scene, "special_operative");
+  load_actor_spritesheet(scene, "chief_executive_officer");
 
   load_image(scene, "UIImages/button_small_up");
   load_image(scene, "UIImages/button_small_down");
@@ -104,6 +121,23 @@ export function create_anims(scene: Phaser.Scene) {
   create_actor_anims(scene, "prison_guard");
   create_actor_anims(scene, "prison_soldier");
   create_actor_anims(scene, "prison_warden");
+  create_actor_anims(scene, "enforcer");
+  create_actor_anims(scene, "technician");
+  create_actor_anims(scene, "engineer");
+  create_actor_anims(scene, "security_officer");
+  create_actor_anims(scene, "mad_scientist");
+  create_actor_anims(scene, "minibot");
+  create_actor_anims(scene, "turret");
+  create_actor_anims(scene, "droid");
+  create_actor_anims(scene, "megabot");
+  create_actor_anims(scene, "senior_technician");
+  create_actor_anims(scene, "senior_engineer");
+  create_actor_anims(scene, "marine");
+  create_actor_anims(scene, "chief_technical_officer");
+  create_actor_anims(scene, "SS_agent");
+  create_actor_anims(scene, "SS_gunner");
+  create_actor_anims(scene, "special_operative");
+  create_actor_anims(scene, "chief_executive_officer");
 
   scene.anims.create({
     key: "health_orb",

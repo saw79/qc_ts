@@ -1,11 +1,13 @@
 import * as PF from "pathfinding";
 
+import {MainScene} from "./main_scene";
 import {Actor, AlertState} from "./actor";
-import {Action, Wait} from "./turn_logic";
+import {Action} from "./turn_logic";
 import {TileGrid, TileType} from "./tile_grid";
 import {Direction, rand_int} from "./util";
+import {initiate_shot} from "./projectile";
 
-export function get_action_ai(actors: Array<Actor>, curr_turn: number, grid: TileGrid): Action {
+export function get_action_ai(scene: MainScene, actors: Array<Actor>, curr_turn: number, grid: TileGrid): Action {
   let player_x = actors[0].tx;
   let player_y = actors[0].ty;
   let enemy_x = actors[curr_turn].tx;
@@ -16,7 +18,7 @@ export function get_action_ai(actors: Array<Actor>, curr_turn: number, grid: Til
   if (grid.visible_from_to(enemy_x, enemy_y, player_x, player_y, vision_dist, dir)) {
     actors[curr_turn].set_alert(AlertState.AWARE);
     actors[curr_turn].last_seen = [player_x, player_y];
-    return get_move_aware(actors, curr_turn, grid);
+    return get_move_aware(scene, actors, curr_turn, grid);
   }
   else {
     if (actors[curr_turn].alert_state == AlertState.AWARE) {
@@ -32,21 +34,26 @@ export function get_action_ai(actors: Array<Actor>, curr_turn: number, grid: Til
   }
 }
 
-function get_move_aware(actors: Array<Actor>, curr_turn: number, grid: TileGrid): Action {
+function get_move_aware(scene: MainScene, actors: Array<Actor>, curr_turn: number, grid: TileGrid): Action {
   let [tgtx, tgty] = [actors[0].tx, actors[0].ty];
+
+  if (actors[curr_turn].ranged) {
+    initiate_shot(scene, actors[curr_turn], tgtx, tgty);
+    return {type: "wait", energy: 0};
+  }
 
   let pfgrid_clone = grid.pfgrid.clone();
   let path = new PF.AStarFinder({allowDiagonal: true}).findPath(
     actors[curr_turn].tx, actors[curr_turn].ty, tgtx, tgty, pfgrid_clone);
   
   if (path[0] === undefined) {
-    return {type: "wait"};
+    return {type: "wait", energy: 100};
   }
   else if (path.length > 2) {
-    return {type: "move", x: path[1][0], y: path[1][1]};
+    return {type: "move", x: path[1][0], y: path[1][1], energy: 100};
   }
   else {
-    return {type: "attack", id: 0};
+    return {type: "attack", id: 0, energy: 100};
   }
 }
 
@@ -58,14 +65,14 @@ function get_move_search(actors: Array<Actor>, curr_turn: number, grid: TileGrid
     actors[curr_turn].tx, actors[curr_turn].ty, tgtx, tgty, pfgrid_clone);
   
   if (path[0] === undefined) {
-    return {type: "wait"};
+    return {type: "wait", energy: 100};
   }
   else if (path.length > 2) {
-    return {type: "move", x: path[1][0], y: path[1][1]};
+    return {type: "move", x: path[1][0], y: path[1][1], energy: 100};
   }
   else {
     actors[curr_turn].alert_state = AlertState.PATROL;
-    return {type: "wait"};
+    return {type: "wait", energy: 100};
   }
 }
 
@@ -104,8 +111,8 @@ function try_move(actors: Array<Actor>, curr_turn: number, grid: TileGrid, dx: n
   let [x1, y1] = [x0 + dx, y0 + dy];
 
   if (grid.at(x1, y1) == TileType.WALL) {
-    return {type: "wait"};
+    return {type: "wait", energy: 100};
   } else {
-    return {type: "move", x: x1, y: y1};
+    return {type: "move", x: x1, y: y1, energy: 100};
   }
 }

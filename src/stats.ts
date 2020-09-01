@@ -1,9 +1,26 @@
 import {ItemType} from "./item";
 
 export const enemy_stats = {
-  "prison_guard"  : { "H": 3, "C": 3, "D": 1 },
-  "prison_soldier": { "H": 3, "C": 2, "D": 1 },
-  "prison_warden" : { "H": 5, "C": 4, "D": 2 },
+  "prison_guard"           : { "T": 0, "H":  3, "C":  3, "D":  1 },
+  "prison_soldier"         : { "T": 1, "H":  3, "C":  3, "D":  1 },
+  "prison_warden"          : { "T": 2, "H":  5, "C":  5, "D":  2 },
+  "enforcer"               : { "T": 3, "H": 10, "C": 10, "D":  4 },
+  "technician"             : { "T": 0, "H":  7, "C":  7, "D":  2 },
+  "engineer"               : { "T": 1, "H":  7, "C":  7, "D":  2 },
+  "security_officer"       : { "T": 2, "H": 12, "C": 12, "D":  3 },
+  "mad_scientist"          : { "T": 3, "H": 20, "C": 20, "D":  6 },
+  "minibot"                : { "T": 0, "H": 10, "C": 10, "D":  3 },
+  "turret"                 : { "T": 1, "H": 10, "C": 10, "D":  3 },
+  "droid"                  : { "T": 2, "H": 18, "C": 18, "D":  4 },
+  "megabot"                : { "T": 3, "H": 30, "C": 30, "D":  8 },
+  "senior_technician"      : { "T": 0, "H": 18, "C": 18, "D":  4 },
+  "senior_engineer"        : { "T": 1, "H": 18, "C": 18, "D":  4 },
+  "marine"                 : { "T": 2, "H": 25, "C": 25, "D":  6 },
+  "chief_technical_officer": { "T": 3, "H": 40, "C": 40, "D":  9 },
+  "SS_agent"               : { "T": 0, "H": 25, "C": 25, "D":  5 },
+  "SS_gunner"              : { "T": 1, "H": 25, "C": 25, "D":  5 },
+  "special_operative"      : { "T": 2, "H": 35, "C": 35, "D":  7 },
+  "chief_executive_officer": { "T": 3, "H": 50, "C": 50, "D": 10 },
 };
 
 export const item_stats = {

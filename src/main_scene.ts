@@ -39,7 +39,6 @@ export class MainScene extends Phaser.Scene {
 
   scrolled: boolean;
   input_mode: InputMode;
-  proj_blocking: boolean;
 
   target_render: Phaser.GameObjects.Image;
   target_x: number;
@@ -79,13 +78,14 @@ export class MainScene extends Phaser.Scene {
     player.camera.centerOn(player.rx, player.ry);
     this.actors.push(player);
 
-    let num_enemies = 10;
+    let num_enemies = 2;
     let num_orbs = 10;
     let num_items = 30;
 
     for (let i = 0; i < num_enemies; i++) {
       let [x, y] = util.rand_tile_no_actor(this);
-      this.actors.push(factory.create_random_enemy(this, x, y));
+      //this.actors.push(factory.create_random_enemy(this, x, y));
+      this.actors.push(factory.create_enemy(this, "prison_soldier", x, y));
     }
 
     this.curr_turn = 0;
@@ -122,7 +122,6 @@ export class MainScene extends Phaser.Scene {
     // ----- extras -------
 
     this.input_mode = InputMode.NORMAL;
-    this.proj_blocking = false;
     this.target_render = this.add.image(0, 0, "target");
     this.target_render.setScale(0.5);
     this.target_render.depth = TARGET_DEPTH;
@@ -141,7 +140,7 @@ export class MainScene extends Phaser.Scene {
     });
 
     this.input.keyboard.on("keydown_W", () => {
-      this.actors[0].actions = [{type: "wait"}];
+      this.actors[0].actions = [{type: "wait", energy: 100}];
     });
     this.input.keyboard.on("keydown_B", () => {
       this.inventory.toggle();
@@ -310,7 +309,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   click_wait(pointer, localX, localY, event) {
-    this.actors[0].actions = [{type: "wait"}];
+    this.actors[0].actions = [{type: "wait", energy: 100}];
     this.buttons_base[0].setTexture("UIImages/button_small_up");
     event.stopPropagation();
   }
@@ -456,7 +455,7 @@ export class MainScene extends Phaser.Scene {
     }
 
     if (id != null) {
-      this.actors[0].actions = [{type: "attack", id: id}];
+      this.actors[0].actions = [{type: "attack", id: id, energy: 100}];
     }
   }
 
@@ -533,8 +532,8 @@ export class MainScene extends Phaser.Scene {
     this.controls.update(delta_ms)
 
     // logic
-    if (!this.proj_blocking) {
-      this.curr_turn = process_turns(this, this.actors, this.curr_turn, this.grid);
+    if (this.projectiles.length == 0) {
+      process_turns(this);
     }
 
     move_actors(this.actors, this.grid, delta_ms);

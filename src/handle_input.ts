@@ -27,7 +27,7 @@ export function mouse_click_normal(
 
   if (click_tile_x == player_x && click_tile_y == player_y) {
     if (!scene.pickup_item()) {
-      actors[0].actions = [{type: "wait"}];
+      actors[0].actions = [{type: "wait", energy: 100}];
     }
   }
   else if (actors[0].path.length > 0) {

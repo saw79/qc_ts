@@ -9,14 +9,17 @@ import {calc_combat} from "./combat_logic";
 
 export interface Wait {
   type: "wait";
+  energy: number;
 }
 export interface Move {
   type: "move";
+  energy: number;
   x: number;
   y: number;
 }
 export interface Attack {
   type: "attack";
+  energy: number;
   id: number;
 }
 
@@ -24,44 +27,49 @@ export type Action = Wait | Move | Attack;
 
 export type ActionResult = [boolean, Action];
 
-const MAX_TURNS = 200;
+export function process_turns(scene: MainScene): void {
+  let start_turn = scene.curr_turn;
+  let curr_turn = scene.curr_turn;
 
-export function process_turns(scene: MainScene, actors: Array<Actor>, curr_turn: number, grid: TileGrid): number {
-  let start_turn = curr_turn;
-
-  for (let num_turns = 0; num_turns < MAX_TURNS; num_turns++) {
+  while (true) {
     let success: boolean = true;
     let action: Action;
-    while (actors[curr_turn].energy >= 100) {
-      if (actors[curr_turn].actions.length > 0) {
-        success = true;
-        action = actors[curr_turn].actions[0];
-        actors[curr_turn].actions.shift();
-      }
-      else if (curr_turn > 0) {
-        success = true;
-        action = get_action_ai(actors, curr_turn, grid);
-      }
-      else {
-        if (actors[curr_turn].motions.length > 1) {
-          success = false;
-        } else {
-          [success, action] = get_action_target(actors, curr_turn, grid);
-          if (!success) {
-            [success, action] = get_action_path(actors, curr_turn);
-          }
+
+    let actor = scene.actors[curr_turn];
+
+    // --- GET ACTION ---
+
+    if (actor.energy < 100) {
+      action = {type: "wait", energy: 0};
+    }
+    else if (actor.actions.length > 0) {
+      action = actor.actions[0];
+      actor.actions.shift();
+    }
+    else if (curr_turn > 0) {
+      action = get_action_ai(scene, scene.actors, curr_turn, scene.grid);
+    }
+    else {
+      if (actor.motions.length > 1) {
+        success = false;
+      } else {
+        [success, action] = get_action_target(scene.actors, curr_turn, scene.grid);
+        if (!success) {
+          [success, action] = get_action_path(scene.actors, curr_turn);
         }
       }
+    }
 
-      if (success) {
-        quick_process(scene, actors, curr_turn, action);
-      } else {
-        break;
-      }
-    } // end WHILE
+    // --- PROCESS ACTION ---
 
     if (success) {
-      curr_turn = next_turn(actors, curr_turn);
+      quick_process(scene, scene.actors, curr_turn, action);
+    } else {
+      break;
+    }
+
+    if (success) {
+      curr_turn = next_turn(scene.actors, curr_turn);
     }
 
     if (curr_turn == start_turn) {
@@ -69,7 +77,7 @@ export function process_turns(scene: MainScene, actors: Array<Actor>, curr_turn:
     }
   }
 
-  return curr_turn;
+  scene.curr_turn = curr_turn;
 }
 
 function next_turn(actors: Array<Actor>, curr_turn: number): number {
@@ -87,7 +95,7 @@ function next_turn(actors: Array<Actor>, curr_turn: number): number {
 
 function get_action_target(actors: Array<Actor>, curr_turn: number, grid: TileGrid): ActionResult {
   if (actors[curr_turn].target == null) {
-    return [false, {type: "wait"}];
+    return [false, {type: "wait", energy: 100}];
   }
 
   let tgt_id = actors[curr_turn].target;
@@ -100,14 +108,14 @@ function get_action_target(actors: Array<Actor>, curr_turn: number, grid: TileGr
   
   if (path[0] === undefined) {
     actors[curr_turn].target = null;
-    return [false, {type: "wait"}];
+    return [false, {type: "wait", energy: 100}];
   }
   else if (path.length > 2) {
-    return [true, {type: "move", x: path[1][0], y: path[1][1]}];
+    return [true, {type: "move", x: path[1][0], y: path[1][1], energy: 100}];
   }
   else {
     actors[curr_turn].target = null;
-    return [true, {type: "attack", id: tgt_id}];
+    return [true, {type: "attack", id: tgt_id, energy: 100}];
   }
 }
 
@@ -115,22 +123,23 @@ function get_action_path(actors: Array<Actor>, curr_turn: number): ActionResult 
   if (actors[curr_turn].path.length > 0) {
     let first_seg = actors[curr_turn].path[0];
     actors[curr_turn].path.shift();
-    return [true, {type: "move", x: first_seg[0], y: first_seg[1]}];
+    return [true, {type: "move", x: first_seg[0], y: first_seg[1], energy: 100}];
 
   } else {
-    return [false, {type: "wait"}];
+    return [false, {type: "wait", energy: 100}];
   }
 }
 
 function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number, action: Action): void {
   switch(action.type) {
     case "wait":
-      actors[curr_turn].energy -= 100;
+      actors[curr_turn].energy -= action.energy;
       return;
     case "move":
       let blocker = actor_at(actors, action.x, action.y);
       if (blocker != null) {
-        actors[curr_turn].actions.push({type: "wait"});
+        quick_process(scene, actors, curr_turn, {type: "wait", energy: 100});
+        //actors[curr_turn].actions.push({type: "wait", energy: 100});
         return;
       }
 
@@ -138,7 +147,7 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       actors[curr_turn].ty = action.y;
       let [rx, ry] = tile_to_render_coords(action.x, action.y);
       actors[curr_turn].motions.push([rx, ry]);
-      actors[curr_turn].energy -= 100;
+      actors[curr_turn].energy -= action.energy;
 
       if (actors[curr_turn].is_player) {
         scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
@@ -171,7 +180,7 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       return;
     case "attack":
       calc_combat(scene, actors[curr_turn], actors[action.id]);
-      actors[curr_turn].energy -= 100;
+      actors[curr_turn].energy -= action.energy;
       scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
       return;
   }

@@ -73,7 +73,6 @@ export class Projectile {
 
   stop(rx: number, ry: number): void {
     this.alive = false;
-    this.scene.proj_blocking = false;
 
     if (this.item != null) {
       this.item.render_comp.depth = ITEM_DEPTH;
@@ -157,7 +156,6 @@ export function initiate_throw(
   }
 
   scene.actors[0].energy -= 100;
-  scene.proj_blocking = true;
 }
 
 export function initiate_shot(
@@ -168,12 +166,13 @@ export function initiate_shot(
 ): void {
   //let pts = line(src_actor.tx, src_actor.ty, tgt_x, tgt_y);
   let pts = line_to_wall(scene.grid, src_actor.tx, src_actor.ty, tgt_x, tgt_y);
+  pts = pts.slice(1);
   let dest = pts[pts.length-1];
   let dst_actor = null;
 
   for (let pt of pts) {
     let da_idx = actor_at(scene.actors, pt[0], pt[1]);
-    if (da_idx != null && da_idx > 0.1) {
+    if (da_idx != null) {
       dest = pt;
       dst_actor = scene.actors[da_idx];
       break;
@@ -215,6 +214,5 @@ export function initiate_shot(
 
   scene.projectiles.push(proj);
 
-  scene.actors[0].energy -= 100;
-  scene.proj_blocking = true;
+  src_actor.energy -= 100;
 }
