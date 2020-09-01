@@ -6,6 +6,7 @@ import {NinePatch} from "@koreez/phaser3-ninepatch";
 import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
 import {load_all, create_anims} from "./resource_manager";
 import {TileGrid} from "./tile_grid";
+import {generate_bsp} from "./level_gen";
 import {Actor} from "./actor";
 import {mouse_click_normal, mouse_click_target, mouse_click_throw_tgt} from "./handle_input";
 import {move_actors, move_projectiles} from "./movement";
@@ -60,11 +61,14 @@ export class MainScene extends Phaser.Scene {
   create(): void {
     create_anims(this);
 
-    let level_width = 30;
-    let level_height = 20;
+    let level_width = 40;
+    let level_height = 40;
 
-    this.grid = new TileGrid(level_width, level_height, "test");
+    let tiles = generate_bsp(level_width, level_height);
+    this.grid = new TileGrid(tiles, level_width, level_height);
+
     const tilemap = this.make.tilemap({data: this.grid.tiles, tileWidth: 32, tileHeight: 32});
+    // note margin/spacing (1/2) are for the extruded image
     const tileset = tilemap.addTilesetImage(
       "prison_tiles_extruded", "prison_tiles_extruded", 32, 32, 1, 2);
     this.grid.vis_layer = tilemap.createDynamicLayer(0, tileset);
@@ -73,15 +77,20 @@ export class MainScene extends Phaser.Scene {
 
     this.actors = [];
 
-    let player = factory.create_player(this, 1, 1);
+    console.log("Creating player");
+    let [px, py] = util.rand_tile(this);
+    let player = factory.create_player(this, px, py);
     player.camera = this.cameras.main;
     player.camera.centerOn(player.rx, player.ry);
     this.actors.push(player);
 
-    let num_enemies = 10;
-    let num_orbs = 10;
-    let num_items = 30;
+    //player.camera.setZoom(0.5);
 
+    let num_enemies = 20;
+    let num_orbs = 6;
+    let num_items = 10;
+
+    console.log("Creating enemies");
     for (let i = 0; i < num_enemies; i++) {
       let [x, y] = util.rand_tile_no_actor(this);
       this.actors.push(factory.create_random_enemy(this, x, y));
@@ -93,6 +102,7 @@ export class MainScene extends Phaser.Scene {
 
     // ----- create items -----
 
+    console.log("Creating items");
     this.items = [];
 
     for (let i = 0; i < num_orbs; i++) {
@@ -117,7 +127,7 @@ export class MainScene extends Phaser.Scene {
 
     // ----- updates -------
 
-    this.grid.update_visibility(1, 1, player.vision_dist);
+    this.grid.update_visibility(player.tx, player.ty, player.vision_dist);
     this.update_entity_visibility();
 
     // ----- extras -------

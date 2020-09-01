@@ -4,7 +4,7 @@ import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {tile_to_render_coords, actor_at} from "./util";//(tx: number, ty: number): [number, number]
 import {get_action_ai} from "./ai_logic";
-import {TileGrid} from "./tile_grid";
+import {TileType, TileGrid} from "./tile_grid";
 import {calc_combat} from "./combat_logic";
 
 export interface Wait {
@@ -143,6 +143,15 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
         return;
       }
 
+      // open doors!
+
+      if (scene.grid.at(action.x, action.y) == TileType.DOORCLOSED) {
+        scene.grid.tiles[action.y][action.x] = TileType.DOOROPEN;
+        scene.grid.vis_layer.putTileAt(TileType.DOOROPEN, action.x, action.y);
+      }
+
+      // do movement, energy, etc.
+
       actors[curr_turn].tx = action.x;
       actors[curr_turn].ty = action.y;
       let [rx, ry] = tile_to_render_coords(action.x, action.y);
@@ -154,8 +163,9 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
         scene.update_entity_visibility();
 
         // if we see NEW enemy, remove rest of path
+        let abort_queue = false;
         if (scene.grid.sees_enemy && !scene.grid.prev_sees_enemy) {
-          actors[0].path = [];
+          abort_queue = true;
         }
 
         scene.grid.prev_sees_enemy = scene.grid.sees_enemy;
@@ -171,9 +181,14 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
           let dir = actors[i].dir;
 
           if (scene.grid.visible_from_to(enemy_x, enemy_y, player_x, player_y, vision_dist, dir)) {
-            actors[0].path = [];
+            abort_queue = true;
             break;
           }
+        }
+
+        if (abort_queue) {
+          actors[0].path = [];
+          actors[0].target = null;
         }
       }
 

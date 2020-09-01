@@ -1,6 +1,6 @@
 import {TILE_SIZE} from "./constants";
 import {MainScene} from "./main_scene";
-import {TileGrid, Visibility} from "./tile_grid";
+import {TileType, TileGrid, Visibility} from "./tile_grid";
 import {Actor} from "./actor";
 import {Item} from "./item";
 
@@ -15,13 +15,28 @@ export function rand_int(max: number): number {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+export function rand_range(min: number, max: number): number {
+  return rand_int(max - min) + min;
+}
+
+export function rand_tile(scene: MainScene): [number, number] {
+  let x = 0;
+  let y = 0;
+  do {
+    x = rand_int(scene.grid.width-2) + 1;
+    y = rand_int(scene.grid.height-2) + 1;
+  } while (scene.grid.at(x, y) != TileType.FLOOR);
+
+  return [x, y];
+}
+
 export function rand_tile_no_item(scene: MainScene): [number, number] {
   let x = 0;
   let y = 0;
   do {
     x = rand_int(scene.grid.width-2) + 1;
     y = rand_int(scene.grid.height-2) + 1;
-  } while (item_at(scene.items, x, y) != null);
+  } while (scene.grid.at(x, y) != TileType.FLOOR || item_at(scene.items, x, y) != null);
 
   return [x, y];
 }
@@ -32,7 +47,7 @@ export function rand_tile_no_actor(scene: MainScene): [number, number] {
   do {
     x = rand_int(scene.grid.width-2) + 1;
     y = rand_int(scene.grid.height-2) + 1;
-  } while (actor_at(scene.actors, x, y) != null);
+  } while (scene.grid.at(x, y) != TileType.FLOOR || actor_at(scene.actors, x, y) != null);
 
   return [x, y];
 }

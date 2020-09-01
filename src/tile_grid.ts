@@ -1,6 +1,5 @@
 import * as PF from "pathfinding";
 
-import {generate_test} from "./level_gen";
 import {line} from "./bresenham";
 import {Direction} from "./util";
 
@@ -28,16 +27,10 @@ export class TileGrid {
   sees_enemy: boolean;
   prev_sees_enemy: boolean;
 
-  constructor(width: number, height: number, generator_name: string) {
+  constructor(tiles: Array<Array<TileType>>, width: number, height: number) {
+    this.tiles = tiles;
     this.width = width;
     this.height = height;
-
-    if (generator_name == "test") {
-      this.tiles = generate_test(width, height);
-    }
-    else {
-      console.log("INVALID generator name " + generator_name);
-    }
 
     this.pfgrid = new PF.Grid(width, height);
     this.visibility = new Array(height);
@@ -71,7 +64,16 @@ export class TileGrid {
     }
   }
 
-  update_visibility(x0: number, y0: number, radius: number) {
+  update_visibility(x0: number, y0: number, radius: number): void {
+    /*
+    for (let x = 0; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
+        this.visibility[y][x] = Visibility.VISIBLE;
+      }
+    }
+    return;
+    */
+
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
         if (this.visibility[y][x] == Visibility.VISIBLE) {
