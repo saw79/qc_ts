@@ -1,4 +1,5 @@
 import "phaser";
+import {MenuScene} from "./menu_scene";
 import {MainScene} from "./main_scene";
 
 //import NinePatchPlugin from "phaser3-rex-plugins/plugins/ninepatch-plugin.js";
@@ -14,7 +15,7 @@ const config = {
   scale: {
     mode: Phaser.Scale.FIT,
   },
-  scene: [MainScene],
+  scene: [MenuScene, MainScene],
   backgroundColor: "#000000",
   plugins: {
     global: [
