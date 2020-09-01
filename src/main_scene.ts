@@ -78,14 +78,15 @@ export class MainScene extends Phaser.Scene {
     player.camera.centerOn(player.rx, player.ry);
     this.actors.push(player);
 
-    let num_enemies = 2;
+    let num_enemies = 10;
     let num_orbs = 10;
     let num_items = 30;
 
     for (let i = 0; i < num_enemies; i++) {
       let [x, y] = util.rand_tile_no_actor(this);
-      //this.actors.push(factory.create_random_enemy(this, x, y));
-      this.actors.push(factory.create_enemy(this, "prison_soldier", x, y));
+      this.actors.push(factory.create_random_enemy(this, x, y));
+      //this.actors.push(factory.create_enemy(this, "prison_guard", x, y));
+      //this.actors.push(factory.create_enemy(this, "prison_soldier", x, y));
     }
 
     this.curr_turn = 0;

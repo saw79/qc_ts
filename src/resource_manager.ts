@@ -164,9 +164,15 @@ function load_image(scene: Phaser.Scene, name: string) {
 }
 
 function load_actor_spritesheet(scene: Phaser.Scene, name: string) {
-  scene.load.spritesheet(
-    name, "assets/sprites/" + name + ".png",
-    {frameWidth: 32, frameHeight: 32 });
+  if (name == "chief_executive_officer") {
+    scene.load.spritesheet(
+      name, "assets/sprites/" + name + ".png",
+      {frameWidth: 64, frameHeight: 64 });
+  } else {
+    scene.load.spritesheet(
+      name, "assets/sprites/" + name + ".png",
+      {frameWidth: 32, frameHeight: 32 });
+  }
 }
 
 function load_any_spritesheet(scene: Phaser.Scene, name: string, w: number, h: number) {
@@ -176,22 +182,43 @@ function load_any_spritesheet(scene: Phaser.Scene, name: string, w: number, h: n
 }
 
 function create_actor_anims(scene: Phaser.Scene, name: string) {
-  scene.anims.create({
-    key: name + "_down",
-    frames: scene.anims.generateFrameNumbers(name, {start: 0, end: 3}),
-    frameRate: 10,
-    repeat: -1,
-  });
-  scene.anims.create({
-    key: name + "_up",
-    frames: scene.anims.generateFrameNumbers(name, {start: 4, end: 7}),
-    frameRate: 10,
-    repeat: -1,
-  });
-  scene.anims.create({
-    key: name + "_right",
-    frames: scene.anims.generateFrameNumbers(name, {start: 8, end: 11}),
-    frameRate: 10,
-    repeat: -1,
-  });
+  if (name == "chief_executive_officer") {
+    scene.anims.create({
+      key: name + "_down",
+      frames: scene.anims.generateFrameNumbers(name, {start: 0, end: 1}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: name + "_up",
+      frames: scene.anims.generateFrameNumbers(name, {start: 2, end: 3}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: name + "_right",
+      frames: scene.anims.generateFrameNumbers(name, {start: 4, end: 5}),
+      frameRate: 10,
+      repeat: -1,
+    });
+  } else {
+    scene.anims.create({
+      key: name + "_down",
+      frames: scene.anims.generateFrameNumbers(name, {start: 0, end: 3}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: name + "_up",
+      frames: scene.anims.generateFrameNumbers(name, {start: 4, end: 7}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: name + "_right",
+      frames: scene.anims.generateFrameNumbers(name, {start: 8, end: 11}),
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
 }

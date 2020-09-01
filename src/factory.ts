@@ -33,6 +33,9 @@ export function create_enemy(scene: MainScene, name: string, x: number, y: numbe
   actor.max_cognition = enemy_stats[name]["C"];
   actor.damage = enemy_stats[name]["D"];
 
+  actor.absorption = enemy_stats[name]["A"];
+  actor.dodge = enemy_stats[name]["O"];
+
   // 0 = normal, 1 = ranged, 2 = tough, 3 = boss
 
   if (actor.type == 1) {
