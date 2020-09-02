@@ -11,6 +11,15 @@ export enum Direction {
   Right
 }
 
+export class TilePos {
+  x: number;
+  y: number;
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
 export function rand_int(max: number): number {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -19,35 +28,51 @@ export function rand_range(min: number, max: number): number {
   return rand_int(max - min) + min;
 }
 
-export function rand_tile(scene: MainScene): [number, number] {
+export function tile_in_list(xy: [number, number], xys: Array<[number, number]>): boolean {
+  for (let xy_i of xys) {
+    if (xy[0] == xy_i[0] && xy[1] == xy_i[1]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export function rand_tile(scene: MainScene, excludes: Array<[number, number]> = []): [number, number] {
   let x = 0;
   let y = 0;
   do {
     x = rand_int(scene.grid.width-2) + 1;
     y = rand_int(scene.grid.height-2) + 1;
-  } while (scene.grid.at(x, y) != TileType.FLOOR);
+  } while (scene.grid.at(x, y) != TileType.FLOOR || tile_in_list([x, y], excludes));
 
   return [x, y];
 }
 
-export function rand_tile_no_item(scene: MainScene): [number, number] {
+export function rand_tile_no_item(scene: MainScene, excludes: Array<[number, number]> = []): [number, number] {
   let x = 0;
   let y = 0;
   do {
     x = rand_int(scene.grid.width-2) + 1;
     y = rand_int(scene.grid.height-2) + 1;
-  } while (scene.grid.at(x, y) != TileType.FLOOR || item_at(scene.items, x, y) != null);
+  } while (
+    scene.grid.at(x, y) != TileType.FLOOR ||
+    item_at(scene.items, x, y) != null ||
+    tile_in_list([x, y], excludes));
 
   return [x, y];
 }
 
-export function rand_tile_no_actor(scene: MainScene): [number, number] {
+export function rand_tile_no_actor(scene: MainScene, excludes: Array<[number, number]> = []): [number, number] {
   let x = 0;
   let y = 0;
   do {
     x = rand_int(scene.grid.width-2) + 1;
     y = rand_int(scene.grid.height-2) + 1;
-  } while (scene.grid.at(x, y) != TileType.FLOOR || actor_at(scene.actors, x, y) != null);
+  } while (
+    scene.grid.at(x, y) != TileType.FLOOR ||
+    actor_at(scene.actors, x, y) != null ||
+    tile_in_list([x, y], excludes));
 
   return [x, y];
 }

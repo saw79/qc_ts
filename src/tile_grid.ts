@@ -8,6 +8,8 @@ export enum TileType {
   DOORCLOSED,
   WALL,
   DOOROPEN,
+  STAIRS_UP,
+  STAIRS_DOWN,
 }
 
 export enum Visibility {

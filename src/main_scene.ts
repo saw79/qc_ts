@@ -5,7 +5,7 @@ import {NinePatch} from "@koreez/phaser3-ninepatch";
 
 import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
 import {load_all, create_anims} from "./resource_manager";
-import {TileGrid} from "./tile_grid";
+import {TileType, TileGrid} from "./tile_grid";
 import {generate_bsp} from "./level_gen";
 import {Actor} from "./actor";
 import {mouse_click_normal, mouse_click_target, mouse_click_throw_tgt} from "./handle_input";
@@ -32,6 +32,8 @@ export class MainScene extends Phaser.Scene {
   grid: TileGrid;
   items: Array<Item>;
   projectiles: Array<Projectile>;
+  stairs_up: [number, number];
+  stairs_down: [number, number];
 
   health_comps: Record<string, any>;
   cog_comps: Record<string, any>;
@@ -70,15 +72,26 @@ export class MainScene extends Phaser.Scene {
     const tilemap = this.make.tilemap({data: this.grid.tiles, tileWidth: 32, tileHeight: 32});
     // note margin/spacing (1/2) are for the extruded image
     const tileset = tilemap.addTilesetImage(
-      "prison_tiles_extruded", "prison_tiles_extruded", 32, 32, 1, 2);
+      "prison_tiles_c_e", "prison_tiles_c_e", 32, 32, 1, 2);
     this.grid.vis_layer = tilemap.createDynamicLayer(0, tileset);
+
+    let excludes = [];
+    let [up_x, up_y] = util.rand_tile(this);
+    excludes.push([up_x, up_y]);
+    let [down_x, down_y] = util.rand_tile(this, excludes=excludes);
+    excludes.push([down_x, down_y]);
+
+    this.grid.tiles[up_y][up_x] = TileType.STAIRS_UP;
+    this.grid.vis_layer.putTileAt(TileType.STAIRS_UP, up_x, up_y);
+    this.grid.tiles[down_y][down_x] = TileType.STAIRS_DOWN;
+    this.grid.vis_layer.putTileAt(TileType.STAIRS_DOWN, down_x, down_y);
 
     // ----- create actors -----
 
     this.actors = [];
 
     console.log("Creating player");
-    let [px, py] = util.rand_tile(this);
+    let [px, py] = util.rand_tile(this, excludes=excludes);
     let player = factory.create_player(this, px, py);
     player.camera = this.cameras.main;
     player.camera.centerOn(player.rx, player.ry);
@@ -88,11 +101,11 @@ export class MainScene extends Phaser.Scene {
 
     let num_enemies = 20;
     let num_orbs = 6;
-    let num_items = 10;
+    let num_items = 20;
 
     console.log("Creating enemies");
     for (let i = 0; i < num_enemies; i++) {
-      let [x, y] = util.rand_tile_no_actor(this);
+      let [x, y] = util.rand_tile_no_actor(this, excludes=excludes);
       this.actors.push(factory.create_random_enemy(this, x, y));
       //this.actors.push(factory.create_enemy(this, "prison_guard", x, y));
       //this.actors.push(factory.create_enemy(this, "prison_soldier", x, y));
@@ -106,20 +119,20 @@ export class MainScene extends Phaser.Scene {
     this.items = [];
 
     for (let i = 0; i < num_orbs; i++) {
-      let [x, y] = util.rand_tile_no_item(this);
+      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
       this.items.push(factory.create_item(this, "health_orb", x, y));
     }
     for (let i = 0; i < num_orbs; i++) {
-      let [x, y] = util.rand_tile_no_item(this);
+      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
       this.items.push(factory.create_item(this, "cognition_orb", x, y));
     }
     for (let i = 0; i < num_orbs; i++) {
-      let [x, y] = util.rand_tile_no_item(this);
+      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
       this.items.push(factory.create_item(this, "rejuvination_orb", x, y));
     }
 
     for (let i = 0; i < num_items; i++) {
-      let [x, y] = util.rand_tile_no_item(this);
+      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
       this.items.push(factory.create_random_item(this, x, y));
     }
 

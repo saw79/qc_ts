@@ -17,7 +17,7 @@ export function create_player(scene: MainScene, x: number, y: number): Actor {
 }
 
 export function create_random_enemy(scene: MainScene, x: number, y: number): Actor {
-  let idx = rand_int(Object.keys(enemy_stats).length);
+  let idx = rand_int(3);//Object.keys(enemy_stats).length);
   let name = Object.keys(enemy_stats)[idx];
 
   return create_enemy(scene, name, x, y);
@@ -49,8 +49,10 @@ export function create_enemy(scene: MainScene, name: string, x: number, y: numbe
 }
 
 export function create_random_item(scene: MainScene, x: number, y: number): Item {
-  let idx = rand_int(Object.keys(item_stats).length);
-  let name = Object.keys(item_stats)[idx];
+  let item_names = ["baton", "mace", "battle_axe", "knife", "spear", "katana", "pistol", "shotgun", "assault_rifle", "rigid_vest", "combat_suit"];
+  let idx = rand_int(item_names.length);//Object.keys(item_stats).length);
+  //let name = Object.keys(item_stats)[idx];
+  let name = item_names[idx];
 
   if (name == "fist" || name == "none") {
     return create_random_item(scene, x, y);

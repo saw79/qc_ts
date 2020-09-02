@@ -1,7 +1,11 @@
 import "phaser";
 
 export function load_all(scene: Phaser.Scene) {
-  load_image(scene, "prison_tiles_extruded");
+  load_image(scene, "prison_tiles_c_e");
+  load_image(scene, "dark_lab_tiles_c_e");
+  load_image(scene, "armory_tiles_c_e");
+  load_image(scene, "advanced_research_facility_tiles_c_e");
+  load_image(scene, "executive_offices_tiles_c_e");
 
   load_image(scene, "health_background");
   load_image(scene, "health_bar");
