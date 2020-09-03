@@ -44,13 +44,37 @@ export class Inventory {
     this.slot_size = Math.min(this.slot_size, max_slot_width);
     this.slot_size = Math.min(this.slot_size, max_slot_height);
 
+    this.showing = false;
+
+    this.equip_items = new Array(EQUIP_ROWS);
+    for (let r = 0; r < EQUIP_ROWS; r++) {
+      this.equip_items[r] = new Array(COLS);
+      for (let c = 0; c < COLS; c++) {
+        this.equip_items[r][c] = null;
+      }
+    }
+
+    this.inv_items = new Array(INV_ROWS);
+    for (let r = 0; r < INV_ROWS; r++) {
+      this.inv_items[r] = new Array(COLS);
+      for (let c = 0; c < COLS; c++) {
+        this.inv_items[r][c] = null;
+      }
+    }
+
+    this.menu_w = this.slot_size * 2;
+    this.menu_h = this.slot_size / 2;
+
+    this.init_textures(scene);
+    this.selected = null;
+  }
+
+  init_textures(scene: MainScene): void {
     let x: number;
     let y: number;
     this.equip_bgs = new Array(EQUIP_ROWS);
-    this.equip_items = new Array(EQUIP_ROWS);
     for (let r = 0; r < EQUIP_ROWS; r++) {
       this.equip_bgs[r] = new Array(COLS);
-      this.equip_items[r] = new Array(COLS);
       for (let c = 0; c < COLS; c++) {
         [x, y] = this.rc2xy(r, c);
 
@@ -69,15 +93,26 @@ export class Inventory {
 
         this.equip_bgs[r][c] = bg;
 
-        this.equip_items[r][c] = null;
+        if (this.equip_items[r][c] != null) {
+          this.equip_items[r][c].init_textures(scene);
+          let [x, y] = this.rc2xy(r, c);
+          this.equip_items[r][c].render_comp.x = x;
+          this.equip_items[r][c].render_comp.y = y;
+          this.equip_items[r][c].render_comp.setScrollFactor(0);
+          this.equip_items[r][c].render_comp.depth = INV_DEPTH + 1;
+          this.equip_items[r][c].render_comp.visible = false;
+        }
       }
     }
 
+    if (this.equip_items[0][0] != null) {
+      let weapon_name = this.equip_items[0][0].name;
+      this.scene.buttons_skin[4].setTexture(weapon_name);
+    }
+
     this.inv_bgs = new Array(INV_ROWS);
-    this.inv_items = new Array(INV_ROWS);
     for (let r = 0; r < INV_ROWS; r++) {
       this.inv_bgs[r] = new Array(COLS);
-      this.inv_items[r] = new Array(COLS);
       for (let c = 0; c < COLS; c++) {
         [x, y] = this.rc2xy(r + 2, c);
 
@@ -96,15 +131,17 @@ export class Inventory {
 
         this.inv_bgs[r][c] = bg;
 
-        this.inv_items[r][c] = null;
+        if (this.inv_items[r][c] != null) {
+          this.inv_items[r][c].init_textures(scene);
+          let [x, y] = this.rc2xy(r + 2, c);
+          this.inv_items[r][c].render_comp.x = x;
+          this.inv_items[r][c].render_comp.y = y;
+          this.inv_items[r][c].render_comp.setScrollFactor(0);
+          this.inv_items[r][c].render_comp.depth = INV_DEPTH + 1;
+          this.inv_items[r][c].render_comp.visible = false;
+        }
       }
     }
-
-    this.showing = false;
-    this.selected = null;
-
-    this.menu_w = this.slot_size * 2;
-    this.menu_h = this.slot_size / 2;
 
     this.menu_bg = scene.add.image(0, 0, "UIImages/label_bg");
     this.menu_bg.visible = false;
@@ -537,8 +574,7 @@ export class Inventory {
     if (this.scene.input_mode == InputMode.TARGET) {
       initiate_throw(
         this.scene,
-        this.scene.actors[0].tx,
-        this.scene.actors[0].ty,
+        this.scene.actors[0],
         this.scene.target_x,
         this.scene.target_y);
       this.scene.input_mode = InputMode.NORMAL;

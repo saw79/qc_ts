@@ -69,12 +69,6 @@ export function create_random_item(scene: MainScene, x: number, y: number): Item
 export function create_item(scene: MainScene, name: string, x: number, y: number): Item {
   let item = new Item(scene, name, x, y);
 
-  item.render_comp.setScale(0.5);
-
-  if (item.name.indexOf("orb") != -1) {
-    item.render_comp.anims.play(item.name);
-  }
-
   return item;
 }
 

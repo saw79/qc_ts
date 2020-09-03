@@ -1,8 +1,9 @@
 import "phaser";
 
+import {MainScene} from "./main_scene";
 import {Direction} from "./util";
 import {TILE_SIZE, ACTOR_DEPTH, PLAYER_VISION, ENEMY_VISION} from "./constants";
-import {tile_to_render_coords} from "./util";
+import {tile_to_render_coords, make_display_name} from "./util";
 import {Action} from "./turn_logic";
 import {TileGrid, Visibility} from "./tile_grid";
 
@@ -27,6 +28,8 @@ export class Actor {
   ranged: boolean;
   type: number;
 
+  display_name: string;
+
   actions: Array<Action>;
   motions: Array<[number, number]>;
   target: number | null;
@@ -49,7 +52,7 @@ export class Actor {
   alert_comps: Record<AlertState, any>;
   last_seen: [number, number];
 
-  constructor(scene: Phaser.Scene, name: string, x: number, y: number) {
+  constructor(scene: MainScene, name: string, x: number, y: number) {
     this.name = name;
     this.tx = x;
     this.ty = y;
@@ -58,19 +61,6 @@ export class Actor {
 
     this.is_player = name.indexOf("player") !== -1;
     this.camera = null;
-
-    this.render_comp = scene.add.sprite(this.rx, this.ry, name);
-    this.render_comp.depth = ACTOR_DEPTH;
-    this.render_health = null;
-    this.vision_comp = null;
-    if (!this.is_player) {
-      this.render_health = scene.add.image(this.rx, this.ry - TILE_SIZE/2, "health_bar");
-      this.render_health.displayHeight = 3;
-      this.render_health.depth = ACTOR_DEPTH;
-
-      this.vision_comp = scene.add.image(this.rx, this.ry, "enemy_vision_wedge");
-      this.vision_comp.alpha = 0.05;
-    }
 
     this.actions = [];
     this.motions = [];
@@ -97,10 +87,31 @@ export class Actor {
       this.vision_dist_max = ENEMY_VISION;
     }
 
+    this.alert_state = AlertState.PATROL;
+
+    this.init_textures(scene);
+
+    this.ranged = false;
+    this.display_name = make_display_name(this.name);
+  }
+
+  init_textures(scene: MainScene): void {
+    this.render_comp = scene.add.sprite(this.rx, this.ry, this.name);
+    this.render_comp.depth = ACTOR_DEPTH;
+    this.render_health = null;
+    this.vision_comp = null;
+    if (!this.is_player) {
+      this.render_health = scene.add.image(this.rx, this.ry - TILE_SIZE/2, "health_bar");
+      this.render_health.displayHeight = 3;
+      this.render_health.depth = ACTOR_DEPTH;
+
+      this.vision_comp = scene.add.image(this.rx, this.ry, "enemy_vision_wedge");
+      this.vision_comp.alpha = 0.05;
+      this.vision_comp.depth = ACTOR_DEPTH + 1;
+    }
+
     this.update_health_bar_width();
     this.update_vision_size();
-
-    this.alert_state = AlertState.PATROL;
 
     let alert_x = this.rx;
     let alert_y = this.ry - TILE_SIZE;
@@ -113,13 +124,12 @@ export class Actor {
     for (let key in this.alert_comps) {
       this.alert_comps[key].setScale(0.3);
       this.alert_comps[key].visible = false;
+      this.alert_comps[key].depth = ACTOR_DEPTH + 1;
     }
 
     if (!this.is_player) {
       this.alert_comps[this.alert_state].visible = true;
     }
-
-    this.ranged = false;
   }
 
   destroy_textures(): void {
@@ -136,6 +146,7 @@ export class Actor {
   }
 
   update_anim_and_dir(prev_rx: number, prev_ry: number, rx: number, ry: number): void {
+    //console.log(this.name, this.render_comp);
     if (rx == prev_rx && ry < prev_ry) {
       this.render_comp.flipX = false;
       this.render_comp.anims.play(this.name + "_up", true);
@@ -175,7 +186,7 @@ export class Actor {
 
   update_vision_size(): void {
     this.vision_dist = this.cognition / this.max_cognition * this.vision_dist_max;
-    this.vision_dist = Math.max(this.vision_dist, 1);
+    this.vision_dist = Math.max(this.vision_dist, 2);
     if (this.vision_comp != null) {
       this.vision_comp.displayWidth = (this.vision_dist*2 + 1) * TILE_SIZE;
       this.vision_comp.displayHeight = (this.vision_dist*2 + 1) * TILE_SIZE;

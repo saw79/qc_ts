@@ -16,37 +16,39 @@ export function calc_combat(scene: MainScene, actor0: Actor, actor1: Actor): voi
   dmg -= actor1.absorption;
   dmg = Math.max(dmg, 0);
 
-  damage_actor(scene, actor1, dmg);
+  damage_actor(scene, actor0, actor1, dmg);
 }
 
 export function damage_actor(
   scene: MainScene,
-  actor: Actor,
+  src_actor: Actor,
+  dst_actor: Actor,
   dmg: number
 ): void {
-  actor.health -= dmg;
-  actor.cognition -= dmg;
-  if (actor.cognition < 0) {
-    actor.cognition = 0;
+  dst_actor.health -= dmg;
+  dst_actor.cognition -= dmg;
+  if (dst_actor.cognition < 0) {
+    dst_actor.cognition = 0;
   }
 
   // --- UPDATE VISUALS ---
 
   scene.update_bars();
 
-  actor.update_vision_size();
+  dst_actor.update_vision_size();
 
   // for enemies (will just abort out for player):
-  actor.update_health_bar_width();
+  dst_actor.update_health_bar_width();
 
-  scene.new_floating_text(dmg.toString(), actor.rx, actor.ry - TILE_SIZE/2, "combat");
+  scene.new_floating_text(dmg.toString(), dst_actor.rx, dst_actor.ry - TILE_SIZE/2, "combat");
 
-  if (actor.health <= 0) {
-    actor.alive = false;
-    actor.render_comp.visible = false;
+  if (dst_actor.health <= 0) {
+    dst_actor.alive = false;
+    dst_actor.render_comp.visible = false;
 
-    if (actor.is_player) {
+    if (dst_actor.is_player) {
       console.log("PLAYER DIED!");
+      scene.scene.start("DeathScene", {killed_by: src_actor.display_name});
     }
   }
 }

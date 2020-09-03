@@ -1,5 +1,6 @@
+import {MainScene} from "./main_scene";
 import {ITEM_DEPTH} from "./constants";
-import {tile_to_render_coords} from "./util";
+import {tile_to_render_coords, make_display_name} from "./util";
 import {TileGrid, Visibility} from "./tile_grid";
 
 export enum ItemType {
@@ -29,20 +30,29 @@ export class Item {
 
   display_name: string;
 
-  constructor(scene: Phaser.Scene, name: string, x: number, y: number) {
+  constructor(scene: MainScene, name: string, x: number, y: number) {
     this.name = name;
     this.tx = x;
     this.ty = y;
     [this.rx, this.ry] = tile_to_render_coords(x, y);
     this.alive = true;
 
-    this.render_comp = scene.add.sprite(this.rx, this.ry, name);
-    this.render_comp.depth = ITEM_DEPTH;
+    this.init_textures(scene);
 
     this.equippable = false;
     this.usable = false;
     
     this.display_name = make_display_name(this.name);
+  }
+
+  init_textures(scene: MainScene): void {
+    this.render_comp = scene.add.sprite(this.rx, this.ry, this.name);
+    this.render_comp.depth = ITEM_DEPTH;
+    this.render_comp.setScale(0.5);
+
+    if (this.name.indexOf("orb") != -1) {
+      this.render_comp.anims.play(this.name);
+    }
   }
 
   update_visible(grid: TileGrid): void {
@@ -58,11 +68,3 @@ export class Item {
   }
 }
 
-export function make_display_name(name: string): string {
-  let words = name.replace(/_/g, " ").split(" ");
-  for (let i = 0; i < words.length; i++) {
-    words[i] = words[i].charAt(0).toUpperCase() + words[i].substring(1);
-  }
-
-  return words.join(" ");
-}

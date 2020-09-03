@@ -26,6 +26,9 @@ export class TileGrid {
   visibility: Array<Array<Visibility>>;
   vis_layer: Phaser.Tilemaps.DynamicTilemapLayer;
 
+  stairs_up: [number, number];
+  stairs_down: [number, number];
+
   sees_enemy: boolean;
   prev_sees_enemy: boolean;
 
@@ -48,6 +51,18 @@ export class TileGrid {
 
     this.sees_enemy = false;
     this.prev_sees_enemy = false;
+  }
+
+  set_stairs_up(x: number, y: number): void {
+    this.stairs_up = [x, y];
+    this.tiles[y][x] = TileType.STAIRS_UP;
+    this.vis_layer.putTileAt(TileType.STAIRS_UP, x, y);
+  }
+
+  set_stairs_down(x: number, y: number): void {
+    this.stairs_down = [x, y];
+    this.tiles[y][x] = TileType.STAIRS_DOWN;
+    this.vis_layer.putTileAt(TileType.STAIRS_DOWN, x, y);
   }
 
   at(x: number, y: number): TileType | null {

@@ -3,7 +3,7 @@ import "phaser";
 import * as PF from "pathfinding";
 
 import {TILE_SIZE} from "./constants";
-import {MainScene, InputMode} from "./main_scene";
+import {MainScene, InputMode, LevelInfo} from "./main_scene";
 import {Actor} from "./actor";
 import {TileGrid, TileType, Visibility} from "./tile_grid";
 import {actor_at} from "./util";
@@ -26,6 +26,34 @@ export function mouse_click_normal(
   let player_y = actors[0].ty;
 
   if (click_tile_x == player_x && click_tile_y == player_y) {
+    let [change_levels, level_num] = [false, 0];
+    if (player_x == scene.grid.stairs_up[0] && player_y == scene.grid.stairs_up[1]) {
+      [change_levels, level_num] = [true, scene.level_num + 1];
+    }
+    if (scene.level_num > 0 &&
+        player_x == scene.grid.stairs_down[0] &&
+        player_y == scene.grid.stairs_down[1]) {
+      [change_levels, level_num] = [true, scene.level_num - 1];
+    }
+
+    if (change_levels) {
+      if (scene.level_num >= scene.level_store.length) {
+        let level_info = new LevelInfo();
+        level_info.grid = scene.grid;
+        level_info.items = scene.items;
+        level_info.enemies = scene.actors.slice(1);
+        scene.level_store.push(level_info);
+      }
+
+      scene.scene.start("MainScene", {
+        prev_level_num: scene.level_num,
+        level_num: level_num,
+        player: actors[0],
+        inventory: scene.inventory,
+        level_store: scene.level_store,
+      });
+    }
+
     if (!scene.pickup_item()) {
       actors[0].actions = [{type: "wait", energy: 100}];
     }
@@ -107,7 +135,7 @@ export function mouse_click_throw_tgt(
     console.log("CANCEL THROW");
   }
   else {
-    initiate_throw(scene, player_x, player_y, click_tile_x, click_tile_y);
+    initiate_throw(scene, actors[0], click_tile_x, click_tile_y);
   }
 
   scene.input_mode = InputMode.NORMAL;

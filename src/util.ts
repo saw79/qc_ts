@@ -11,13 +11,23 @@ export enum Direction {
   Right
 }
 
-export class TilePos {
-  x: number;
-  y: number;
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
+export function new_game(scene: Phaser.Scene): void {
+  scene.scene.start("MainScene", {
+    prev_level_num: -1,
+    level_num: 0,
+    player: null,
+    inventory: null,
+    level_store: [],
+  });
+}
+
+export function make_display_name(name: string): string {
+  let words = name.replace(/_/g, " ").split(" ");
+  for (let i = 0; i < words.length; i++) {
+    words[i] = words[i].charAt(0).toUpperCase() + words[i].substring(1);
   }
+
+  return words.join(" ");
 }
 
 export function rand_int(max: number): number {

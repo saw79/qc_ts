@@ -80,7 +80,7 @@ export class Projectile {
       this.item.ry = ry;
 
       if (this.dst_actor != null) {
-        damage_actor(this.scene, this.dst_actor, 1);
+        damage_actor(this.scene, this.src_actor, this.dst_actor, 1);
       }
     }
     else {
@@ -103,12 +103,11 @@ export class Projectile {
 
 export function initiate_throw(
   scene: MainScene,
-  pl_x: number,
-  pl_y: number,
+  src_actor: Actor,
   tgt_x: number,
   tgt_y: number
 ): void {
-  let pts = line(pl_x, pl_y, tgt_x, tgt_y);
+  let pts = line(src_actor.tx, src_actor.ty, tgt_x, tgt_y);
   let dest = pts[pts.length-1];
   let dst_actor = null;
 
@@ -132,6 +131,7 @@ export function initiate_throw(
   let [dest_rx, dest_ry] = tile_to_render_coords(dest[0], dest[1]);
 
   let proj = new Projectile(scene, item, scene.actors[0].rx, scene.actors[0].ry, dest_rx, dest_ry);
+  proj.src_actor = src_actor;
   proj.dst_actor = dst_actor;
   scene.projectiles.push(proj);
 

@@ -3,8 +3,7 @@ import "phaser";
 import * as PF from "pathfinding";
 import {NinePatch} from "@koreez/phaser3-ninepatch";
 
-import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
-import {load_all, create_anims} from "./resource_manager";
+import {TILE_SIZE, TARGET_DEPTH, ACTOR_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
 import {TileType, TileGrid} from "./tile_grid";
 import {generate_bsp} from "./level_gen";
 import {Actor} from "./actor";
@@ -25,6 +24,12 @@ export enum InputMode {
   THROW_TGT,
 }
 
+export class LevelInfo {
+  grid: TileGrid;
+  items: Array<Item>;
+  enemies: Array<Actor>;
+}
+
 export class MainScene extends Phaser.Scene {
   controls: Phaser.Cameras.Controls.FixedKeyControl;
   actors: Array<Actor>;
@@ -32,8 +37,6 @@ export class MainScene extends Phaser.Scene {
   grid: TileGrid;
   items: Array<Item>;
   projectiles: Array<Projectile>;
-  stairs_up: [number, number];
-  stairs_down: [number, number];
 
   health_comps: Record<string, any>;
   cog_comps: Record<string, any>;
@@ -52,63 +55,97 @@ export class MainScene extends Phaser.Scene {
 
   inventory: Inventory;
 
+  level_num: number;
+  level_store: Array<LevelInfo>;
+
   constructor() {
     super({ key: "MainScene"});
   }
 
   preload(): void {
-    load_all(this);
   }
 
-  create(): void {
-    create_anims(this);
+  create(data): void {
+    this.level_num = data.level_num;
+    this.level_store = data.level_store;
+    if (this.level_store == null || this.level_store == undefined) {
+      this.level_store = [];
+    }
 
-    let level_width = 40;
-    let level_height = 40;
+    console.log("CREATING LEVEL " + this.level_num);
 
-    let tiles = generate_bsp(level_width, level_height);
-    this.grid = new TileGrid(tiles, level_width, level_height);
+    let loaded_level = false;
+    if (this.level_num >= this.level_store.length) {
+      this.create_level_grid();
+      this.items = [];
+      this.actors = [];
+    } else {
+      this.grid = this.level_store[this.level_num].grid;
+      this.items = this.level_store[this.level_num].items;
+      this.actors = this.level_store[this.level_num].enemies;
 
-    const tilemap = this.make.tilemap({data: this.grid.tiles, tileWidth: 32, tileHeight: 32});
-    // note margin/spacing (1/2) are for the extruded image
-    const tileset = tilemap.addTilesetImage(
-      "prison_tiles_c_e", "prison_tiles_c_e", 32, 32, 1, 2);
-    this.grid.vis_layer = tilemap.createDynamicLayer(0, tileset);
+      for (let item of this.items) {
+        item.init_textures(this);
+      }
+      for (let actor of this.actors) {
+        actor.init_textures(this);
+      }
+
+      loaded_level = true;
+    }
+    this.create_level_textures();
 
     let excludes = [];
-    let [up_x, up_y] = util.rand_tile(this);
-    excludes.push([up_x, up_y]);
-    let [down_x, down_y] = util.rand_tile(this, excludes=excludes);
-    excludes.push([down_x, down_y]);
+    if (!loaded_level) {
+      let [up_x, up_y] = util.rand_tile(this);
+      this.grid.set_stairs_up(up_x, up_y);
+    }
+    excludes.push(this.grid.stairs_up);
 
-    this.grid.tiles[up_y][up_x] = TileType.STAIRS_UP;
-    this.grid.vis_layer.putTileAt(TileType.STAIRS_UP, up_x, up_y);
-    this.grid.tiles[down_y][down_x] = TileType.STAIRS_DOWN;
-    this.grid.vis_layer.putTileAt(TileType.STAIRS_DOWN, down_x, down_y);
+    if (this.level_num > 0) {
+      if (!loaded_level) {
+        let [down_x, down_y] = util.rand_tile(this, excludes=excludes);
+        this.grid.set_stairs_down(down_x, down_y);
+      }
+      excludes.push(this.grid.stairs_down);
+    }
 
     // ----- create actors -----
 
-    this.actors = [];
-
-    console.log("Creating player");
-    let [px, py] = util.rand_tile(this, excludes=excludes);
-    let player = factory.create_player(this, px, py);
+    let player = data.player;
+    if (player == undefined || player == null) {
+      let [px, py] = util.rand_tile(this, excludes=excludes);
+      player = factory.create_player(this, px, py);
+    } else {
+      if (data.prev_level_num < this.level_num) {
+        player.tx = this.grid.stairs_down[0];
+        player.ty = this.grid.stairs_down[1];
+      } else {
+        player.tx = this.grid.stairs_up[0];
+        player.ty = this.grid.stairs_up[1];
+      }
+      let [rx, ry] = util.tile_to_render_coords(player.tx, player.ty);
+      player.rx = rx;
+      player.ry = ry;
+      player.init_textures(this);
+    }
     player.camera = this.cameras.main;
     player.camera.centerOn(player.rx, player.ry);
-    this.actors.push(player);
+
+    this.actors.unshift(player);
 
     //player.camera.setZoom(0.5);
 
-    let num_enemies = 20;
+    let num_enemies = this.level_num*2 + 1;
     let num_orbs = 6;
-    let num_items = 20;
+    let num_items = 1;
 
-    console.log("Creating enemies");
-    for (let i = 0; i < num_enemies; i++) {
-      let [x, y] = util.rand_tile_no_actor(this, excludes=excludes);
-      this.actors.push(factory.create_random_enemy(this, x, y));
-      //this.actors.push(factory.create_enemy(this, "prison_guard", x, y));
-      //this.actors.push(factory.create_enemy(this, "prison_soldier", x, y));
+    if (!loaded_level) {
+      console.log("Creating enemies");
+      for (let i = 0; i < num_enemies; i++) {
+        let [x, y] = util.rand_tile_no_actor(this, excludes=excludes);
+        this.actors.push(factory.create_random_enemy(this, x, y));
+      }
     }
 
     this.curr_turn = 0;
@@ -116,24 +153,25 @@ export class MainScene extends Phaser.Scene {
     // ----- create items -----
 
     console.log("Creating items");
-    this.items = [];
 
-    for (let i = 0; i < num_orbs; i++) {
-      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
-      this.items.push(factory.create_item(this, "health_orb", x, y));
-    }
-    for (let i = 0; i < num_orbs; i++) {
-      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
-      this.items.push(factory.create_item(this, "cognition_orb", x, y));
-    }
-    for (let i = 0; i < num_orbs; i++) {
-      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
-      this.items.push(factory.create_item(this, "rejuvination_orb", x, y));
-    }
+    if (!loaded_level) {
+      for (let i = 0; i < num_orbs; i++) {
+        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        this.items.push(factory.create_item(this, "health_orb", x, y));
+      }
+      for (let i = 0; i < num_orbs; i++) {
+        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        this.items.push(factory.create_item(this, "cognition_orb", x, y));
+      }
+      for (let i = 0; i < num_orbs; i++) {
+        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        this.items.push(factory.create_item(this, "rejuvination_orb", x, y));
+      }
 
-    for (let i = 0; i < num_items; i++) {
-      let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
-      this.items.push(factory.create_random_item(this, x, y));
+      for (let i = 0; i < num_items; i++) {
+        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        this.items.push(factory.create_random_item(this, x, y));
+      }
     }
 
     this.projectiles = [];
@@ -329,7 +367,35 @@ export class MainScene extends Phaser.Scene {
     this.buttons_base[3].on('pointerup', this.click_target, this);
     this.buttons_base[4].on('pointerup', this.click_attack, this);
 
-    this.inventory = new Inventory(this);
+    this.inventory = data.inventory;
+    if (this.inventory == undefined || this.inventory == null) {
+      this.inventory = new Inventory(this);
+    } else {
+      this.inventory.init_textures(this);
+    }
+  }
+
+  create_level_grid(): void {
+    let level_width = 40;
+    let level_height = 40;
+
+    let tiles = generate_bsp(level_width, level_height);
+    this.grid = new TileGrid(tiles, level_width, level_height);
+  }
+
+  create_level_textures(): void {
+    let tile_name = "prison";
+    if (this.level_num <= 10) { tile_name = "prison"; }
+    else if (this.level_num <= 20) { tile_name = "dark_lab"; }
+    else if (this.level_num <= 30) { tile_name = "armory"; }
+    else if (this.level_num <= 40) { tile_name = "advanced_research_facility"; }
+    else { tile_name = "executive_offices"; }
+
+    const tilemap = this.make.tilemap({data: this.grid.tiles, tileWidth: 32, tileHeight: 32});
+    // note margin/spacing (1/2) are for the extruded image
+    const tileset = tilemap.addTilesetImage(
+      tile_name + "_tiles_c_e", tile_name + "_tiles_c_e", 32, 32, 1, 2);
+    this.grid.vis_layer = tilemap.createDynamicLayer(0, tileset);
   }
 
   click_wait(pointer, localX, localY, event) {
