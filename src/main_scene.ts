@@ -44,6 +44,9 @@ export class MainScene extends Phaser.Scene {
   floating_texts: Array<FloatingText>;
 
   scrolled: boolean;
+  scrolled_x: number;
+  scrolled_y: number;
+
   input_mode: InputMode;
 
   target_render: Phaser.GameObjects.Image;
@@ -163,7 +166,7 @@ export class MainScene extends Phaser.Scene {
         let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
         this.items.push(factory.create_item(this, "cognition_orb", x, y));
       }
-      for (let i = 0; i < num_orbs; i++) {
+      for (let i = 0; i < 2; i++) {
         let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
         this.items.push(factory.create_item(this, "rejuvination_orb", x, y));
       }
@@ -231,33 +234,41 @@ export class MainScene extends Phaser.Scene {
     });
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       this.scrolled = false;
+      this.scrolled_x = 0;
+      this.scrolled_y = 0;
     });
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
       if (!pointer.isDown) {
         return;
       }
 
-      this.cameras.main.scrollX -= pointer.x - pointer.prevPosition.x; // () / zoom
-      this.cameras.main.scrollY -= pointer.y - pointer.prevPosition.y;
+      let dx = pointer.x - pointer.prevPosition.x; // () / zoom
+      let dy = pointer.y - pointer.prevPosition.y;
+      this.cameras.main.scrollX -= dx;
+      this.cameras.main.scrollY -= dy;
       this.scrolled = true;
+      this.scrolled_x += dx;
+      this.scrolled_y += dy;
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      if (!this.scrolled) {
-        if (this.inventory.showing) {
-          this.inventory.hide();
-        } else {
-          if (this.input_mode == InputMode.NORMAL) {
-            mouse_click_normal(this, pointer, this.cameras.main, this.actors, this.grid);
-          }
-          else if (this.input_mode == InputMode.TARGET) {
-            mouse_click_target(this, pointer);
-          }
-          else if (this.input_mode == InputMode.THROW_TGT) {
-            mouse_click_throw_tgt(this, pointer, this.cameras.main, this.actors, this.grid);
-          }
-          else {
-            console.log("UNIMPLEMNTED INPUT MODE " + this.input_mode);
-          }
+      if (this.scrolled && Math.abs(this.scrolled_x) + Math.abs(this.scrolled_y) > 5) {
+        return;
+      }
+
+      if (this.inventory.showing) {
+        this.inventory.hide();
+      } else {
+        if (this.input_mode == InputMode.NORMAL) {
+          mouse_click_normal(this, pointer, this.cameras.main, this.actors, this.grid);
+        }
+        else if (this.input_mode == InputMode.TARGET) {
+          mouse_click_target(this, pointer);
+        }
+        else if (this.input_mode == InputMode.THROW_TGT) {
+          mouse_click_throw_tgt(this, pointer, this.cameras.main, this.actors, this.grid);
+        }
+        else {
+          console.log("UNIMPLEMNTED INPUT MODE " + this.input_mode);
         }
       }
     });
