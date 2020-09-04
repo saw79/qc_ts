@@ -46,6 +46,7 @@ export class MainScene extends Phaser.Scene {
   scrolled: boolean;
   scrolled_x: number;
   scrolled_y: number;
+  down_button: number;
 
   input_mode: InputMode;
 
@@ -236,6 +237,7 @@ export class MainScene extends Phaser.Scene {
       this.scrolled = false;
       this.scrolled_x = 0;
       this.scrolled_y = 0;
+      this.down_button = -1;
     });
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
       if (!pointer.isDown) {
@@ -251,6 +253,10 @@ export class MainScene extends Phaser.Scene {
       this.scrolled_y += dy;
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      if (this.down_button >= 0) {
+        this.buttons_base[this.down_button].setTexture("UIImages/button_small_up");
+      }
+
       if (this.scrolled && Math.abs(this.scrolled_x) + Math.abs(this.scrolled_y) > 5) {
         return;
       }
@@ -271,6 +277,9 @@ export class MainScene extends Phaser.Scene {
           console.log("UNIMPLEMNTED INPUT MODE " + this.input_mode);
         }
       }
+    });
+    this.input.on("wheel", (pointer, objs, dx, dy, dz) => {
+      this.cameras.main.setZoom(this.cameras.main.zoom - dy/1000);
     });
 
     // ----- UI -----
@@ -347,12 +356,7 @@ export class MainScene extends Phaser.Scene {
       btn_base.setScrollFactor(0);
       btn_base.setInteractive()
 
-      btn_base.on('pointerdown', () => {
-        btn_base.setTexture("UIImages/button_small_down");
-      });
-
       this.buttons_base.push(btn_base);
-
 
       let key = idx < 4 ? "UIImages/btn_" + names[idx] + "_skin" : "fist";
       let btn_skin = this.add.image(x, y, key);
@@ -368,10 +372,34 @@ export class MainScene extends Phaser.Scene {
 
       this.buttons_skin.push(btn_skin);
 
-
       idx += 1;
     }
 
+    this.buttons_base[0].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons_base[0].setTexture("UIImages/button_small_down");
+      this.down_button = 0;
+      ev.stopPropagation();
+    });
+    this.buttons_base[1].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons_base[1].setTexture("UIImages/button_small_down");
+      this.down_button = 1;
+      ev.stopPropagation();
+    });
+    this.buttons_base[2].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons_base[2].setTexture("UIImages/button_small_down");
+      this.down_button = 2;
+      ev.stopPropagation();
+    });
+    this.buttons_base[3].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons_base[3].setTexture("UIImages/button_small_down");
+      this.down_button = 3;
+      ev.stopPropagation();
+    });
+    this.buttons_base[4].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons_base[4].setTexture("UIImages/button_small_down");
+      this.down_button = 4;
+      ev.stopPropagation();
+    });
     this.buttons_base[0].on('pointerup', this.click_wait, this);
     this.buttons_base[1].on('pointerup', this.click_bag, this);
     this.buttons_base[2].on('pointerup', this.click_grab, this);
@@ -410,24 +438,36 @@ export class MainScene extends Phaser.Scene {
   }
 
   click_wait(pointer, localX, localY, event) {
+    if (this.down_button < 0) {
+      return;
+    }
     this.actors[0].actions = [{type: "wait", energy: 100}];
     this.buttons_base[0].setTexture("UIImages/button_small_up");
     event.stopPropagation();
   }
 
   click_bag(pointer, localX, localY, event) {
+    if (this.down_button < 0) {
+      return;
+    }
     this.inventory.toggle();
     this.buttons_base[1].setTexture("UIImages/button_small_up");
     event.stopPropagation();
   }
 
   click_grab(pointer, localX, localY, event) {
+    if (this.down_button < 0) {
+      return;
+    }
     this.pickup_item();
     this.buttons_base[2].setTexture("UIImages/button_small_up");
     event.stopPropagation();
   }
 
   click_target(pointer, localX, localY, event) {
+    if (this.down_button < 0) {
+      return;
+    }
     if (this.input_mode == InputMode.NORMAL) {
       this.enter_target_mode();
     }
@@ -447,6 +487,9 @@ export class MainScene extends Phaser.Scene {
   }
 
   click_attack(pointer, localX, localY, event) {
+    if (this.down_button < 0) {
+      return;
+    }
     this.attack();
 
     this.buttons_base[4].setTexture("UIImages/button_small_up");

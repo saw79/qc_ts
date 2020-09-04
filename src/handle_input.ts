@@ -4,6 +4,7 @@ import * as PF from "pathfinding";
 
 import {TILE_SIZE} from "./constants";
 import {MainScene, InputMode, LevelInfo} from "./main_scene";
+import {TransitionScene} from "./transition_scene";
 import {Actor} from "./actor";
 import {TileGrid, TileType, Visibility} from "./tile_grid";
 import {actor_at} from "./util";
@@ -45,7 +46,7 @@ export function mouse_click_normal(
         scene.level_store.push(level_info);
       }
 
-      scene.scene.start("MainScene", {
+      scene.scene.start("TransitionScene", {
         prev_level_num: scene.level_num,
         level_num: level_num,
         player: actors[0],

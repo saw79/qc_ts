@@ -155,6 +155,9 @@ export function initiate_throw(
     }
   }
 
+  scene.actors[0].update_dir(src_actor.tx, src_actor.ty, tgt_x, tgt_y);
+  scene.actors[0].update_anim_and_vision(false);
+
   scene.actors[0].energy -= 100;
 }
 
@@ -213,6 +216,9 @@ export function initiate_shot(
   proj.render_comp.rotation = ang;
 
   scene.projectiles.push(proj);
+
+  src_actor.update_dir(src_actor.tx, src_actor.ty, tgt_x, tgt_y);
+  src_actor.update_anim_and_vision(false);
 
   src_actor.energy -= 100;
 }

@@ -27,6 +27,7 @@ export class Actor {
   camera: Phaser.Cameras.Scene2D.Camera | null;
   ranged: boolean;
   type: number;
+  prev_move_dir: string;
 
   display_name: string;
 
@@ -93,6 +94,7 @@ export class Actor {
 
     this.ranged = false;
     this.display_name = make_display_name(this.name);
+    this.prev_move_dir = "stop";
   }
 
   init_textures(scene: MainScene): void {
@@ -145,35 +147,68 @@ export class Actor {
     }
   }
 
-  update_anim_and_dir(prev_rx: number, prev_ry: number, rx: number, ry: number): void {
-    //console.log(this.name, this.render_comp);
+  update_dir(prev_rx: number, prev_ry: number, rx: number, ry: number): void {
     if (rx == prev_rx && ry < prev_ry) {
-      this.render_comp.flipX = false;
-      this.render_comp.anims.play(this.name + "_up", true);
       this.dir = Direction.Up;
     }
     else if (rx == prev_rx) {
-      this.render_comp.flipX = false;
-      this.render_comp.anims.play(this.name + "_down", true);
       this.dir = Direction.Down;
     }
     else if (rx < prev_rx) {
-      this.render_comp.flipX = true;
-      this.render_comp.anims.play(this.name + "_right", true);
       this.dir = Direction.Left;
     }
     else {
-      this.render_comp.flipX = false;
-      this.render_comp.anims.play(this.name + "_right", true);
       this.dir = Direction.Right;
     }
+  }
+
+  update_anim_and_vision(do_play: boolean): void {
+    let move_dir = this.prev_move_dir;
+
+    switch (this.dir) {
+      case Direction.Up:
+        move_dir = "up";
+        break;
+      case Direction.Down:
+        move_dir = "down";
+        break;
+      case Direction.Left:
+        move_dir = "left";
+        break;
+      case Direction.Right:
+        move_dir = "right";
+        break;
+    }
+
+    if (move_dir != this.prev_move_dir) {
+      if (move_dir == "left") {
+        this.render_comp.anims.play(this.name + "_right", true);
+        this.render_comp.flipX = true;
+      } else {
+        this.render_comp.anims.play(this.name + "_" + move_dir, true);
+        this.render_comp.flipX = false;
+      }
+
+      if (!do_play) {
+        this.render_comp.anims.stop();
+      }
+    }
+    this.prev_move_dir = move_dir;
 
     if (this.vision_comp != null) {
       switch (this.dir) {
-        case Direction.Up: this.vision_comp.rotation = -Math.PI/2; break;
-        case Direction.Down: this.vision_comp.rotation = Math.PI/2; break;
-        case Direction.Left: this.vision_comp.rotation = Math.PI; break;
-        case Direction.Right: this.vision_comp.rotation = 0; break;
+        case Direction.Up:
+          this.vision_comp.rotation = -Math.PI/2;
+          break;
+        case Direction.Down:
+          this.vision_comp.rotation = Math.PI/2;
+          break;
+        case Direction.Left:
+          this.vision_comp.rotation = Math.PI;
+          break;
+        case Direction.Right:
+          this.vision_comp.rotation = 0;
+          break;
       }
     }
   }
@@ -217,7 +252,8 @@ export class Actor {
   }
 
   move(rx: number, ry: number, grid: TileGrid): void {
-    this.update_anim_and_dir(this.rx, this.ry, rx, ry);
+    this.update_dir(this.rx, this.ry, rx, ry);
+    this.update_anim_and_vision(true);
     this.rx = rx;
     this.ry = ry;
     this.render_comp.x = rx;

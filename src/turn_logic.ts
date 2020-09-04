@@ -2,7 +2,7 @@ import * as PF from "pathfinding";
 
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
-import {tile_to_render_coords, actor_at} from "./util";//(tx: number, ty: number): [number, number]
+import {Direction, tile_to_render_coords, actor_at} from "./util";
 import {get_action_ai} from "./ai_logic";
 import {TileType, TileGrid} from "./tile_grid";
 import {calc_combat} from "./combat_logic";
@@ -194,6 +194,13 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
 
       return;
     case "attack":
+      let x0 = actors[curr_turn].tx;
+      let y0 = actors[curr_turn].ty;
+      let x1 = actors[action.id].tx;
+      let y1 = actors[action.id].ty;
+      actors[curr_turn].update_dir(x0, y0, x1, y1);
+      actors[curr_turn].update_anim_and_vision(false);
+
       calc_combat(scene, actors[curr_turn], actors[action.id]);
       actors[curr_turn].energy -= action.energy;
       scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
