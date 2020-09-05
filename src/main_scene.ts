@@ -256,11 +256,8 @@ export class MainScene extends Phaser.Scene {
         let dy1 = pointer.y - other_pointer.y;
         let dist1 = Math.sqrt(dx1*dx1 + dy1*dy1);
 
-        if (dist1 > dist0) {
-          this.setZoom(0.05);
-        } else {
-          this.setZoom(-0.05);
-        }
+        let dz = (dist1 - dist0)/1000;
+        this.setZoom(dz);
 
         return;
       }
