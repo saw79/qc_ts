@@ -76,6 +76,7 @@ export class MainScene extends Phaser.Scene {
     this.debug_str = ["", "", ""];
     this.debug_txt = this.add.text(100, 100, "", { color: "blue", stroke: "blue", fontSize: 36});
     this.debug_txt.setScrollFactor(0);
+    this.debug_txt.depth = 3000;
 
     this.level_num = data.level_num;
     this.level_store = data.level_store;
