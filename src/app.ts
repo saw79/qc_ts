@@ -6,6 +6,7 @@ import {DeathScene} from "./death_scene";
 
 //import NinePatchPlugin from "phaser3-rex-plugins/plugins/ninepatch-plugin.js";
 import {NinePatchPlugin} from "@koreez/phaser3-ninepatch";
+//import GesturesPlugin from "phaser3-rex-plugins/plugins/gestures-plugin";
 
 let aspect = window.innerWidth / window.innerHeight;
 

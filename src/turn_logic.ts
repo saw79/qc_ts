@@ -145,9 +145,12 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
 
       // open doors!
 
+      let update_vis = false;
+
       if (scene.grid.at(action.x, action.y) == TileType.DOORCLOSED) {
         scene.grid.tiles[action.y][action.x] = TileType.DOOROPEN;
         scene.grid.vis_layer.putTileAt(TileType.DOOROPEN, action.x, action.y);
+        update_vis = true;
       }
 
       // do movement, energy, etc.
@@ -159,7 +162,7 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       actors[curr_turn].energy -= action.energy;
 
       if (actors[curr_turn].is_player) {
-        scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
+        update_vis = true;
         scene.update_entity_visibility();
 
         // if we see NEW enemy, remove rest of path
@@ -190,6 +193,10 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
           actors[0].path = [];
           actors[0].target = null;
         }
+      }
+
+      if (update_vis) {
+        scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
       }
 
       return;

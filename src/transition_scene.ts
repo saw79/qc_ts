@@ -28,12 +28,10 @@ export class TransitionScene extends Phaser.Scene {
     else { name = "executive_offices"; }
 
     name = make_display_name(name);
-    
-    let num = data.level_num % 10;
 
-    let txt_name = this.add.text(w/2, 100, name, {
-      fontFamily: "Arial", fontSize: 48, color: "blue", stroke: "blue", strokeThickness: 3});
-    let txt_num = this.add.text(w/2, 250, "Floor " + num, {
+    let txt_num = this.add.text(w/2, 100, "Floor " + data.level_num, {
+      fontFamily: "Arial", fontSize: 36, color: "blue", stroke: "blue", strokeThickness: 3});
+    let txt_name = this.add.text(w/2, 250, name, {
       fontFamily: "Arial", fontSize: 36, color: "blue", stroke: "blue", strokeThickness: 3});
 
     txt_name.x -= txt_name.displayWidth/2;

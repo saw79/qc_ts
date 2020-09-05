@@ -3,8 +3,8 @@ import "phaser";
 import * as PF from "pathfinding";
 import {NinePatch} from "@koreez/phaser3-ninepatch";
 
-import {TILE_SIZE, TARGET_DEPTH, ACTOR_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
-import {TileType, TileGrid} from "./tile_grid";
+import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
+import {TileGrid} from "./tile_grid";
 import {generate_bsp} from "./level_gen";
 import {Actor} from "./actor";
 import {mouse_click_normal, mouse_click_target, mouse_click_throw_tgt} from "./handle_input";
@@ -47,6 +47,7 @@ export class MainScene extends Phaser.Scene {
   scrolled_x: number;
   scrolled_y: number;
   down_button: number;
+  pointer_states: Array<[number, number]>;
 
   input_mode: InputMode;
 
@@ -62,6 +63,9 @@ export class MainScene extends Phaser.Scene {
   level_num: number;
   level_store: Array<LevelInfo>;
 
+  debug_str: Array<string>;
+  debug_txt: Phaser.GameObjects.Text;
+
   constructor() {
     super({ key: "MainScene"});
   }
@@ -70,6 +74,10 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(data): void {
+    this.debug_str = ["", ""];
+    this.debug_txt = this.add.text(100, 100, "", { color: "blue", stroke: "blue", fontSize: 36});
+    this.debug_txt.setScrollFactor(0);
+
     this.level_num = data.level_num;
     this.level_store = data.level_store;
     if (this.level_store == null || this.level_store == undefined) {
@@ -195,6 +203,8 @@ export class MainScene extends Phaser.Scene {
     this.target_x = 0;
     this.target_y = 0;
 
+    this.pointer_states = [null, null];
+
     const cursors = this.input.keyboard.createCursorKeys();
     this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
       camera: this.cameras.main,
@@ -233,11 +243,15 @@ export class MainScene extends Phaser.Scene {
     this.input.keyboard.on("keydown_A", () => {
       this.attack();
     });
+
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       this.scrolled = false;
       this.scrolled_x = 0;
       this.scrolled_y = 0;
       this.down_button = -1;
+
+      this.debug_str[pointer.id] = Math.round(pointer.x).toString() + ", " + Math.round(pointer.y).toString();
+      this.debug_txt.setText(this.debug_str);
     });
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
       if (!pointer.isDown) {
@@ -253,6 +267,8 @@ export class MainScene extends Phaser.Scene {
       this.scrolled_y += dy;
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      this.debug_str[pointer.id] = "up";
+      this.debug_txt.setText(this.debug_str);
       if (this.down_button >= 0) {
         this.buttons_base[this.down_button].setTexture("UIImages/button_small_up");
       }
