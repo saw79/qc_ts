@@ -4,7 +4,6 @@ import * as PF from "pathfinding";
 
 import {TILE_SIZE} from "./constants";
 import {MainScene, InputMode, LevelInfo} from "./main_scene";
-import {TransitionScene} from "./transition_scene";
 import {Actor} from "./actor";
 import {TileGrid, TileType, Visibility} from "./tile_grid";
 import {actor_at} from "./util";
@@ -46,11 +45,12 @@ export function mouse_click_normal(
         scene.level_store.push(level_info);
       }
 
+      scene.scene.remove("HUDScene");
       scene.scene.start("TransitionScene", {
         prev_level_num: scene.level_num,
         level_num: level_num,
         player: actors[0],
-        inventory: scene.inventory,
+        inventory: scene.hud.inventory,
         level_store: scene.level_store,
       });
     }
@@ -66,7 +66,7 @@ export function mouse_click_normal(
   else {
     let tgt = actor_at(actors, click_tile_x, click_tile_y);
     if (tgt != null) {
-      let weapon = scene.inventory.get_weapon();
+      let weapon = scene.hud.inventory.get_weapon();
       let weapon_name = weapon == null ? "fist" : weapon.name;
 
       if (item_stats[weapon_name]["R"]) {

@@ -25,7 +25,7 @@ export class DeathScene extends Phaser.Scene {
     txt_killedby.y -= txt_killedby.displayHeight/2;
     txt_killedby.setAlign("center");
 
-    let btn_new = this.add.image(w/2, h-200, "up");
+    let btn_new = this.add.image(w/2, h-200, "UIImages/button_wide_up");
     btn_new.displayWidth = 300
     btn_new.displayHeight = 100
 
@@ -36,10 +36,10 @@ export class DeathScene extends Phaser.Scene {
 
     btn_new.setInteractive();
     btn_new.on('pointerdown', () => {
-      btn_new.setTexture("down");
+      btn_new.setTexture("UIImages/button_wide_down");
     });
     btn_new.on('pointerup', () => {
-      btn_new.setTexture("up");
+      btn_new.setTexture("UIImages/button_wide_up");
       new_game(this);
     });
   }

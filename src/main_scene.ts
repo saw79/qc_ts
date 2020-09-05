@@ -1,9 +1,8 @@
 import "phaser";
 
 import * as PF from "pathfinding";
-import {NinePatch} from "@koreez/phaser3-ninepatch";
 
-import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH, MIN_ZOOM, MAX_ZOOM} from "./constants";
+import {TILE_SIZE, TARGET_DEPTH, MIN_ZOOM, MAX_ZOOM} from "./constants";
 import {TileGrid} from "./tile_grid";
 import {generate_bsp} from "./level_gen";
 import {Actor} from "./actor";
@@ -14,9 +13,9 @@ import * as util from "./util";
 import {FloatingText} from "./floating_text";
 import {Item} from "./item";
 import * as factory from "./factory";
-import {Inventory} from "./inventory";
 import {Projectile, initiate_shot} from "./projectile";
 import {item_stats} from "./stats";
+import {HUDScene} from "./hud_scene";
 
 export enum InputMode {
   NORMAL,
@@ -38,9 +37,6 @@ export class MainScene extends Phaser.Scene {
   items: Array<Item>;
   projectiles: Array<Projectile>;
 
-  health_comps: Record<string, any>;
-  cog_comps: Record<string, any>;
-
   floating_texts: Array<FloatingText>;
 
   scrolled: boolean;
@@ -54,10 +50,7 @@ export class MainScene extends Phaser.Scene {
   target_x: number;
   target_y: number;
 
-  buttons_base: Array<Phaser.GameObjects.Image>;
-  buttons_skin: Array<Phaser.GameObjects.Image>;
-
-  inventory: Inventory;
+  hud: HUDScene;
 
   level_num: number;
   level_store: Array<LevelInfo>;
@@ -222,7 +215,7 @@ export class MainScene extends Phaser.Scene {
       this.actors[0].actions = [{type: "wait", energy: 100}];
     });
     this.input.keyboard.on("keydown_B", () => {
-      this.inventory.toggle();
+      this.hud.inventory.toggle();
     });
     this.input.keyboard.on("keydown_G", () => {
       this.pickup_item();
@@ -232,7 +225,7 @@ export class MainScene extends Phaser.Scene {
         this.enter_target_mode();
       }
       else if (this.input_mode == InputMode.TARGET) {
-        this.buttons_base[3].setTexture("UIImages/button_small_up");
+        this.hud.buttons_base[3].setTexture("UIImages/button_small_up");
         this.input_mode = InputMode.NORMAL;
         this.target_render.visible = false;
       }
@@ -286,15 +279,15 @@ export class MainScene extends Phaser.Scene {
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
       if (this.down_button >= 0) {
-        this.buttons_base[this.down_button].setTexture("UIImages/button_small_up");
+        this.hud.buttons_base[this.down_button].setTexture("UIImages/button_small_up");
       }
 
       if (this.scrolled && Math.abs(this.scrolled_x) + Math.abs(this.scrolled_y) > 5) {
         return;
       }
 
-      if (this.inventory.showing) {
-        this.inventory.hide();
+      if (this.hud.inventory.showing) {
+        this.hud.inventory.hide();
       } else {
         if (this.input_mode == InputMode.NORMAL) {
           mouse_click_normal(this, pointer, this.cameras.main, this.actors, this.grid);
@@ -316,134 +309,10 @@ export class MainScene extends Phaser.Scene {
 
     // ----- UI -----
 
-    // health
-    this.health_comps = {};
-    this.health_comps["bg"] = this.add.image(0, 0, "health_background");
-    this.health_comps["fill"] = this.add.image(0, 0, "health_fill");
-    this.health_comps["cover"] = new NinePatch(this, 0, 0, 74, 40, "status_cover", null, {
-      top: 0,
-      bottom: 0,
-      left: 11,
-      right: 11
-    });
-    this.add.existing(this.health_comps["cover"]);
-
-    // cognition
-    this.cog_comps = {};
-    this.cog_comps["bg"] = this.add.image(0, 0, "health_background");
-    this.cog_comps["fill"] = this.add.image(0, 0, "cog_fill");
-    this.cog_comps["cover"] = new NinePatch(this, 0, 0, 74, 40, "status_cover", null, {
-      top: 0,
-      bottom: 0,
-      left: 11,
-      right: 11
-    });
-    this.add.existing(this.cog_comps["cover"]);
-
-    for (let key in this.health_comps) {
-      this.health_comps[key].y = TILE_SIZE / 2;
-      if (key != "cover") {
-        this.health_comps[key].displayHeight = TILE_SIZE / 2;
-      }
-      this.health_comps[key].setScrollFactor(0);
-      this.health_comps[key].depth = HUD_DEPTH;
-    }
-    for (let key in this.cog_comps) {
-      this.cog_comps[key].y = TILE_SIZE;
-      if (key != "cover") {
-        this.cog_comps[key].displayHeight = TILE_SIZE / 2;
-      }
-      this.cog_comps[key].setScrollFactor(0);
-      this.cog_comps[key].depth = HUD_DEPTH;
-    }
-
-    this.update_bars();
-
     this.floating_texts = [];
 
-    // ----- buttons ------
-
-    let button_size = 2*TILE_SIZE;
-    let pad_size = TILE_SIZE/2;
-    let game_width = +(this.game.config.width);
-    let hud_width = 5*button_size + 6*pad_size;
-
-    if (game_width < hud_width) {
-      console.log("fixing buttons");
-      button_size *= game_width/hud_width;
-      pad_size *= game_width/hud_width;
-    }
-
-    let y = +(this.game.config.height) - pad_size - button_size/2;
-    let idx = 0;
-    let names = ["wait", "bag", "grab", "target"];
-    this.buttons_base = [];
-    this.buttons_skin = [];
-    for (let i = -2; i <= 2; i++) {
-      let x = game_width/2 +  i*(pad_size + button_size);
-      let btn_base = this.add.image(x, y, "UIImages/button_small_up");
-      btn_base.displayWidth = button_size;
-      btn_base.displayHeight = button_size;
-      btn_base.depth = BUTTONS_DEPTH;
-      btn_base.setScrollFactor(0);
-      btn_base.setInteractive()
-
-      this.buttons_base.push(btn_base);
-
-      let key = idx < 4 ? "UIImages/btn_" + names[idx] + "_skin" : "fist";
-      let btn_skin = this.add.image(x, y, key);
-      if (idx < 4) {
-        btn_skin.displayWidth = button_size/2;
-        btn_skin.displayHeight = button_size/2;
-      } else {
-        btn_skin.displayWidth = button_size*0.75;
-        btn_skin.displayHeight = button_size*0.75;
-      }
-      btn_skin.depth = BUTTONS_DEPTH + 1;
-      btn_skin.setScrollFactor(0);
-
-      this.buttons_skin.push(btn_skin);
-
-      idx += 1;
-    }
-
-    this.buttons_base[0].on('pointerdown', (p,lx,ly,ev) => {
-      this.buttons_base[0].setTexture("UIImages/button_small_down");
-      this.down_button = 0;
-      ev.stopPropagation();
-    });
-    this.buttons_base[1].on('pointerdown', (p,lx,ly,ev) => {
-      this.buttons_base[1].setTexture("UIImages/button_small_down");
-      this.down_button = 1;
-      ev.stopPropagation();
-    });
-    this.buttons_base[2].on('pointerdown', (p,lx,ly,ev) => {
-      this.buttons_base[2].setTexture("UIImages/button_small_down");
-      this.down_button = 2;
-      ev.stopPropagation();
-    });
-    this.buttons_base[3].on('pointerdown', (p,lx,ly,ev) => {
-      this.buttons_base[3].setTexture("UIImages/button_small_down");
-      this.down_button = 3;
-      ev.stopPropagation();
-    });
-    this.buttons_base[4].on('pointerdown', (p,lx,ly,ev) => {
-      this.buttons_base[4].setTexture("UIImages/button_small_down");
-      this.down_button = 4;
-      ev.stopPropagation();
-    });
-    this.buttons_base[0].on('pointerup', this.click_wait, this);
-    this.buttons_base[1].on('pointerup', this.click_bag, this);
-    this.buttons_base[2].on('pointerup', this.click_grab, this);
-    this.buttons_base[3].on('pointerup', this.click_target, this);
-    this.buttons_base[4].on('pointerup', this.click_attack, this);
-
-    this.inventory = data.inventory;
-    if (this.inventory == undefined || this.inventory == null) {
-      this.inventory = new Inventory(this);
-    } else {
-      this.inventory.init_textures(this);
-    }
+    this.hud = new HUDScene(this, data.inventory);
+    this.scene.add("HUDScene", this.hud, true);
   }
 
   setZoom(dz: number): void {
@@ -479,67 +348,9 @@ export class MainScene extends Phaser.Scene {
     this.grid.vis_layer = tilemap.createDynamicLayer(0, tileset);
   }
 
-  click_wait(pointer, localX, localY, event) {
-    if (this.down_button < 0) {
-      return;
-    }
-    this.actors[0].actions = [{type: "wait", energy: 100}];
-    this.buttons_base[0].setTexture("UIImages/button_small_up");
-    event.stopPropagation();
-  }
-
-  click_bag(pointer, localX, localY, event) {
-    if (this.down_button < 0) {
-      return;
-    }
-    this.inventory.toggle();
-    this.buttons_base[1].setTexture("UIImages/button_small_up");
-    event.stopPropagation();
-  }
-
-  click_grab(pointer, localX, localY, event) {
-    if (this.down_button < 0) {
-      return;
-    }
-    this.pickup_item();
-    this.buttons_base[2].setTexture("UIImages/button_small_up");
-    event.stopPropagation();
-  }
-
-  click_target(pointer, localX, localY, event) {
-    if (this.down_button < 0) {
-      return;
-    }
-    if (this.input_mode == InputMode.NORMAL) {
-      this.enter_target_mode();
-    }
-    else if (this.input_mode == InputMode.TARGET) {
-      this.buttons_base[3].setTexture("UIImages/button_small_up");
-      this.input_mode = InputMode.NORMAL;
-      this.target_render.visible = false;
-    }
-    else if (this.input_mode == InputMode.THROW_TGT) {
-      console.log("I don't know what to do with throw tgt mode -> target click");
-    }
-    else {
-      console.log("UNKNOWN INPUT MODE!!! " + this.input_mode);
-    }
-
-    event.stopPropagation();
-  }
-
-  click_attack(pointer, localX, localY, event) {
-    if (this.down_button < 0) {
-      return;
-    }
-    this.attack();
-
-    this.buttons_base[4].setTexture("UIImages/button_small_up");
-    event.stopPropagation();
-  }
 
   enter_target_mode(): void {
-    this.buttons_base[3].setTexture("UIImages/button_small_checked");
+    this.hud.buttons_base[3].setTexture("UIImages/button_small_checked");
     this.input_mode = InputMode.TARGET;
     this.target_render.visible = true;
 
@@ -560,39 +371,13 @@ export class MainScene extends Phaser.Scene {
     this.target_render.y = ry;
   }
 
-  update_bars() {
-    let max_width = +(this.game.config.width) - TILE_SIZE;
-    const full_width_hps = 50;
-
-    // health
-    let hb_w_max = this.actors[0].max_health * max_width / full_width_hps;
-    let hb_w_cur = this.actors[0].health * max_width / full_width_hps;
-
-    this.health_comps["bg"].displayWidth = hb_w_max;
-    this.health_comps["bg"].x = hb_w_max/2 + TILE_SIZE/2;
-    this.health_comps["fill"].displayWidth = hb_w_cur;
-    this.health_comps["fill"].x = hb_w_cur/2 + TILE_SIZE/2;
-    this.health_comps["cover"].resize(hb_w_max, TILE_SIZE/2);
-    this.health_comps["cover"].x = hb_w_max/2 + TILE_SIZE/2;
-
-    // cognition
-    let cb_w_max = this.actors[0].max_cognition * max_width / full_width_hps;
-    let cb_w_cur = this.actors[0].cognition * max_width / full_width_hps;
-
-    this.cog_comps["bg"].displayWidth = cb_w_max;
-    this.cog_comps["bg"].x = cb_w_max/2 + TILE_SIZE/2;
-    this.cog_comps["fill"].displayWidth = cb_w_cur;
-    this.cog_comps["fill"].x = cb_w_cur/2 + TILE_SIZE/2;
-    this.cog_comps["cover"].resize(cb_w_max, TILE_SIZE/2);
-    this.cog_comps["cover"].x = cb_w_max/2 + TILE_SIZE/2;
-  }
 
   new_floating_text(text: string, x: number, y: number, style: string, delay = 0) {
     this.floating_texts.push(new FloatingText(this, text, x, y, style, delay));
   }
 
   attack(): void {
-    let weapon = this.inventory.get_weapon();
+    let weapon = this.hud.inventory.get_weapon();
     let weapon_name = "fist";
     if (weapon != null) {
       weapon_name = weapon.name;
@@ -609,7 +394,7 @@ export class MainScene extends Phaser.Scene {
           this.target_x,
           this.target_y);
         this.input_mode = InputMode.NORMAL;
-        this.buttons_base[3].setTexture("UIImages/button_small_up");
+        this.hud.buttons_base[3].setTexture("UIImages/button_small_up");
         this.target_render.visible = false;
       }
       else {
@@ -657,7 +442,7 @@ export class MainScene extends Phaser.Scene {
         player.health = Math.min(player.health + heal_amount, max_health);
 
         this.items[id].alive = false;
-        this.update_bars();
+        this.hud.update_bars();
         this.new_floating_text(heal_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "health");
         return true;
       }
@@ -668,7 +453,7 @@ export class MainScene extends Phaser.Scene {
         player.cognition = Math.min(player.cognition + cog_amount, max_cognition);
 
         this.items[id].alive = false;
-        this.update_bars();
+        this.hud.update_bars();
         this.new_floating_text(cog_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "cognition");
         player.update_vision_size();
         this.grid.update_visibility(player.tx, player.ty, player.vision_dist);
@@ -686,7 +471,7 @@ export class MainScene extends Phaser.Scene {
         player.cognition = Math.min(player.cognition + cog_amount, max_cognition);
 
         this.items[id].alive = false;
-        this.update_bars();
+        this.hud.update_bars();
         this.new_floating_text(heal_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "health");
         this.new_floating_text(cog_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "cognition", 0.3);
         player.update_vision_size();
@@ -695,7 +480,7 @@ export class MainScene extends Phaser.Scene {
         return true;
       }
       else {
-        if (this.inventory.try_add(this.items[id])) {
+        if (this.hud.inventory.try_add(this.items[id])) {
           let added = this.items.splice(id, 1);
           return true;
         }

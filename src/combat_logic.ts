@@ -33,7 +33,7 @@ export function damage_actor(
 
   // --- UPDATE VISUALS ---
 
-  scene.update_bars();
+  scene.hud.update_bars();
 
   dst_actor.update_vision_size();
 
@@ -48,6 +48,7 @@ export function damage_actor(
 
     if (dst_actor.is_player) {
       console.log("PLAYER DIED!");
+      scene.scene.remove("HUDScene");
       scene.scene.start("DeathScene", {killed_by: src_actor.display_name});
     }
   }

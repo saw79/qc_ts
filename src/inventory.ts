@@ -107,7 +107,7 @@ export class Inventory {
 
     if (this.equip_items[0][0] != null) {
       let weapon_name = this.equip_items[0][0].name;
-      this.scene.buttons_skin[4].setTexture(weapon_name);
+      this.scene.hud.buttons_skin[4].setTexture(weapon_name);
     }
 
     this.inv_bgs = new Array(INV_ROWS);
@@ -578,7 +578,7 @@ export class Inventory {
         this.scene.target_x,
         this.scene.target_y);
       this.scene.input_mode = InputMode.NORMAL;
-      this.scene.buttons_base[3].setTexture("UIImages/button_small_up");
+      this.scene.hud.buttons_base[3].setTexture("UIImages/button_small_up");
       this.scene.target_render.visible = false;
     } else {
       this.scene.input_mode = InputMode.THROW_TGT;
@@ -619,13 +619,13 @@ export class Inventory {
 
   equip_weapon(): void {
     let weapon_name = this.equip_items[0][0].name;
-    this.scene.buttons_skin[4].setTexture(weapon_name);
+    this.scene.hud.buttons_skin[4].setTexture(weapon_name);
 
     this.recalc_weapon_stats();
   }
 
   unequip_weapon(): void {
-    this.scene.buttons_skin[4].setTexture("fist");
+    this.scene.hud.buttons_skin[4].setTexture("fist");
 
     this.recalc_weapon_stats();
   }

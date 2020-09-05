@@ -126,8 +126,8 @@ export function initiate_throw(
     }
   }
 
-  let [r, c, is_equip] = scene.inventory.throw_select;
-  let item = scene.inventory.remove_item(r, c, is_equip);
+  let [r, c, is_equip] = scene.hud.inventory.throw_select;
+  let item = scene.hud.inventory.remove_item(r, c, is_equip);
   let [dest_rx, dest_ry] = tile_to_render_coords(dest[0], dest[1]);
 
   let proj = new Projectile(scene, item, scene.actors[0].rx, scene.actors[0].ry, dest_rx, dest_ry);
@@ -145,10 +145,10 @@ export function initiate_throw(
 
   if (is_equip) {
     if (r == 0 && c == 0) {
-      scene.inventory.unequip_weapon();
+      scene.hud.inventory.unequip_weapon();
     }
     else if (r == 0 && c == 1) {
-      scene.inventory.unequip_armor();
+      scene.hud.inventory.unequip_armor();
     }
     else {
       console.log("UNIMPLEMNTED UNEQUIP r/c = " + r + ", " + c);
@@ -191,7 +191,7 @@ export function initiate_shot(
   let [dest_rx, dest_ry] = tile_to_render_coords(dest[0], dest[1]);
 
   let proj_texture = "bullet";
-  let weapon = scene.inventory.get_weapon();
+  let weapon = scene.hud.inventory.get_weapon();
   let weapon_name = weapon == null ? "fist" : weapon.name;
   if (weapon_name == "railgun" ||
       weapon_name == "electrified_railgun" ||

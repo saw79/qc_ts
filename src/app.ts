@@ -1,7 +1,6 @@
 import "phaser";
 import {MenuScene} from "./menu_scene";
 import {MainScene} from "./main_scene";
-import {HUDScene} from "./hud_scene";
 import {TransitionScene} from "./transition_scene";
 import {DeathScene} from "./death_scene";
 
@@ -19,7 +18,7 @@ const config = {
   scale: {
     mode: Phaser.Scale.FIT,
   },
-  scene: [MenuScene, MainScene, HUDScene, TransitionScene, DeathScene],
+  scene: [MenuScene, MainScene, TransitionScene, DeathScene],
   backgroundColor: "#000000",
   plugins: {
     global: [
