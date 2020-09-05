@@ -8,6 +8,9 @@ export const BUTTONS_DEPTH: number = 100;
 export const HUD_DEPTH: number = 100;
 export const INV_DEPTH: number = 110;
 
+export const MIN_ZOOM: number = 0.4;
+export const MAX_ZOOM: number = 4;
+
 // MOTION
 
 export const MOVE_SPEED: number = 320;

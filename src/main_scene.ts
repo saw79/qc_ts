@@ -3,7 +3,7 @@ import "phaser";
 import * as PF from "pathfinding";
 import {NinePatch} from "@koreez/phaser3-ninepatch";
 
-import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
+import {TILE_SIZE, TARGET_DEPTH, BUTTONS_DEPTH, HUD_DEPTH, MIN_ZOOM, MAX_ZOOM} from "./constants";
 import {TileGrid} from "./tile_grid";
 import {generate_bsp} from "./level_gen";
 import {Actor} from "./actor";
@@ -265,9 +265,15 @@ export class MainScene extends Phaser.Scene {
         let dist1 = Math.sqrt(dx1*dx1 + dy1*dy1);
 
         if (dist1 > dist0) {
-          this.cameras.main.setZoom(this.cameras.main.zoom + 0.005);
+          this.cameras.main.setZoom(this.cameras.main.zoom + 0.01);
+          if (this.cameras.main.zoom > MAX_ZOOM) {
+            this.cameras.main.setZoom(MAX_ZOOM);
+          }
         } else {
-          this.cameras.main.setZoom(this.cameras.main.zoom - 0.005);
+          this.cameras.main.setZoom(this.cameras.main.zoom - 0.01);
+          if (this.cameras.main.zoom < MIN_ZOOM) {
+            this.cameras.main.setZoom(MIN_ZOOM);
+          }
         }
 
         return;
@@ -315,6 +321,13 @@ export class MainScene extends Phaser.Scene {
     });
     this.input.on("wheel", (pointer, objs, dx, dy, dz) => {
       this.cameras.main.setZoom(this.cameras.main.zoom - dy/1000);
+      console.log(this.cameras.main.zoom);
+      if (this.cameras.main.zoom < MIN_ZOOM) {
+        this.cameras.main.setZoom(MIN_ZOOM);
+      }
+      if (this.cameras.main.zoom > MAX_ZOOM) {
+        this.cameras.main.setZoom(MAX_ZOOM);
+      }
     });
 
     // ----- UI -----
