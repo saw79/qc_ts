@@ -47,7 +47,6 @@ export class MainScene extends Phaser.Scene {
   scrolled_x: number;
   scrolled_y: number;
   down_button: number;
-  pointer_states: Array<[number, number]>;
 
   input_mode: InputMode;
 
@@ -74,7 +73,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(data): void {
-    this.debug_str = ["", ""];
+    this.debug_str = ["", "", ""];
     this.debug_txt = this.add.text(100, 100, "", { color: "blue", stroke: "blue", fontSize: 36});
     this.debug_txt.setScrollFactor(0);
 
@@ -203,8 +202,6 @@ export class MainScene extends Phaser.Scene {
     this.target_x = 0;
     this.target_y = 0;
 
-    this.pointer_states = [null, null];
-
     const cursors = this.input.keyboard.createCursorKeys();
     this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
       camera: this.cameras.main,
@@ -250,7 +247,7 @@ export class MainScene extends Phaser.Scene {
       this.scrolled_y = 0;
       this.down_button = -1;
 
-      this.debug_str[pointer.id] = Math.round(pointer.x).toString() + ", " + Math.round(pointer.y).toString();
+      this.debug_str[pointer.id] = pointer.id.toString() + ": " + Math.round(pointer.x).toString() + ", " + Math.round(pointer.y).toString();
       this.debug_txt.setText(this.debug_str);
     });
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
@@ -267,7 +264,7 @@ export class MainScene extends Phaser.Scene {
       this.scrolled_y += dy;
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      this.debug_str[pointer.id] = "up";
+      this.debug_str[pointer.id] = pointer.id.toString() + ": up";
       this.debug_txt.setText(this.debug_str);
       if (this.down_button >= 0) {
         this.buttons_base[this.down_button].setTexture("UIImages/button_small_up");
