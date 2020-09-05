@@ -265,9 +265,9 @@ export class MainScene extends Phaser.Scene {
         let dist1 = Math.sqrt(dx1*dx1 + dy1*dy1);
 
         if (dist1 > dist0) {
-          this.cameras.main.setZoom(this.cameras.main.zoom + 0.05);
+          this.cameras.main.setZoom(this.cameras.main.zoom + 0.005);
         } else {
-          this.cameras.main.setZoom(this.cameras.main.zoom - 0.05);
+          this.cameras.main.setZoom(this.cameras.main.zoom - 0.005);
         }
 
         return;

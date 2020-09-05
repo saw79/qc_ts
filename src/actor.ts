@@ -112,6 +112,7 @@ export class Actor {
       this.vision_comp.depth = ACTOR_DEPTH + 1;
     }
 
+    this.update_anim_and_vision(false);
     this.update_health_bar_width();
     this.update_vision_size();
 
