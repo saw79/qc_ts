@@ -73,8 +73,9 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(data): void {
-    this.debug_str = ["", "", ""];
+    this.debug_str = ["0: up", "1: up", "2: up"];
     this.debug_txt = this.add.text(100, 100, "", { color: "blue", stroke: "blue", fontSize: 36});
+    this.debug_txt.setText(this.debug_str.join("\n"));
     this.debug_txt.setScrollFactor(0);
     this.debug_txt.depth = 3000;
 
@@ -249,7 +250,7 @@ export class MainScene extends Phaser.Scene {
       this.down_button = -1;
 
       this.debug_str[pointer.id] = pointer.id.toString() + ": " + Math.round(pointer.x).toString() + ", " + Math.round(pointer.y).toString();
-      this.debug_txt.setText(this.debug_str);
+      this.debug_txt.setText(this.debug_str.join("\n"));
     });
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
       if (!pointer.isDown) {
@@ -266,7 +267,7 @@ export class MainScene extends Phaser.Scene {
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
       this.debug_str[pointer.id] = pointer.id.toString() + ": up";
-      this.debug_txt.setText(this.debug_str);
+      this.debug_txt.setText(this.debug_str.join("\n"));
       if (this.down_button >= 0) {
         this.buttons_base[this.down_button].setTexture("UIImages/button_small_up");
       }
