@@ -214,6 +214,8 @@ export class MainScene extends Phaser.Scene {
       speed: 0.5
     });
 
+    this.input.addPointer();
+
     this.input.keyboard.on("keydown_W", () => {
       this.actors[0].actions = [{type: "wait", energy: 100}];
     });
