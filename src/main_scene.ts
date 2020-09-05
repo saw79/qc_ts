@@ -255,6 +255,24 @@ export class MainScene extends Phaser.Scene {
       this.debug_txt.setText(this.debug_str.join("\n"));
     });
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+      if (this.input.pointer1.isDown && this.input.pointer2.isDown) {
+        let other_pointer = pointer.id == 1 ?  this.input.pointer2 : this.input.pointer1;
+        let dx0 = pointer.prevPosition.x - other_pointer.x;
+        let dy0 = pointer.prevPosition.y - other_pointer.y;
+        let dist0 = Math.sqrt(dx0*dx0 + dy0*dy0);
+        let dx1 = pointer.x - other_pointer.x;
+        let dy1 = pointer.y - other_pointer.y;
+        let dist1 = Math.sqrt(dx1*dx1 + dy1*dy1);
+
+        if (dist1 > dist0) {
+          this.cameras.main.setZoom(this.cameras.main.zoom + 0.05);
+        } else {
+          this.cameras.main.setZoom(this.cameras.main.zoom - 0.05);
+        }
+
+        return;
+      }
+
       if (!pointer.isDown) {
         return;
       }
