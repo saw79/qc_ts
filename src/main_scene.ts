@@ -62,8 +62,8 @@ export class MainScene extends Phaser.Scene {
   level_num: number;
   level_store: Array<LevelInfo>;
 
-  debug_str: Array<string>;
-  debug_txt: Phaser.GameObjects.Text;
+  //debug_str: Array<string>;
+  //debug_txt: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: "MainScene"});
@@ -73,11 +73,13 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(data): void {
+    /*
     this.debug_str = ["0: up", "1: up", "2: up"];
     this.debug_txt = this.add.text(100, 100, "", { color: "blue", stroke: "blue", fontSize: 36});
     this.debug_txt.setText(this.debug_str.join("\n"));
     this.debug_txt.setScrollFactor(0);
     this.debug_txt.depth = 3000;
+    */
 
     this.level_num = data.level_num;
     this.level_store = data.level_store;
@@ -250,9 +252,6 @@ export class MainScene extends Phaser.Scene {
       this.scrolled_x = 0;
       this.scrolled_y = 0;
       this.down_button = -1;
-
-      this.debug_str[pointer.id] = pointer.id.toString() + ": " + Math.round(pointer.x).toString() + ", " + Math.round(pointer.y).toString();
-      this.debug_txt.setText(this.debug_str.join("\n"));
     });
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
       if (this.input.pointer1.isDown && this.input.pointer2.isDown) {
@@ -265,15 +264,9 @@ export class MainScene extends Phaser.Scene {
         let dist1 = Math.sqrt(dx1*dx1 + dy1*dy1);
 
         if (dist1 > dist0) {
-          this.cameras.main.setZoom(this.cameras.main.zoom + 0.01);
-          if (this.cameras.main.zoom > MAX_ZOOM) {
-            this.cameras.main.setZoom(MAX_ZOOM);
-          }
+          this.setZoom(0.05);
         } else {
-          this.cameras.main.setZoom(this.cameras.main.zoom - 0.01);
-          if (this.cameras.main.zoom < MIN_ZOOM) {
-            this.cameras.main.setZoom(MIN_ZOOM);
-          }
+          this.setZoom(-0.05);
         }
 
         return;
@@ -292,8 +285,6 @@ export class MainScene extends Phaser.Scene {
       this.scrolled_y += dy;
     });
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      this.debug_str[pointer.id] = pointer.id.toString() + ": up";
-      this.debug_txt.setText(this.debug_str.join("\n"));
       if (this.down_button >= 0) {
         this.buttons_base[this.down_button].setTexture("UIImages/button_small_up");
       }
@@ -320,14 +311,7 @@ export class MainScene extends Phaser.Scene {
       }
     });
     this.input.on("wheel", (pointer, objs, dx, dy, dz) => {
-      this.cameras.main.setZoom(this.cameras.main.zoom - dy/1000);
-      console.log(this.cameras.main.zoom);
-      if (this.cameras.main.zoom < MIN_ZOOM) {
-        this.cameras.main.setZoom(MIN_ZOOM);
-      }
-      if (this.cameras.main.zoom > MAX_ZOOM) {
-        this.cameras.main.setZoom(MAX_ZOOM);
-      }
+      this.setZoom(-dy/1000);
     });
 
     // ----- UI -----
@@ -459,6 +443,16 @@ export class MainScene extends Phaser.Scene {
       this.inventory = new Inventory(this);
     } else {
       this.inventory.init_textures(this);
+    }
+  }
+
+  setZoom(dz: number): void {
+    this.cameras.main.setZoom(this.cameras.main.zoom + dz);
+    if (this.cameras.main.zoom < MIN_ZOOM) {
+      this.cameras.main.setZoom(MIN_ZOOM);
+    }
+    if (this.cameras.main.zoom > MAX_ZOOM) {
+      this.cameras.main.setZoom(MAX_ZOOM);
     }
   }
 

@@ -8,8 +8,6 @@ export class DeathScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image("up", "assets/sprites/UIImages/button_wide_up.png");
-    this.load.image("down", "assets/sprites/UIImages/button_wide_down.png");
   }
 
   create(data): void {
