@@ -50,6 +50,8 @@ export function process_turns(scene: MainScene): void {
       action = get_action_ai(scene, scene.actors, curr_turn, scene.grid);
     }
     else {
+      abort_because_new_enemy(scene);
+
       if (actor.motions.length > 1) {
         success = false;
       } else {
@@ -164,35 +166,6 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       if (actors[curr_turn].is_player) {
         update_vis = true;
         scene.update_entity_visibility();
-
-        // if we see NEW enemy, remove rest of path
-        let abort_queue = false;
-        if (scene.grid.sees_enemy && !scene.grid.prev_sees_enemy) {
-          abort_queue = true;
-        }
-
-        scene.grid.prev_sees_enemy = scene.grid.sees_enemy;
-        scene.grid.sees_enemy = false;
-
-        // if in enemy vision, remove rest of path
-        let player_x = actors[0].tx;
-        let player_y = actors[0].ty;
-        for (let i = 1; i < actors.length; i++) {
-          let enemy_x = actors[i].tx;
-          let enemy_y = actors[i].ty;
-          let vision_dist = actors[i].vision_dist;
-          let dir = actors[i].dir;
-
-          if (scene.grid.visible_from_to(enemy_x, enemy_y, player_x, player_y, vision_dist, dir)) {
-            abort_queue = true;
-            break;
-          }
-        }
-
-        if (abort_queue) {
-          actors[0].path = [];
-          actors[0].target = null;
-        }
       }
 
       if (update_vis) {
@@ -212,5 +185,22 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       actors[curr_turn].energy -= action.energy;
       scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
       return;
+  }
+}
+
+function abort_because_new_enemy(scene: MainScene): void {
+  // if we see NEW enemy, remove rest of path
+  scene.grid.prev_sees_enemy = scene.grid.sees_enemy;
+  scene.grid.sees_enemy = false;
+  for (let i = 1; i < scene.actors.length; i++) {
+    if (scene.actors[i].render_comp.visible) {
+      scene.grid.sees_enemy = true;
+      break;
+    }
+  }
+
+  if (scene.grid.sees_enemy && !scene.grid.prev_sees_enemy) {
+    scene.actors[0].path = [];
+    scene.actors[0].target = null;
   }
 }

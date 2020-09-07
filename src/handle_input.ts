@@ -90,7 +90,26 @@ export function mouse_click_normal(
         }
         else if (path.length >= 2) {
           path.shift();
-          actors[0].path = path;
+
+          // if in enemy vision, only add 1st path component
+          let in_enemy_vision = false;
+          for (let i = 1; i < scene.actors.length; i++) {
+            let enemy_x = scene.actors[i].tx;
+            let enemy_y = scene.actors[i].ty;
+            let vision_dist = scene.actors[i].vision_dist;
+            let dir = scene.actors[i].dir;
+
+            if (scene.grid.visible_from_to(enemy_x, enemy_y, player_x, player_y, vision_dist, dir)) {
+              in_enemy_vision = true;
+              break;
+            }
+          }
+
+          if (in_enemy_vision) {
+            actors[0].path = [path[0]];
+          } else {
+            actors[0].path = path;
+          }
         }
         else {
           console.log("path length 0 | 1 ???");
