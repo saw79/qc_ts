@@ -31,9 +31,11 @@ function move_actor(actor: Actor, grid: TileGrid, delta_ms: number) {
 
   if (curr_dist < move_dist) {
     actor.move(x1, y1, grid);
-    actor.prev_move_dir = "stop";
-    actor.render_comp.anims.stop();
     actor.motions.shift();
+    if (actor.motions.length == 0) {
+      actor.prev_move_dir = "stop";
+      actor.render_comp.anims.stop();
+    }
   } else {
     x1 = x0 + dx / curr_dist * move_dist;
     y1 = y0 + dy / curr_dist * move_dist;
