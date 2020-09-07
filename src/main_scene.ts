@@ -30,7 +30,6 @@ export class LevelInfo {
 }
 
 export class MainScene extends Phaser.Scene {
-  controls: Phaser.Cameras.Controls.FixedKeyControl;
   actors: Array<Actor>;
   curr_turn: number;
   grid: TileGrid;
@@ -198,16 +197,6 @@ export class MainScene extends Phaser.Scene {
     this.target_render.visible = false;
     this.target_x = 0;
     this.target_y = 0;
-
-    const cursors = this.input.keyboard.createCursorKeys();
-    this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
-      camera: this.cameras.main,
-      left: cursors.left,
-      right: cursors.right,
-      up: cursors.up,
-      down: cursors.down,
-      speed: 0.5
-    });
 
     this.input.addPointer();
 
@@ -496,10 +485,6 @@ export class MainScene extends Phaser.Scene {
   }
 
   update(_time: number, delta_ms: number): void {
-    // input - note we have a callback defined in create
-    this.controls.update(delta_ms)
-
-    // logic
     if (this.projectiles.length == 0) {
       process_turns(this);
     }
