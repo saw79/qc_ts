@@ -2,7 +2,7 @@ import * as PF from "pathfinding";
 
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
-import {Direction, tile_to_render_coords, actor_at} from "./util";
+import {tile_to_render_coords, actor_at, is_in_enemy_vision} from "./util";
 import {get_action_ai} from "./ai_logic";
 import {TileType, TileGrid} from "./tile_grid";
 import {calc_combat} from "./combat_logic";
@@ -60,6 +60,8 @@ export function process_turns(scene: MainScene): void {
           [success, action] = get_action_path(scene.actors, curr_turn);
         }
       }
+
+      abort_target_in_vision(scene);
     }
 
     // --- PROCESS ACTION ---
@@ -200,6 +202,13 @@ function abort_because_new_enemy(scene: MainScene): void {
   }
 
   if (scene.grid.sees_enemy && !scene.grid.prev_sees_enemy) {
+    scene.actors[0].path = [];
+    scene.actors[0].target = null;
+  }
+}
+
+function abort_target_in_vision(scene: MainScene): void {
+  if (is_in_enemy_vision(scene, scene.actors[0].tx, scene.actors[0].ty)) {
     scene.actors[0].path = [];
     scene.actors[0].target = null;
   }

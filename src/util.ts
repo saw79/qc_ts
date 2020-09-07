@@ -133,3 +133,18 @@ export function closest_actor(grid: TileGrid, actors: Array<Actor>, pl_x: number
 
   return best_actor;
 }
+
+export function is_in_enemy_vision(scene: MainScene, player_x: number, player_y: number): boolean {
+  for (let i = 1; i < scene.actors.length; i++) {
+    let enemy_x = scene.actors[i].tx;
+    let enemy_y = scene.actors[i].ty;
+    let vision_dist = scene.actors[i].vision_dist;
+    let dir = scene.actors[i].dir;
+
+    if (scene.grid.visible_from_to(enemy_x, enemy_y, player_x, player_y, vision_dist, dir)) {
+      return true;
+    }
+  }
+
+  return false;
+}

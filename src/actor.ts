@@ -52,6 +52,8 @@ export class Actor {
   alert_state: AlertState;
   alert_comps: Record<AlertState, any>;
   last_seen: [number, number];
+  spin_start: Direction;
+  spin_dir: number;
 
   constructor(scene: MainScene, name: string, x: number, y: number) {
     this.name = name;

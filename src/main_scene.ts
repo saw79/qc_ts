@@ -79,14 +79,14 @@ export class MainScene extends Phaser.Scene {
       this.level_store = [];
     }
 
-    console.log("CREATING LEVEL " + this.level_num);
-
     let loaded_level = false;
     if (this.level_num >= this.level_store.length) {
+      console.log("CREATING level " + this.level_num);
       this.create_level_grid();
       this.items = [];
       this.actors = [];
     } else {
+      console.log("LOADING level " + this.level_num);
       this.grid = this.level_store[this.level_num].grid;
       this.items = this.level_store[this.level_num].items;
       this.actors = this.level_store[this.level_num].enemies;
@@ -141,14 +141,11 @@ export class MainScene extends Phaser.Scene {
 
     this.actors.unshift(player);
 
-    //player.camera.setZoom(0.5);
-
     let num_enemies = this.level_num*2 + 1;
     let num_orbs = 6;
     let num_items = 1;
 
     if (!loaded_level) {
-      console.log("Creating enemies");
       for (let i = 0; i < num_enemies; i++) {
         let [x, y] = util.rand_tile_no_actor(this, excludes=excludes);
         this.actors.push(factory.create_random_enemy(this, x, y));
@@ -158,8 +155,6 @@ export class MainScene extends Phaser.Scene {
     this.curr_turn = 0;
 
     // ----- create items -----
-
-    console.log("Creating items");
 
     if (!loaded_level) {
       for (let i = 0; i < num_orbs; i++) {
@@ -427,6 +422,8 @@ export class MainScene extends Phaser.Scene {
         let heal_amount = Math.round(0.4 * max_health);
         player.health = Math.min(player.health + heal_amount, max_health);
 
+        player.energy -= 100;
+
         this.items[id].alive = false;
         this.hud.update_bars();
         this.new_floating_text(heal_amount.toString(), player.rx, player.ry - TILE_SIZE/2, "health");
@@ -437,6 +434,8 @@ export class MainScene extends Phaser.Scene {
         let max_cognition = player.max_cognition;
         let cog_amount = Math.round(0.4 * max_cognition);
         player.cognition = Math.min(player.cognition + cog_amount, max_cognition);
+
+        player.energy -= 100;
 
         this.items[id].alive = false;
         this.hud.update_bars();
@@ -451,6 +450,8 @@ export class MainScene extends Phaser.Scene {
         let max_health = player.max_health;
         let heal_amount = Math.round(0.4 * max_health);
         player.health = Math.min(player.health + heal_amount, max_health);
+
+        player.energy -= 100;
 
         let max_cognition = player.max_cognition;
         let cog_amount = Math.round(0.4 * max_cognition);

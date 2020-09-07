@@ -83,12 +83,14 @@ export class TileGrid {
 
   update_visibility(x0: number, y0: number, radius: number): void {
     /*
+    // DEBUG - ALWAYS VISIBLE
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
         this.visibility[y][x] = Visibility.VISIBLE;
       }
     }
     return;
+    // DEBUG - ALWAYS VISIBLE
     */
 
     for (let x = 0; x < this.width; x++) {

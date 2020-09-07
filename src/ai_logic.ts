@@ -35,6 +35,7 @@ export function get_action_ai(scene: MainScene, actors: Array<Actor>, curr_turn:
 }
 
 function get_move_aware(scene: MainScene, actors: Array<Actor>, curr_turn: number, grid: TileGrid): Action {
+  actors[curr_turn].spin_start = null;
   let [tgtx, tgty] = [actors[0].tx, actors[0].ty];
 
   if (actors[curr_turn].ranged) {
@@ -58,25 +59,49 @@ function get_move_aware(scene: MainScene, actors: Array<Actor>, curr_turn: numbe
 }
 
 function get_move_search(actors: Array<Actor>, curr_turn: number, grid: TileGrid): Action {
-  let [tgtx, tgty] = [actors[0].tx, actors[0].ty];
+  let [tgtx, tgty] = actors[curr_turn].last_seen;
+
+  if (actors[curr_turn].tx == tgtx && actors[curr_turn].ty == tgty) {
+    if (actors[curr_turn].spin_start == null) {
+      actors[curr_turn].spin_start = actors[curr_turn].dir;
+      actors[curr_turn].spin_dir = rand_int(2);
+    }
+
+    actors[curr_turn].dir = next_dir(actors[curr_turn].dir, actors[curr_turn].spin_dir);
+
+    if (actors[curr_turn].dir == actors[curr_turn].spin_start) {
+      actors[curr_turn].alert_state = AlertState.PATROL;
+    }
+
+    actors[curr_turn].update_anim_and_vision(false);
+    return {type: "wait", energy: 100};
+  }
 
   let pfgrid_clone = grid.pfgrid.clone();
   let path = new PF.AStarFinder({allowDiagonal: true}).findPath(
     actors[curr_turn].tx, actors[curr_turn].ty, tgtx, tgty, pfgrid_clone);
   
-  if (path[0] === undefined) {
+  if (path[0] === undefined || path.length == 1) {
     return {type: "wait", energy: 100};
-  }
-  else if (path.length > 2) {
-    return {type: "move", x: path[1][0], y: path[1][1], energy: 100};
   }
   else {
-    actors[curr_turn].alert_state = AlertState.PATROL;
-    return {type: "wait", energy: 100};
+    return {type: "move", x: path[1][0], y: path[1][1], energy: 100};
   }
 }
 
+function next_dir(dir0: Direction, dir_dir: number): Direction {
+  if (dir_dir == 0 && dir0 == Direction.Right) { return Direction.Up; }
+  else if (dir_dir == 0 && dir0 == Direction.Up) { return Direction.Left; }
+  else if (dir_dir == 0 && dir0 == Direction.Left) { return Direction.Down; }
+  else if (dir_dir == 0 && dir0 == Direction.Down) { return Direction.Right; }
+  else if (dir0 == Direction.Right) { return Direction.Down; }
+  else if (dir0 == Direction.Down) { return Direction.Left; }
+  else if (dir0 == Direction.Left) { return Direction.Up; }
+  else { return Direction.Right; }
+}
+
 function get_move_patrol(actors: Array<Actor>, curr_turn: number, grid: TileGrid): Action {
+  actors[curr_turn].spin_start = null;
   if (rand_int(10) < 5) {
     switch (actors[curr_turn].dir) {
       case Direction.Up: return try_move(actors, curr_turn, grid, 0, -1);

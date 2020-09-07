@@ -503,6 +503,7 @@ export class Inventory {
       }
 
       this.equip_weapon();
+      this.scene.actors[0].energy -= 100;
     }
     else if (this.inv_items[ri][ci].type == ItemType.ARMOR) {
       if (this.equip_items[0][1] == null) {
@@ -512,6 +513,7 @@ export class Inventory {
       }
 
       this.equip_armor();
+      this.scene.actors[0].energy -= 100;
     }
     else {
       console.log("item type " + this.inv_items[ri][ci].type + " equip not implemented");

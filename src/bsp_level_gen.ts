@@ -2,8 +2,6 @@ import {rand_int, rand_range} from "./util";
 import {TileType} from "./tile_grid";
 import {init_grid} from "./level_gen_util";
 
-// TODO - better halls (its a bit excessive right now, see other TODO)
-
 class Room {
   x: number;
   y: number;
@@ -111,20 +109,16 @@ export class BSPLevelGenerator {
   }
 
   create_halls(): void {
-    for (let i = 0; i < this.rooms.length; i++) {
+    for (let i = 0; i < this.rooms.length - 1; i++) {
       let connected_h = false;
       let connected_v = false;
-      for (let j = 0; j < this.rooms.length; j++) {
-        if (i == j) continue;
-
+      for (let j = i + 1; j < this.rooms.length; j++) {
         if (!connected_h &&
             this.rooms[j].y <= this.rooms[i].y + this.rooms[i].h &&
             this.rooms[j].y + this.rooms[j].h >= this.rooms[i].y) {
           this.connect_rooms_h(this.rooms[i], this.rooms[j]);
           connected_h = true;
         }
-
-        // TODO connect only 1 tile per row vertically
 
         if (!connected_v &&
             this.rooms[j].x <= this.rooms[i].x + this.rooms[i].w &&

@@ -8,7 +8,7 @@ import {Actor} from "./actor";
 import {TileGrid, TileType, Visibility} from "./tile_grid";
 import {actor_at} from "./util";
 import {initiate_shot, initiate_throw} from "./projectile";
-import {tile_to_render_coords} from "./util";
+import {tile_to_render_coords, is_in_enemy_vision} from "./util";
 import {item_stats} from "./stats";
 
 export function mouse_click_normal(
@@ -26,29 +26,31 @@ export function mouse_click_normal(
   let player_y = actors[0].ty;
 
   if (click_tile_x == player_x && click_tile_y == player_y) {
-    let [change_levels, level_num] = [false, 0];
+    let [change_levels, next_level_num] = [false, 0];
     if (player_x == scene.grid.stairs_up[0] && player_y == scene.grid.stairs_up[1]) {
-      [change_levels, level_num] = [true, scene.level_num + 1];
+      [change_levels, next_level_num] = [true, scene.level_num + 1];
     }
     if (scene.level_num > 0 &&
         player_x == scene.grid.stairs_down[0] &&
         player_y == scene.grid.stairs_down[1]) {
-      [change_levels, level_num] = [true, scene.level_num - 1];
+      [change_levels, next_level_num] = [true, scene.level_num - 1];
     }
 
     if (change_levels) {
+      let level_info = new LevelInfo();
+      level_info.grid = scene.grid;
+      level_info.items = scene.items;
+      level_info.enemies = scene.actors.slice(1);
       if (scene.level_num >= scene.level_store.length) {
-        let level_info = new LevelInfo();
-        level_info.grid = scene.grid;
-        level_info.items = scene.items;
-        level_info.enemies = scene.actors.slice(1);
         scene.level_store.push(level_info);
+      } else {
+        scene.level_store[scene.level_num] = level_info;
       }
 
       scene.scene.remove("HUDScene");
       scene.scene.start("TransitionScene", {
         prev_level_num: scene.level_num,
-        level_num: level_num,
+        level_num: next_level_num,
         player: actors[0],
         inventory: scene.hud.inventory,
         level_store: scene.level_store,
@@ -92,18 +94,7 @@ export function mouse_click_normal(
           path.shift();
 
           // if in enemy vision, only add 1st path component
-          let in_enemy_vision = false;
-          for (let i = 1; i < scene.actors.length; i++) {
-            let enemy_x = scene.actors[i].tx;
-            let enemy_y = scene.actors[i].ty;
-            let vision_dist = scene.actors[i].vision_dist;
-            let dir = scene.actors[i].dir;
-
-            if (scene.grid.visible_from_to(enemy_x, enemy_y, player_x, player_y, vision_dist, dir)) {
-              in_enemy_vision = true;
-              break;
-            }
-          }
+          let in_enemy_vision = is_in_enemy_vision(scene, player_x, player_y);
 
           if (in_enemy_vision) {
             actors[0].path = [path[0]];
