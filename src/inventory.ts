@@ -470,8 +470,8 @@ export class Inventory {
       weapon_name = this.equip_items[0][0].name;
     }
 
-    this.scene.actors[0].damage = item_stats[weapon_name]["D"];
-    this.scene.actors[0].damage_std = item_stats[weapon_name]["S"];
+    this.scene.actors[0].combat.damage = item_stats[weapon_name]["D"];
+    this.scene.actors[0].combat.damage_std = item_stats[weapon_name]["S"];
   }
 
   recalc_armor_stats(): void {
@@ -480,7 +480,7 @@ export class Inventory {
       armor_name = this.equip_items[0][1].name;
     }
 
-    this.scene.actors[0].absorption = item_stats[armor_name]["A"];
+    this.scene.actors[0].combat.absorption = item_stats[armor_name]["A"];
   }
 
   menu_equip(): void {

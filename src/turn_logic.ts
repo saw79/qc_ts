@@ -90,7 +90,9 @@ function next_turn(actors: Array<Actor>, curr_turn: number): number {
     turn2 = 0;
 
     for (let actor of actors) {
-      actor.energy += 100;
+      if (!actor.is_barrel) {
+        actor.energy += 100;
+      }
     }
   }
 
@@ -147,6 +149,12 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
         return;
       }
 
+      actors[curr_turn].tx = action.x;
+      actors[curr_turn].ty = action.y;
+      let [rx, ry] = tile_to_render_coords(action.x, action.y);
+      actors[curr_turn].motions.push([rx, ry]);
+      actors[curr_turn].energy -= action.energy;
+
       // open doors!
 
       let update_vis = false;
@@ -159,19 +167,13 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
 
       // do movement, energy, etc.
 
-      actors[curr_turn].tx = action.x;
-      actors[curr_turn].ty = action.y;
-      let [rx, ry] = tile_to_render_coords(action.x, action.y);
-      actors[curr_turn].motions.push([rx, ry]);
-      actors[curr_turn].energy -= action.energy;
-
       if (actors[curr_turn].is_player) {
         update_vis = true;
-        scene.update_entity_visibility();
       }
 
       if (update_vis) {
         scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
+        scene.update_entity_visibility();
       }
 
       return;

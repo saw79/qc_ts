@@ -6,6 +6,7 @@ import {TILE_SIZE, ACTOR_DEPTH, PLAYER_VISION, ENEMY_VISION} from "./constants";
 import {tile_to_render_coords, make_display_name} from "./util";
 import {Action} from "./turn_logic";
 import {TileGrid, Visibility} from "./tile_grid";
+import {CombatInfo} from "./combat_logic";
 
 export enum AlertState {
   PATROL,
@@ -29,6 +30,8 @@ export class Actor {
   type: number;
   prev_move_dir: string;
 
+  is_barrel: boolean;
+
   display_name: string;
 
   actions: Array<Action>;
@@ -38,14 +41,9 @@ export class Actor {
 
   energy: number;
   alive: boolean;
-  health: number;
-  max_health: number;
-  cognition: number;
-  max_cognition: number;
-  damage: number;
-  damage_std: number;
-  absorption: number;
-  dodge: number;
+
+  combat: CombatInfo;
+
   vision_dist: number;
   vision_dist_max: number;
 
@@ -55,7 +53,7 @@ export class Actor {
   spin_start: Direction;
   spin_dir: number;
 
-  constructor(scene: MainScene, name: string, x: number, y: number) {
+  constructor(scene: MainScene, name: string, x: number, y: number, is_barrel: boolean) {
     this.name = name;
     this.tx = x;
     this.ty = y;
@@ -70,22 +68,22 @@ export class Actor {
     this.path = [];
     this.target = null;
 
-    this.energy = 100;
+    this.energy = is_barrel ? 0 : 100;
     this.alive = true;
-    this.health = 10;
-    this.max_health = 10;
-    this.cognition = 10;
-    this.max_cognition = 10;
-    this.damage = 1;
-    this.damage_std = 1;
-    this.absorption = 0;
-    this.dodge = 10;
+
+    this.is_barrel = is_barrel;
+
+    this.combat = new CombatInfo();
 
     if (this.is_player) {
       this.vision_dist = PLAYER_VISION;
       this.vision_dist_max = PLAYER_VISION;
-
-    } else {
+    }
+    else if (this.is_barrel) {
+      this.vision_dist = 0;
+      this.vision_dist_max = 0;
+    }
+    else {
       this.vision_dist = ENEMY_VISION;
       this.vision_dist_max = ENEMY_VISION;
     }
@@ -100,7 +98,15 @@ export class Actor {
   }
 
   init_textures(scene: MainScene): void {
+    if (this.is_barrel) {
+      let [rx, ry] = tile_to_render_coords(this.tx, this.ty);
+      this.render_comp = scene.add.image(rx, ry, this.name);
+      this.render_comp.setScale(0.5);
+      return;
+    }
+
     this.render_comp = scene.add.sprite(this.rx, this.ry, this.name);
+
     this.render_comp.depth = ACTOR_DEPTH;
     this.render_health = null;
     this.vision_comp = null;
@@ -166,6 +172,10 @@ export class Actor {
   }
 
   update_anim_and_vision(do_play: boolean): void {
+    if (this.is_barrel) {
+      return;
+    }
+
     let move_dir = this.prev_move_dir;
 
     switch (this.dir) {
@@ -218,12 +228,12 @@ export class Actor {
 
   update_health_bar_width(): void {
     if (this.render_health != null) {
-      this.render_health.displayWidth = TILE_SIZE * this.health / this.max_health;
+      this.render_health.displayWidth = TILE_SIZE * this.combat.health / this.combat.max_health;
     }
   }
 
   update_vision_size(): void {
-    this.vision_dist = this.cognition / this.max_cognition * this.vision_dist_max;
+    this.vision_dist = this.combat.cognition / this.combat.max_cognition * this.vision_dist_max;
     this.vision_dist = Math.max(this.vision_dist, 2);
     if (this.vision_comp != null) {
       this.vision_comp.displayWidth = (this.vision_dist*2 + 1) * TILE_SIZE;
@@ -232,22 +242,30 @@ export class Actor {
   }
 
   update_visible(grid: TileGrid): void {
-    if (!this.is_player) {
-      if (grid.get_visibility(this.tx, this.ty) == Visibility.VISIBLE) {
-        this.render_comp.visible = true;
+    if (this.is_player) {
+      return;
+    }
+
+    if (!this.is_barrel) {
+      for (let key in this.alert_comps) {
+        this.alert_comps[key].visible = false;
+      }
+    }
+
+    if (grid.get_visibility(this.tx, this.ty) == Visibility.VISIBLE) {
+      this.render_comp.visible = true;
+
+      if (!this.is_barrel) {
         this.render_health.visible = true;
         this.vision_comp.visible = true;
-        for (let key in this.alert_comps) {
-          this.alert_comps[key].visible = false;
-        }
         this.alert_comps[this.alert_state].visible = true;
-      } else {
-        this.render_comp.visible = false;
+      }
+    } else {
+      this.render_comp.visible = false;
+
+      if (!this.is_barrel) {
         this.render_health.visible = false;
         this.vision_comp.visible = false;
-        for (let key in this.alert_comps) {
-          this.alert_comps[key].visible = false;
-        }
       }
     }
   }

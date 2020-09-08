@@ -24,6 +24,12 @@ export function load_all(scene: Phaser.Scene) {
   load_any_spritesheet(scene, "cognition_orb", 64, 64);
   load_any_spritesheet(scene, "rejuvination_orb", 64, 64);
 
+  load_image(scene, "barrel_prison");
+  load_image(scene, "barrel_dark_lab");
+  load_image(scene, "barrel_armory");
+  load_image(scene, "barrel_advanced_research_facility");
+  load_image(scene, "barrel_executive_offices");
+
   load_image(scene, "fist");
   load_image(scene, "baton");
   load_image(scene, "mace");

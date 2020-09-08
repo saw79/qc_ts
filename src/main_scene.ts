@@ -141,7 +141,8 @@ export class MainScene extends Phaser.Scene {
 
     this.actors.unshift(player);
 
-    let num_enemies = this.level_num*2 + 1;
+    let num_enemies = this.level_num*3 + 1;
+    let num_barrels = 15;
     let num_orbs = 6;
     let num_items = 1;
 
@@ -149,6 +150,11 @@ export class MainScene extends Phaser.Scene {
       for (let i = 0; i < num_enemies; i++) {
         let [x, y] = util.rand_tile_no_actor(this, excludes=excludes);
         this.actors.push(factory.create_random_enemy(this, x, y));
+      }
+
+      for (let i = 0; i < num_barrels; i++) {
+        let [x, y] = util.rand_tile_no_actor(this, excludes=excludes);
+        this.actors.push(factory.create_barrel(this, x, y));
       }
     }
 
@@ -271,7 +277,7 @@ export class MainScene extends Phaser.Scene {
         this.hud.inventory.hide();
       } else {
         if (this.input_mode == InputMode.NORMAL) {
-          mouse_click_normal(this, pointer, this.cameras.main, this.actors, this.grid);
+          mouse_click_normal(this, pointer, this.cameras.main, this.grid);
         }
         else if (this.input_mode == InputMode.TARGET) {
           mouse_click_target(this, pointer);
@@ -315,12 +321,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   create_level_textures(): void {
-    let tile_name = "prison";
-    if (this.level_num <= 10) { tile_name = "prison"; }
-    else if (this.level_num <= 20) { tile_name = "dark_lab"; }
-    else if (this.level_num <= 30) { tile_name = "armory"; }
-    else if (this.level_num <= 40) { tile_name = "advanced_research_facility"; }
-    else { tile_name = "executive_offices"; }
+    let tile_name = util.get_tile_name(this.level_num);
 
     const tilemap = this.make.tilemap({data: this.grid.tiles, tileWidth: 32, tileHeight: 32});
     // note margin/spacing (1/2) are for the extruded image
@@ -337,7 +338,7 @@ export class MainScene extends Phaser.Scene {
 
     let pl_x = this.actors[0].tx;
     let pl_y = this.actors[0].ty;
-    let actor = util.closest_actor(this.grid, this.actors, pl_x, pl_y);
+    let actor = util.closest_enemy_visible(this.grid, this.actors, pl_x, pl_y);
 
     if (actor == null) {
       this.target_x = pl_x + 1;
@@ -418,9 +419,9 @@ export class MainScene extends Phaser.Scene {
     if (id != null) {
       if (this.items[id].name == "health_orb") {
         let player = this.actors[0];
-        let max_health = player.max_health;
+        let max_health = player.combat.max_health;
         let heal_amount = Math.round(0.4 * max_health);
-        player.health = Math.min(player.health + heal_amount, max_health);
+        player.combat.health = Math.min(player.combat.health + heal_amount, max_health);
 
         player.energy -= 100;
 
@@ -431,9 +432,9 @@ export class MainScene extends Phaser.Scene {
       }
       else if (this.items[id].name == "cognition_orb") {
         let player = this.actors[0];
-        let max_cognition = player.max_cognition;
+        let max_cognition = player.combat.max_cognition;
         let cog_amount = Math.round(0.4 * max_cognition);
-        player.cognition = Math.min(player.cognition + cog_amount, max_cognition);
+        player.combat.cognition = Math.min(player.combat.cognition + cog_amount, max_cognition);
 
         player.energy -= 100;
 
@@ -447,15 +448,15 @@ export class MainScene extends Phaser.Scene {
       }
       else if (this.items[id].name == "rejuvination_orb") {
         let player = this.actors[0];
-        let max_health = player.max_health;
+        let max_health = player.combat.max_health;
         let heal_amount = Math.round(0.4 * max_health);
-        player.health = Math.min(player.health + heal_amount, max_health);
+        player.combat.health = Math.min(player.combat.health + heal_amount, max_health);
 
         player.energy -= 100;
 
-        let max_cognition = player.max_cognition;
+        let max_cognition = player.combat.max_cognition;
         let cog_amount = Math.round(0.4 * max_cognition);
-        player.cognition = Math.min(player.cognition + cog_amount, max_cognition);
+        player.combat.cognition = Math.min(player.combat.cognition + cog_amount, max_cognition);
 
         this.items[id].alive = false;
         this.hud.update_bars();

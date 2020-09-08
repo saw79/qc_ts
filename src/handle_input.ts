@@ -15,15 +15,14 @@ export function mouse_click_normal(
   scene: MainScene,
   pointer: Phaser.Input.Pointer,
   camera: Phaser.Cameras.Scene2D.Camera,
-  actors: Array<Actor>,
   grid: TileGrid) {
 
   let world_pt = camera.getWorldPoint(pointer.x, pointer.y);
   let click_tile_x = Math.floor(world_pt.x / TILE_SIZE);
   let click_tile_y = Math.floor(world_pt.y / TILE_SIZE);
 
-  let player_x = actors[0].tx;
-  let player_y = actors[0].ty;
+  let player_x = scene.actors[0].tx;
+  let player_y = scene.actors[0].ty;
 
   if (click_tile_x == player_x && click_tile_y == player_y) {
     let [change_levels, next_level_num] = [false, 0];
@@ -51,31 +50,31 @@ export function mouse_click_normal(
       scene.scene.start("TransitionScene", {
         prev_level_num: scene.level_num,
         level_num: next_level_num,
-        player: actors[0],
+        player: scene.actors[0],
         inventory: scene.hud.inventory,
         level_store: scene.level_store,
       });
     }
 
     if (!scene.pickup_item()) {
-      actors[0].actions = [{type: "wait", energy: 100}];
+      scene.actors[0].actions = [{type: "wait", energy: 100}];
     }
   }
-  else if (actors[0].path.length > 0) {
-    actors[0].target = null;
-    actors[0].path = [];
+  else if (scene.actors[0].path.length > 0) {
+    scene.actors[0].target = null;
+    scene.actors[0].path = [];
   }
   else {
-    let tgt = actor_at(actors, click_tile_x, click_tile_y);
+    let tgt = actor_at(scene.actors, click_tile_x, click_tile_y);
     if (tgt != null) {
       let weapon = scene.hud.inventory.get_weapon();
       let weapon_name = weapon == null ? "fist" : weapon.name;
 
       if (item_stats[weapon_name]["R"]) {
-        initiate_shot(scene, actors[0], click_tile_x, click_tile_y);
+        initiate_shot(scene, scene.actors[0], click_tile_x, click_tile_y);
       }
       else {
-        actors[0].target = tgt;
+        scene.actors[0].target = tgt;
       }
     }
     else if (click_tile_x >= 0 && click_tile_x < grid.width &&
@@ -97,9 +96,9 @@ export function mouse_click_normal(
           let in_enemy_vision = is_in_enemy_vision(scene, player_x, player_y);
 
           if (in_enemy_vision) {
-            actors[0].path = [path[0]];
+            scene.actors[0].path = [path[0]];
           } else {
-            actors[0].path = path;
+            scene.actors[0].path = path;
           }
         }
         else {

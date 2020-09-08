@@ -161,8 +161,8 @@ export class HUDScene extends Phaser.Scene {
     let player = this.main_scene.actors[0];
 
     // health
-    let hb_w_max = player.max_health * max_width / full_width_hps;
-    let hb_w_cur = player.health * max_width / full_width_hps;
+    let hb_w_max = player.combat.max_health * max_width / full_width_hps;
+    let hb_w_cur = player.combat.health * max_width / full_width_hps;
 
     this.health_comps["bg"].displayWidth = hb_w_max;
     this.health_comps["bg"].x = hb_w_max/2 + TILE_SIZE/2;
@@ -172,8 +172,8 @@ export class HUDScene extends Phaser.Scene {
     this.health_comps["cover"].x = hb_w_max/2 + TILE_SIZE/2;
 
     // cognition
-    let cb_w_max = player.max_cognition * max_width / full_width_hps;
-    let cb_w_cur = player.cognition * max_width / full_width_hps;
+    let cb_w_max = player.combat.max_cognition * max_width / full_width_hps;
+    let cb_w_cur = player.combat.cognition * max_width / full_width_hps;
 
     this.cog_comps["bg"].displayWidth = cb_w_max;
     this.cog_comps["bg"].x = cb_w_max/2 + TILE_SIZE/2;

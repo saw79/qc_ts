@@ -3,17 +3,39 @@ import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {rand_int} from "./util";
 
+export class CombatInfo {
+  health: number;
+  max_health: number;
+  cognition: number;
+  max_cognition: number;
+  damage: number;
+  damage_std: number;
+  absorption: number;
+  dodge: number;
+
+  constructor() {
+    this.health = 10;
+    this.max_health = 10;
+    this.cognition = 10;
+    this.max_cognition = 10;
+    this.damage = 1;
+    this.damage_std = 1;
+    this.absorption = 0;
+    this.dodge = 10;
+  }
+}
+
 export function calc_combat(scene: MainScene, actor0: Actor, actor1: Actor): void {
   // --- CALCULATE ---
 
-  if (rand_int(100) < actor1.dodge) {
+  if (rand_int(100) < actor1.combat.dodge) {
     scene.new_floating_text("DODGED", actor1.rx, actor1.ry - TILE_SIZE/2, "dodge");
     return;
   }
 
-  let dmg = actor0.damage;
+  let dmg = actor0.combat.damage;
   dmg += rand_int(3) - 1;
-  dmg -= actor1.absorption;
+  dmg -= actor1.combat.absorption;
   dmg = Math.max(dmg, 0);
 
   damage_actor(scene, actor0, actor1, dmg);
@@ -25,10 +47,10 @@ export function damage_actor(
   dst_actor: Actor,
   dmg: number
 ): void {
-  dst_actor.health -= dmg;
-  dst_actor.cognition -= dmg;
-  if (dst_actor.cognition < 0) {
-    dst_actor.cognition = 0;
+  dst_actor.combat.health -= dmg;
+  dst_actor.combat.cognition -= dmg;
+  if (dst_actor.combat.cognition < 0) {
+    dst_actor.combat.cognition = 0;
   }
 
   // --- UPDATE VISUALS ---
@@ -42,7 +64,7 @@ export function damage_actor(
 
   scene.new_floating_text(dmg.toString(), dst_actor.rx, dst_actor.ry - TILE_SIZE/2, "combat");
 
-  if (dst_actor.health <= 0) {
+  if (dst_actor.combat.health <= 0) {
     dst_actor.alive = false;
     dst_actor.render_comp.visible = false;
 

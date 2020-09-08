@@ -21,6 +21,14 @@ export function new_game(scene: Phaser.Scene): void {
   });
 }
 
+export function get_tile_name(level_num: number): string {
+  if (level_num <= 10) { return "prison"; }
+  else if (level_num <= 20) { return "dark_lab"; }
+  else if (level_num <= 30) { return "armory"; }
+  else if (level_num <= 40) { return "advanced_research_facility"; }
+  else { return "executive_offices"; }
+}
+
 export function make_display_name(name: string): string {
   let words = name.replace(/_/g, " ").split(" ");
   for (let i = 0; i < words.length; i++) {
@@ -113,7 +121,7 @@ export function item_at(items: Array<Item>, tile_x: number, tile_y: number): num
   return null;
 }
 
-export function closest_actor(grid: TileGrid, actors: Array<Actor>, pl_x: number, pl_y: number): Actor | null {
+export function closest_enemy_visible(grid: TileGrid, actors: Array<Actor>, pl_x: number, pl_y: number): Actor | null {
   let best_actor = null;
   let best_dist = 1000;
 

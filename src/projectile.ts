@@ -113,6 +113,7 @@ export function initiate_throw(
 
   for (let pt of pts) {
     let da_idx = actor_at(scene.actors, pt[0], pt[1]);
+
     if (da_idx != null && da_idx > 0.1) {
       dest = pt;
       dst_actor = scene.actors[da_idx];
@@ -121,9 +122,10 @@ export function initiate_throw(
 
     let tile = scene.grid.at(pt[0], pt[1]);
     if (tile == TileType.WALL || tile == TileType.DOORCLOSED) {
-      dest = pt;
       break;
     }
+
+    dest = pt;
   }
 
   let [r, c, is_equip] = scene.hud.inventory.throw_select;

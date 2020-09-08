@@ -1,17 +1,17 @@
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {Item} from "./item";
-import {rand_int} from "./util";
+import {rand_int, get_tile_name} from "./util";
 import {enemy_stats, item_stats} from "./stats";
 
 export function create_player(scene: MainScene, x: number, y: number): Actor {
-    let player = new Actor(scene, "player_none", x, y);
+    let player = new Actor(scene, "player_none", x, y, false);
 
-    player.health = 10;
-    player.max_health = 10;
-    player.cognition = 10;
-    player.max_cognition = 10;
-    player.damage = 1;
+    player.combat.health = 10;
+    player.combat.max_health = 10;
+    player.combat.cognition = 10;
+    player.combat.max_cognition = 10;
+    player.combat.damage = 1;
 
     return player;
 }
@@ -24,17 +24,17 @@ export function create_random_enemy(scene: MainScene, x: number, y: number): Act
 }
 
 export function create_enemy(scene: MainScene, name: string, x: number, y: number): Actor {
-  let actor = new Actor(scene, name, x, y);
+  let actor = new Actor(scene, name, x, y, false);
 
   actor.type = enemy_stats[name]["T"];
-  actor.health = enemy_stats[name]["H"];
-  actor.max_health = enemy_stats[name]["H"];
-  actor.cognition = enemy_stats[name]["C"];
-  actor.max_cognition = enemy_stats[name]["C"];
-  actor.damage = enemy_stats[name]["D"];
+  actor.combat.health = enemy_stats[name]["H"];
+  actor.combat.max_health = enemy_stats[name]["H"];
+  actor.combat.cognition = enemy_stats[name]["C"];
+  actor.combat.max_cognition = enemy_stats[name]["C"];
+  actor.combat.damage = enemy_stats[name]["D"];
 
-  actor.absorption = enemy_stats[name]["A"];
-  actor.dodge = enemy_stats[name]["O"];
+  actor.combat.absorption = enemy_stats[name]["A"];
+  actor.combat.dodge = enemy_stats[name]["O"];
 
   // 0 = normal, 1 = ranged, 2 = tough, 3 = boss
 
@@ -72,3 +72,10 @@ export function create_item(scene: MainScene, name: string, x: number, y: number
   return item;
 }
 
+export function create_barrel(scene: MainScene, x: number, y: number): Actor {
+  let name = "barrel_" + get_tile_name(scene.level_num);
+  let actor = new Actor(scene, name, x, y, true);
+  actor.combat.health = 1;
+  actor.combat.dodge = 0;
+  return actor;
+}
