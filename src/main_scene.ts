@@ -16,6 +16,7 @@ import * as factory from "./factory";
 import {Projectile, initiate_shot} from "./projectile";
 import {item_stats} from "./stats";
 import {HUDScene} from "./hud_scene";
+import {Liquid} from "./liquid";
 
 export enum InputMode {
   NORMAL,
@@ -27,6 +28,7 @@ export class LevelInfo {
   grid: TileGrid;
   items: Array<Item>;
   enemies: Array<Actor>;
+  liquids: Array<Liquid>;
 }
 
 export class MainScene extends Phaser.Scene {
@@ -34,6 +36,7 @@ export class MainScene extends Phaser.Scene {
   curr_turn: number;
   grid: TileGrid;
   items: Array<Item>;
+  liquids: Array<Liquid>;
   projectiles: Array<Projectile>;
 
   floating_texts: Array<FloatingText>;
@@ -85,17 +88,22 @@ export class MainScene extends Phaser.Scene {
       this.create_level_grid();
       this.items = [];
       this.actors = [];
+      this.liquids = [];
     } else {
       console.log("LOADING level " + this.level_num);
       this.grid = this.level_store[this.level_num].grid;
       this.items = this.level_store[this.level_num].items;
       this.actors = this.level_store[this.level_num].enemies;
+      this.liquids = this.level_store[this.level_num].liquids;
 
       for (let item of this.items) {
         item.init_textures(this);
       }
       for (let actor of this.actors) {
         actor.init_textures(this);
+      }
+      for (let liquid of this.liquids) {
+        liquid.init_textures(this);
       }
 
       loaded_level = true;

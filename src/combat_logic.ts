@@ -1,7 +1,10 @@
-import {TILE_SIZE} from "./constants";
+import {TILE_SIZE, LIQUID_RADIUS} from "./constants";
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {rand_int} from "./util";
+import {Liquid, LiquidColor} from "./liquid";
+import {line} from "./bresenham";
+import {TileGrid, TileType} from "./tile_grid";
 
 export class CombatInfo {
   health: number;
@@ -73,6 +76,130 @@ export function damage_actor(
       scene.scene.remove("HUDScene");
       scene.scene.start("DeathScene", {killed_by: src_actor.display_name});
     }
+    else if (dst_actor.is_barrel) {
+      create_liquid(scene, dst_actor.tx, dst_actor.ty);
+    }
   }
 }
 
+export function create_liquid(scene: MainScene, xc: number, yc: number): void {
+  let xs = [];
+  let ys = [];
+  console.log("create liquid from", xc, yc);
+  for (let x = xc - LIQUID_RADIUS; x <= xc + LIQUID_RADIUS; x++) {
+    for (let y = yc - LIQUID_RADIUS; y <= yc + LIQUID_RADIUS; y++) {
+      if ((x != xc || y != yc) && line_blocked(scene.grid, xc, yc, x, y)) {
+        continue
+      }
+
+      let dist = Math.abs(x - xc) + Math.abs(y - yc);
+      if (dist < rand_int(LIQUID_RADIUS + 2)) {
+        xs.push(x);
+        ys.push(y);
+      }
+    }
+  }
+
+  let num = rand_int(4);
+  let color = LiquidColor.GREY;
+  switch (num) {
+    case 0: color = LiquidColor.RED; break;
+    case 1: color = LiquidColor.BLUE; break;
+    case 2: color = LiquidColor.GREEN; break;
+    default: color = LiquidColor.YELLOW; break;
+  }
+
+  for (let i = 0; i < xs.length; i++) {
+    let [num, rot] = get_frame_num(xs, ys, xs[i], ys[i]);
+    let liquid = new Liquid(scene, xs[i], ys[i], color, num, rot);
+    scene.liquids.push(liquid);
+  }
+}
+
+function line_blocked(grid: TileGrid, x0: number, y0: number, x1: number, y1: number): boolean {
+  let los = line(x0, y0, x1, y1);
+  for (let i = 0; i < los.length; i++) {
+    if (grid.at(los[i][0], los[i][1]) == TileType.WALL ||
+        grid.at(los[i][0], los[i][1]) == TileType.DOORCLOSED) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function get_frame_num(xs: Array<number>, ys: Array<number>, x: number, y: number): [number, number] {
+  let left = false;
+  let right = false;
+  let up = false;
+  let down = false;
+
+  let num_touches = 0;
+  if (contains_point(xs, ys, x-1, y)) {
+    left = true;
+    num_touches++;
+  }
+  if (contains_point(xs, ys, x+1, y)) {
+    right = true;
+    num_touches++;
+  }
+  if (contains_point(xs, ys, x, y-1)) {
+    up = true;
+    num_touches++;
+  }
+  if (contains_point(xs, ys, x, y+1)) {
+    down = true;
+    num_touches++;
+  }
+
+  if (num_touches == 0) {
+    return [0, 0];
+  }
+  else if (num_touches == 1) {
+    if (left)
+      return [1, Math.PI/2];
+    else if (right)
+      return [1, -Math.PI/2];
+    else if (up)
+      return [1, Math.PI];
+    else
+      return [1, 0];
+  }
+  else if (num_touches == 2) {
+    if (left && right)
+      return [3, Math.PI/2];
+    else if (up && down)
+      return [3, 0];
+    else if (right && down)
+      return [2, 0];
+    else if (down && left)
+      return [2, Math.PI/2];
+    else if (left && up)
+      return [2, Math.PI];
+    else
+      return [2, -Math.PI/2];
+  }
+  else if (num_touches == 3) {
+    if (!left)
+      return [4, 0];
+    else if (!up)
+      return [4, Math.PI/2];
+    else if (!right)
+      return [4, Math.PI];
+    else
+      return [4, -Math.PI/2];
+  }
+  else {
+    return [5, 0];
+  }
+}
+
+function contains_point(xs: Array<number>, ys: Array<number>, x: number, y: number): boolean {
+  for (let i = 0; i < xs.length; i++) {
+    if (xs[i] == x && ys[i] == y) {
+      return true;
+    }
+  }
+
+  return false;
+}

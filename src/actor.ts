@@ -263,6 +263,10 @@ export class Actor {
     } else {
       this.render_comp.visible = false;
 
+      if (grid.get_visibility(this.tx, this.ty) == Visibility.SEEN && this.is_barrel) {
+        this.render_comp.visible = true;
+      }
+
       if (!this.is_barrel) {
         this.render_health.visible = false;
         this.vision_comp.visible = false;

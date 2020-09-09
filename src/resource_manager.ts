@@ -30,6 +30,12 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "barrel_advanced_research_facility");
   load_image(scene, "barrel_executive_offices");
 
+  load_any_spritesheet(scene, "gray_liquid_sheet", 64, 64);
+  load_any_spritesheet(scene, "red_liquid_sheet", 64, 64);
+  load_any_spritesheet(scene, "blue_liquid_sheet", 64, 64);
+  load_any_spritesheet(scene, "green_liquid_sheet", 64, 64);
+  load_any_spritesheet(scene, "yellow_liquid_sheet", 64, 64);
+
   load_image(scene, "fist");
   load_image(scene, "baton");
   load_image(scene, "mace");

@@ -40,6 +40,7 @@ export function mouse_click_normal(
       level_info.grid = scene.grid;
       level_info.items = scene.items;
       level_info.enemies = scene.actors.slice(1);
+      level_info.liquids = scene.liquids;
       if (scene.level_num >= scene.level_store.length) {
         scene.level_store.push(level_info);
       } else {

@@ -1,7 +1,8 @@
 // UI
 export const TILE_SIZE: number = 32;
 
-export const ITEM_DEPTH: number = 1;
+export const LIQUID_DEPTH: number = 1;
+export const ITEM_DEPTH: number = 2;
 export const ACTOR_DEPTH: number = 10;
 export const TARGET_DEPTH: number=15;
 export const BUTTONS_DEPTH: number = 100;
@@ -24,3 +25,7 @@ export const FLOATING_TEXT_SPEED: number = 64;
 
 export const PLAYER_VISION: number = 12;
 export const ENEMY_VISION: number = 8;
+
+// LIQUID
+
+export const LIQUID_RADIUS: number = 4;
