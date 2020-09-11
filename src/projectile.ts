@@ -80,7 +80,7 @@ export class Projectile {
       this.item.ry = ry;
 
       if (this.dst_actor != null) {
-        damage_actor(this.scene, this.src_actor, this.dst_actor, 1);
+        damage_actor(this.scene, this.src_actor.display_name, this.dst_actor, 1, 0);
       }
     }
     else {

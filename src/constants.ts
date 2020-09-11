@@ -12,6 +12,8 @@ export const INV_DEPTH: number = 110;
 export const MIN_ZOOM: number = 0.4;
 export const MAX_ZOOM: number = 4;
 
+export const BUFF_ICONS: number = 10;
+
 // MOTION
 
 export const MOVE_SPEED: number = 320;
@@ -29,3 +31,6 @@ export const ENEMY_VISION: number = 8;
 // LIQUID
 
 export const LIQUID_RADIUS: number = 4;
+export const BURN_DURATION: number = 5;
+export const CHILL_DURATION: number = 5;
+export const NAUSEOUS_DURATION: number = 10;

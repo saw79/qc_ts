@@ -7,6 +7,7 @@ import {tile_to_render_coords, make_display_name} from "./util";
 import {Action} from "./turn_logic";
 import {TileGrid, Visibility} from "./tile_grid";
 import {CombatInfo} from "./combat_logic";
+import {Buff} from "./buff";
 
 export enum AlertState {
   PATROL,
@@ -53,6 +54,8 @@ export class Actor {
   spin_start: Direction;
   spin_dir: number;
 
+  buffs: Array<Buff>;
+
   constructor(scene: MainScene, name: string, x: number, y: number, is_barrel: boolean) {
     this.name = name;
     this.tx = x;
@@ -90,6 +93,8 @@ export class Actor {
 
     this.alert_state = AlertState.PATROL;
 
+    this.buffs = [];
+
     this.init_textures(scene);
 
     this.ranged = false;
@@ -102,12 +107,13 @@ export class Actor {
       let [rx, ry] = tile_to_render_coords(this.tx, this.ty);
       this.render_comp = scene.add.image(rx, ry, this.name);
       this.render_comp.setScale(0.5);
+      this.render_comp.depth = ACTOR_DEPTH;
       return;
     }
 
     this.render_comp = scene.add.sprite(this.rx, this.ry, this.name);
-
     this.render_comp.depth = ACTOR_DEPTH;
+
     this.render_health = null;
     this.vision_comp = null;
     if (!this.is_player) {

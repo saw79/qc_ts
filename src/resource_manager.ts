@@ -30,7 +30,7 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "barrel_advanced_research_facility");
   load_image(scene, "barrel_executive_offices");
 
-  load_any_spritesheet(scene, "gray_liquid_sheet", 64, 64);
+  load_any_spritesheet(scene, "grey_liquid_sheet", 64, 64);
   load_any_spritesheet(scene, "red_liquid_sheet", 64, 64);
   load_any_spritesheet(scene, "blue_liquid_sheet", 64, 64);
   load_any_spritesheet(scene, "green_liquid_sheet", 64, 64);
@@ -124,6 +124,52 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "bullet");
   load_image(scene, "em_beam");
   load_image(scene, "particle_beam");
+
+  load_image(scene, "white_square");
+  load_image(scene, "black_square");
+
+  load_image(scene, "icon_adaptive_skin");
+  load_image(scene, "icon_meditate");
+  load_image(scene, "icon_aware");
+  load_image(scene, "icon_mind_reading");
+  load_image(scene, "icon_bend_light");
+  load_image(scene, "icon_momentum");
+  load_image(scene, "icon_blinded");
+  load_image(scene, "icon_nauseous");
+  load_image(scene, "icon_burning");
+  load_image(scene, "icon_noise_cancellation");
+  load_image(scene, "icon_chemical_immunity");
+  load_image(scene, "icon_optimization");
+  load_image(scene, "icon_chilled");
+  load_image(scene, "icon_overclock");
+  load_image(scene, "icon_double_strike");
+  load_image(scene, "icon_overheat");
+  load_image(scene, "icon_enhanced_absorption");
+  load_image(scene, "icon_perpetual_motion");
+  load_image(scene, "icon_enhanced_damage");
+  load_image(scene, "icon_pipeline");
+  load_image(scene, "icon_enhanced_dodge");
+  load_image(scene, "icon_placebo");
+  load_image(scene, "icon_enhanced_speed");
+  load_image(scene, "icon_question");
+  load_image(scene, "icon_error_correction");
+  load_image(scene, "icon_quickness");
+  load_image(scene, "icon_flee");
+  load_image(scene, "icon_radar");
+  load_image(scene, "icon_fragile");
+  load_image(scene, "icon_rebound");
+  load_image(scene, "icon_hack");
+  load_image(scene, "icon_rewire");
+  load_image(scene, "icon_heat_shield");
+  load_image(scene, "icon_searching");
+  load_image(scene, "icon_leech");
+  load_image(scene, "icon_superposition");
+  load_image(scene, "icon_light_feet");
+  load_image(scene, "icon_supersonic");
+  load_image(scene, "icon_light_speed");
+  load_image(scene, "icon_unaware");
+  load_image(scene, "icon_machine_learning");
+  load_image(scene, "icon_wormhole");
 }
 
 export function create_anims(scene: Phaser.Scene) {

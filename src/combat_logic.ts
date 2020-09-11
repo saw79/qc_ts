@@ -5,6 +5,7 @@ import {rand_int} from "./util";
 import {Liquid, LiquidColor} from "./liquid";
 import {line} from "./bresenham";
 import {TileGrid, TileType} from "./tile_grid";
+import {BuffType, has_buff} from "./buff";
 
 export class CombatInfo {
   health: number;
@@ -31,27 +32,44 @@ export class CombatInfo {
 export function calc_combat(scene: MainScene, actor0: Actor, actor1: Actor): void {
   // --- CALCULATE ---
 
-  if (rand_int(100) < actor1.combat.dodge) {
+  let is_nauseous0 = has_buff(actor0, BuffType.NAUSEOUS);
+  let is_nauseous1 = has_buff(actor1, BuffType.NAUSEOUS);
+
+  if (!is_nauseous1 && rand_int(100) < actor1.combat.dodge) {
     scene.new_floating_text("DODGED", actor1.rx, actor1.ry - TILE_SIZE/2, "dodge");
     return;
   }
 
   let dmg = actor0.combat.damage;
   dmg += rand_int(3) - 1;
-  dmg -= actor1.combat.absorption;
-  dmg = Math.max(dmg, 0);
+  let absorp = actor1.combat.absorption;
 
-  damage_actor(scene, actor0, actor1, dmg);
+  if (is_nauseous0 && Math.random() < 0.5) {
+    dmg /= 2;
+  }
+  if (is_nauseous1 && Math.random() < 0.5) {
+    dmg *= 2;
+    absorp /= 2;
+  }
+
+  let final_dmg = Math.max(0, Math.round(dmg - absorp));
+
+  damage_actor(scene, actor0.display_name, actor1, final_dmg, 0.5);
 }
 
 export function damage_actor(
   scene: MainScene,
-  src_actor: Actor,
+  src_name: string,
   dst_actor: Actor,
-  dmg: number
+  dmg: number,
+  cog_factor: number
 ): void {
   dst_actor.combat.health -= dmg;
-  dst_actor.combat.cognition -= dmg;
+
+  if (Math.random() < cog_factor) {
+    dst_actor.combat.cognition -= dmg;
+  }
+
   if (dst_actor.combat.cognition < 0) {
     dst_actor.combat.cognition = 0;
   }
@@ -74,7 +92,7 @@ export function damage_actor(
     if (dst_actor.is_player) {
       console.log("PLAYER DIED!");
       scene.scene.remove("HUDScene");
-      scene.scene.start("DeathScene", {killed_by: src_actor.display_name});
+      scene.scene.start("DeathScene", {killed_by: src_name});
     }
     else if (dst_actor.is_barrel) {
       create_liquid(scene, dst_actor.tx, dst_actor.ty);
@@ -85,7 +103,6 @@ export function damage_actor(
 export function create_liquid(scene: MainScene, xc: number, yc: number): void {
   let xs = [];
   let ys = [];
-  console.log("create liquid from", xc, yc);
   for (let x = xc - LIQUID_RADIUS; x <= xc + LIQUID_RADIUS; x++) {
     for (let y = yc - LIQUID_RADIUS; y <= yc + LIQUID_RADIUS; y++) {
       if ((x != xc || y != yc) && line_blocked(scene.grid, xc, yc, x, y)) {

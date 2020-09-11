@@ -17,6 +17,7 @@ import {Projectile, initiate_shot} from "./projectile";
 import {item_stats} from "./stats";
 import {HUDScene} from "./hud_scene";
 import {Liquid} from "./liquid";
+import {Buff} from "./buff";
 
 export enum InputMode {
   NORMAL,
@@ -57,8 +58,8 @@ export class MainScene extends Phaser.Scene {
   level_num: number;
   level_store: Array<LevelInfo>;
 
-  //debug_str: Array<string>;
-  //debug_txt: Phaser.GameObjects.Text;
+  debug_str: Array<string>;
+  debug_txt: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: "MainScene"});
@@ -67,13 +68,20 @@ export class MainScene extends Phaser.Scene {
   preload(): void {
   }
 
+  update_debug_txt(): void {
+    this.debug_txt.setText(this.debug_str.join("\n"));
+    this.debug_txt.x = this.debug_txt.displayWidth/2;
+    this.debug_txt.y = this.debug_txt.displayHeight/2 + 20;
+  }
+
   create(data): void {
     /*
-    this.debug_str = ["0: up", "1: up", "2: up"];
-    this.debug_txt = this.add.text(100, 100, "", { color: "blue", stroke: "blue", fontSize: 36});
-    this.debug_txt.setText(this.debug_str.join("\n"));
+    this.debug_str = ["test1", "test2"];
+    this.debug_txt = this.add.text(100, 300, "", {
+      color: "green", stroke: "green", fontSize: 36, strokeThickness: 2});
     this.debug_txt.setScrollFactor(0);
     this.debug_txt.depth = 3000;
+    this.update_debug_txt();
     */
 
     this.level_num = data.level_num;
@@ -510,6 +518,7 @@ export class MainScene extends Phaser.Scene {
 
   kill_dead_objects() {
     for (let actor of this.actors) {
+      actor.buffs = actor.buffs.filter((buff: Buff) => { return buff.alive; });
       if (!actor.alive) {
         actor.destroy_textures();
       }

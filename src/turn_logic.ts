@@ -5,7 +5,10 @@ import {Actor} from "./actor";
 import {tile_to_render_coords, actor_at, is_in_enemy_vision} from "./util";
 import {get_action_ai} from "./ai_logic";
 import {TileType, TileGrid} from "./tile_grid";
-import {calc_combat} from "./combat_logic";
+import {calc_combat, damage_actor} from "./combat_logic";
+import {LiquidColor} from "./liquid";
+import {BuffType, add_buff, has_buff, get_buff_texture} from "./buff";
+import {BURN_DURATION, CHILL_DURATION, NAUSEOUS_DURATION, BUFF_ICONS, TILE_SIZE} from "./constants";
 
 export interface Wait {
   type: "wait";
@@ -66,15 +69,15 @@ export function process_turns(scene: MainScene): void {
 
     // --- PROCESS ACTION ---
 
-    if (success) {
-      quick_process(scene, scene.actors, curr_turn, action);
-    } else {
+    if (!success) {
       break;
     }
 
-    if (success) {
-      curr_turn = next_turn(scene.actors, curr_turn);
+    if (!actor.is_barrel) {
+      quick_process(scene, scene.actors, curr_turn, action);
     }
+
+    curr_turn = next_turn(scene.actors, curr_turn);
 
     if (curr_turn == start_turn) {
       break;
@@ -91,7 +94,11 @@ function next_turn(actors: Array<Actor>, curr_turn: number): number {
 
     for (let actor of actors) {
       if (!actor.is_barrel) {
-        actor.energy += 100;
+        if (has_buff(actor, BuffType.CHILL)) {
+          actor.energy += 25;
+        } else {
+          actor.energy += 100;
+        }
       }
     }
   }
@@ -140,7 +147,7 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
   switch(action.type) {
     case "wait":
       actors[curr_turn].energy -= action.energy;
-      return;
+      break;
     case "move":
       let blocker = actor_at(actors, action.x, action.y);
       if (blocker != null) {
@@ -176,7 +183,7 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
         scene.update_entity_visibility();
       }
 
-      return;
+      break;
     case "attack":
       let x0 = actors[curr_turn].tx;
       let y0 = actors[curr_turn].ty;
@@ -188,7 +195,62 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       calc_combat(scene, actors[curr_turn], actors[action.id]);
       actors[curr_turn].energy -= action.energy;
       scene.grid.update_visibility(actors[0].tx, actors[0].ty, actors[0].vision_dist);
-      return;
+      break;
+  }
+
+  process_buffs(scene, actors, curr_turn);
+}
+
+function process_buffs(scene: MainScene, actors: Array<Actor>, curr_turn: number): void {
+  for (let i = 0; i < actors[curr_turn].buffs.length; i++) {
+    if (actors[curr_turn].buffs[i].type == BuffType.BURN) {
+      damage_actor(scene, "Red Liquid", actors[curr_turn], 1, 0);
+    }
+    actors[curr_turn].buffs[i].tick();
+  }
+
+  let tx = actors[curr_turn].tx;
+  let ty = actors[curr_turn].ty;
+  for (let i = 0; i < scene.liquids.length; i++) {
+    if (tx == scene.liquids[i].tx && ty == scene.liquids[i].ty) {
+      switch (scene.liquids[i].color) {
+        case LiquidColor.RED:
+          add_buff(actors[curr_turn], BuffType.BURN, BURN_DURATION);
+          break;
+        case LiquidColor.BLUE:
+          add_buff(actors[curr_turn], BuffType.CHILL, CHILL_DURATION);
+          break;
+        case LiquidColor.YELLOW:
+          add_buff(actors[curr_turn], BuffType.NAUSEOUS, NAUSEOUS_DURATION);
+          break;
+        case LiquidColor.GREEN:
+          damage_actor(scene, "Green Liquid", actors[curr_turn], 3, 0);
+          break;
+      }
+
+      break;
+    }
+  }
+
+  if (curr_turn == 0) {
+    for (let i = 0; i < BUFF_ICONS; i++) {
+      if (i >= actors[0].buffs.length) {
+        scene.hud.buff_bgs[i].visible = false;
+        scene.hud.buff_icons[i].visible = false;
+        scene.hud.buff_shades[i].visible = false;
+        continue;
+      }
+
+      scene.hud.buff_bgs[i].visible = true;
+      scene.hud.buff_icons[i].visible = true;
+      scene.hud.buff_shades[i].visible = true;
+
+      scene.hud.buff_icons[i].setTexture(get_buff_texture(actors[0].buffs[i].type));
+
+      let shade_height = TILE_SIZE * actors[0].buffs[i].curr_turn / actors[0].buffs[i].duration;
+      scene.hud.buff_shades[i].y = TILE_SIZE/2 + i*1.5*TILE_SIZE + shade_height/2;
+      scene.hud.buff_shades[i].displayHeight = shade_height;
+    }
   }
 }
 

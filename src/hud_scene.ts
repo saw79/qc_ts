@@ -2,7 +2,7 @@ import "phaser";
 
 import {NinePatch} from "@koreez/phaser3-ninepatch";
 
-import {TILE_SIZE, BUTTONS_DEPTH, HUD_DEPTH} from "./constants";
+import {TILE_SIZE, BUTTONS_DEPTH, HUD_DEPTH, BUFF_ICONS} from "./constants";
 import {MainScene, InputMode} from "./main_scene";
 import {Inventory} from "./inventory";
 
@@ -16,6 +16,10 @@ export class HUDScene extends Phaser.Scene {
   buttons_skin: Array<Phaser.GameObjects.Image>;
 
   inventory: Inventory;
+
+  buff_bgs: Array<Phaser.GameObjects.Image>;
+  buff_icons: Array<Phaser.GameObjects.Image>;
+  buff_shades: Array<Phaser.GameObjects.Image>;
 
   constructor(main_scene: MainScene, inventory: Inventory) {
     super({ key: "HUDScene" });
@@ -151,6 +155,30 @@ export class HUDScene extends Phaser.Scene {
       this.inventory = new Inventory(this.main_scene);
     } else {
       this.inventory.init_textures(this.main_scene);
+    }
+
+    this.buff_bgs = [];
+    this.buff_icons = [];
+    this.buff_shades = [];
+    for (let i = 0; i < BUFF_ICONS; i++) {
+      let x = game_width-TILE_SIZE;
+      let y = TILE_SIZE + i*1.5*TILE_SIZE;
+
+      let bg = this.add.image(x, y, "white_square");
+      let icon = this.add.image(x, y, "icon_burning");
+      let shade = this.add.image(x, y, "black_square");
+
+      bg.setDisplaySize(TILE_SIZE, TILE_SIZE);
+      bg.visible = false;
+      icon.setDisplaySize(TILE_SIZE, TILE_SIZE);
+      icon.visible = false;
+      shade.setDisplaySize(TILE_SIZE, 0);
+      shade.visible = false;
+      shade.alpha = 0.5;
+
+      this.buff_bgs.push(bg);
+      this.buff_icons.push(icon);
+      this.buff_shades.push(shade);
     }
   }
 
