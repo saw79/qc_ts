@@ -144,6 +144,10 @@ export function closest_enemy_visible(grid: TileGrid, actors: Array<Actor>, pl_x
 
 export function is_in_enemy_vision(scene: MainScene, player_x: number, player_y: number): boolean {
   for (let i = 1; i < scene.actors.length; i++) {
+    if (scene.actors[i].is_barrel) {
+      continue;
+    }
+
     let enemy_x = scene.actors[i].tx;
     let enemy_y = scene.actors[i].ty;
     let vision_dist = scene.actors[i].vision_dist;

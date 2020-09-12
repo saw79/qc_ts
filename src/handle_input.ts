@@ -97,6 +97,7 @@ export function mouse_click_normal(
           let in_enemy_vision = is_in_enemy_vision(scene, player_x, player_y);
 
           if (in_enemy_vision) {
+            console.log("in visit, return path 1");
             scene.actors[0].path = [path[0]];
           } else {
             scene.actors[0].path = path;

@@ -9,6 +9,7 @@ import {calc_combat, damage_actor} from "./combat_logic";
 import {LiquidColor} from "./liquid";
 import {BuffType, add_buff, has_buff, get_buff_texture} from "./buff";
 import {BURN_DURATION, CHILL_DURATION, NAUSEOUS_DURATION, BUFF_ICONS, TILE_SIZE} from "./constants";
+import {process_mine} from "./item_process";
 
 export interface Wait {
   type: "wait";
@@ -78,6 +79,14 @@ export function process_turns(scene: MainScene): void {
     }
 
     curr_turn = next_turn(scene.actors, curr_turn);
+
+    if (curr_turn == 0) {
+      for (let item of scene.items) {
+        if (item.name.indexOf("mine") != -1 && item.active) {
+          process_mine(scene, item);
+        }
+      }
+    }
 
     if (curr_turn == start_turn) {
       break;
@@ -259,7 +268,7 @@ function abort_because_new_enemy(scene: MainScene): void {
   scene.grid.prev_sees_enemy = scene.grid.sees_enemy;
   scene.grid.sees_enemy = false;
   for (let i = 1; i < scene.actors.length; i++) {
-    if (scene.actors[i].render_comp.visible) {
+    if (!scene.actors[i].is_barrel && scene.actors[i].render_comp.visible) {
       scene.grid.sees_enemy = true;
       break;
     }

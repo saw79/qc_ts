@@ -1,4 +1,4 @@
-import {THROW_SPEED, BULLET_SPEED, ITEM_DEPTH} from "./constants";
+import {THROW_SPEED, BULLET_SPEED, ITEM_DEPTH, TIMED_MINE_DURATION} from "./constants";
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {Item} from "./item";
@@ -81,6 +81,25 @@ export class Projectile {
 
       if (this.dst_actor != null) {
         damage_actor(this.scene, this.src_actor.display_name, this.dst_actor, 1, 0);
+      }
+
+      if (this.item.name.indexOf("mine") != -1) {
+        this.item.active = true;
+
+        this.item.sub_textures[0].x = this.item.rx;
+        this.item.sub_textures[0].y = this.item.ry;
+        this.item.sub_textures[0].visible = true;
+
+        if (this.item.name.indexOf("timed") != -1) {
+          this.item.turns_left = TIMED_MINE_DURATION;
+        } else {
+          if (this.item.name.indexOf("remote") != -1) {
+            this.scene.hud.buttons2_base[4].visible = true;
+            this.scene.hud.buttons2_skin[4].visible = true;
+          }
+
+          this.item.turns_left = 1000;
+        }
       }
     }
     else {

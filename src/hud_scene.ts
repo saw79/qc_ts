@@ -5,6 +5,7 @@ import {NinePatch} from "@koreez/phaser3-ninepatch";
 import {TILE_SIZE, BUTTONS_DEPTH, HUD_DEPTH, BUFF_ICONS} from "./constants";
 import {MainScene, InputMode} from "./main_scene";
 import {Inventory} from "./inventory";
+import {explode_mine} from "./item_process";
 
 export class HUDScene extends Phaser.Scene {
   main_scene: MainScene;
@@ -14,6 +15,9 @@ export class HUDScene extends Phaser.Scene {
 
   buttons_base: Array<Phaser.GameObjects.Image>;
   buttons_skin: Array<Phaser.GameObjects.Image>;
+
+  buttons2_base: Array<Phaser.GameObjects.Image>;
+  buttons2_skin: Array<Phaser.GameObjects.Image>;
 
   inventory: Inventory;
 
@@ -151,6 +155,81 @@ export class HUDScene extends Phaser.Scene {
     this.buttons_base[3].on('pointerup', this.click_target, this);
     this.buttons_base[4].on('pointerup', this.click_attack, this);
 
+    y = +(this.game.config.height) - pad_size - button_size/2 - pad_size - button_size;
+    idx = 0;
+    this.buttons2_base = [];
+    this.buttons2_skin = [];
+    for (let i = -2; i <= 2; i++) {
+      let x = game_width/2 +  i*(pad_size + button_size);
+      let btn_base = this.add.image(x, y, "UIImages/button_small_up");
+      btn_base.displayWidth = button_size;
+      btn_base.displayHeight = button_size;
+      btn_base.depth = BUTTONS_DEPTH;
+      btn_base.setScrollFactor(0);
+      btn_base.setInteractive()
+      btn_base.visible = false;
+
+      this.buttons2_base.push(btn_base);
+
+      let key = idx < 4 ? "fist" : "UIImages/btn_detonate_skin";
+      let btn_skin = this.add.image(x, y, key);
+      if (idx < 4) {
+        btn_skin.displayWidth = button_size/2;
+        btn_skin.displayHeight = button_size/2;
+      } else {
+        btn_skin.displayWidth = button_size*0.75;
+        btn_skin.displayHeight = button_size*0.75;
+      }
+      btn_skin.depth = BUTTONS_DEPTH + 1;
+      btn_skin.setScrollFactor(0);
+      btn_skin.visible = false;
+
+      this.buttons2_skin.push(btn_skin);
+
+      idx += 1;
+    }
+
+    this.buttons2_base[0].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons2_base[0].setTexture("UIImages/button_small_down");
+      this.main_scene.down_button = 5;
+      ev.stopPropagation();
+    });
+    this.buttons2_base[1].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons2_base[1].setTexture("UIImages/button_small_down");
+      this.main_scene.down_button = 6;
+      ev.stopPropagation();
+    });
+    this.buttons2_base[2].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons2_base[2].setTexture("UIImages/button_small_down");
+      this.main_scene.down_button = 7;
+      ev.stopPropagation();
+    });
+    this.buttons2_base[3].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons2_base[3].setTexture("UIImages/button_small_down");
+      this.main_scene.down_button = 8;
+      ev.stopPropagation();
+    });
+    this.buttons2_base[4].on('pointerdown', (p,lx,ly,ev) => {
+      this.buttons2_base[4].setTexture("UIImages/button_small_down");
+      this.main_scene.down_button = 9;
+      ev.stopPropagation();
+    });
+    this.buttons2_base[0].on('pointerup', (p,lx,ly,ev) => {
+      this.click_ability(0, p, lx, ly, ev);
+    });
+    this.buttons2_base[1].on('pointerup', (p,lx,ly,ev) => {
+      this.click_ability(1, p, lx, ly, ev);
+    });
+    this.buttons2_base[2].on('pointerup', (p,lx,ly,ev) => {
+      this.click_ability(2, p, lx, ly, ev);
+    });
+    this.buttons2_base[3].on('pointerup', (p,lx,ly,ev) => {
+      this.click_ability(3, p, lx, ly, ev);
+    });
+    this.buttons2_base[4].on('pointerup', (p,lx,ly,ev) => {
+      this.click_detonate(p, lx, ly, ev);
+    });
+
     if (this.inventory == undefined || this.inventory == null) {
       this.inventory = new Inventory(this.main_scene);
     } else {
@@ -267,6 +346,32 @@ export class HUDScene extends Phaser.Scene {
     this.main_scene.attack();
 
     this.buttons_base[4].setTexture("UIImages/button_small_up");
+    event.stopPropagation();
+  }
+
+  click_ability(num: number, pointer, localX, localY, event) {
+    if (this.main_scene.down_button < 0) {
+      return;
+    }
+
+    this.buttons2_base[num].setTexture("UIImages/button_small_up");
+    event.stopPropagation();
+  }
+
+  click_detonate(pointer, localX, localY, event) {
+    if (this.main_scene.down_button < 0) {
+      return;
+    }
+
+    for (let item of this.main_scene.items) {
+      if (item.name.indexOf("mine_remote") != -1 && item.active) {
+        explode_mine(this.main_scene, item);
+      }
+    }
+
+    this.buttons2_base[4].setTexture("UIImages/button_small_up");
+    this.buttons2_base[4].visible = false;
+    this.buttons2_skin[4].visible = false;
     event.stopPropagation();
   }
 }

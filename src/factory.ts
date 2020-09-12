@@ -49,6 +49,16 @@ export function create_enemy(scene: MainScene, name: string, x: number, y: numbe
 }
 
 export function create_random_item(scene: MainScene, x: number, y: number): Item {
+  let num = rand_int(10);
+  if (num < 2) {
+    return create_random_combat_item(scene, x, y);
+  }
+  else {
+    return create_random_mine(scene, x, y);
+  }
+}
+
+export function create_random_combat_item(scene: MainScene, x: number, y: number): Item {
   let item_names = ["baton", "mace", "battle_axe", "knife", "spear", "katana", "pistol", "shotgun", "assault_rifle", "rigid_vest", "combat_suit"];
   let idx = rand_int(item_names.length);//Object.keys(item_stats).length);
   //let name = Object.keys(item_stats)[idx];
@@ -58,7 +68,7 @@ export function create_random_item(scene: MainScene, x: number, y: number): Item
     return create_random_item(scene, x, y);
   }
 
-  let item = create_item(scene, name, x, y);
+  let item = new Item(scene, name, x, y);
 
   item.equippable = true;
   item.type = item_stats[name]["T"];
@@ -66,9 +76,17 @@ export function create_random_item(scene: MainScene, x: number, y: number): Item
   return item;
 }
 
-export function create_item(scene: MainScene, name: string, x: number, y: number): Item {
-  let item = new Item(scene, name, x, y);
+export function create_random_mine(scene: MainScene, x: number, y: number): Item {
+  // Math.max is only needed because we haven't implemented level 0 yet
+  let mine_num = Math.max(1, Math.ceil(scene.level_num / 10));
+  let type = ["proximity", "remote", "timed"][rand_int(3)];
+  console.log("creating mine", type);
 
+  return create_mine(scene, "mine_" + type + mine_num.toString(), x, y);
+}
+
+export function create_mine(scene: MainScene, name: string, x: number, y: number): Item {
+  let item = new Item(scene, name, x, y);
   return item;
 }
 

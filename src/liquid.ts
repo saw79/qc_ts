@@ -40,6 +40,7 @@ export class Liquid {
     }
     let [rx, ry] = tile_to_render_coords(this.tx, this.ty);
     this.render_comp = scene.add.image(rx, ry, sheet_name, this.frame_num);
+    this.render_comp.alpha = 0.6;
     this.render_comp.depth = LIQUID_DEPTH;
     this.render_comp.setScale(0.5);
     this.render_comp.setRotation(this.rotate);

@@ -59,3 +59,5 @@ export const item_stats = {
   "force_field_suit"      : { "T": ItemType.ARMOR, "A": 4 },
   "quark_suit"            : { "T": ItemType.ARMOR, "A": 5 },
 };
+
+export const mine_damage = [10, 20, 30, 40, 50];

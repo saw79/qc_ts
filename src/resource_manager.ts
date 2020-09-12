@@ -109,6 +109,7 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "UIImages/btn_bag_skin");
   load_image(scene, "UIImages/btn_grab_skin");
   load_image(scene, "UIImages/btn_target_skin");
+  load_image(scene, "UIImages/btn_detonate_skin");
 
   load_image(scene, "UIImages/btn_equipped_up");
   load_image(scene, "UIImages/btn_equipped_checked");
@@ -170,6 +171,24 @@ export function load_all(scene: Phaser.Scene) {
   load_image(scene, "icon_unaware");
   load_image(scene, "icon_machine_learning");
   load_image(scene, "icon_wormhole");
+
+  load_any_spritesheet(scene, "mine_proximity1", 64, 64);
+  load_any_spritesheet(scene, "mine_proximity2", 64, 64);
+  load_any_spritesheet(scene, "mine_proximity3", 64, 64);
+  load_any_spritesheet(scene, "mine_proximity4", 64, 64);
+  load_any_spritesheet(scene, "mine_proximity5", 64, 64);
+  load_any_spritesheet(scene, "mine_remote1", 64, 64);
+  load_any_spritesheet(scene, "mine_remote2", 64, 64);
+  load_any_spritesheet(scene, "mine_remote3", 64, 64);
+  load_any_spritesheet(scene, "mine_remote4", 64, 64);
+  load_any_spritesheet(scene, "mine_remote5", 64, 64);
+  load_any_spritesheet(scene, "mine_timed1", 64, 64);
+  load_any_spritesheet(scene, "mine_timed2", 64, 64);
+  load_any_spritesheet(scene, "mine_timed3", 64, 64);
+  load_any_spritesheet(scene, "mine_timed4", 64, 64);
+  load_any_spritesheet(scene, "mine_timed5", 64, 64);
+
+  load_image(scene, "mine_circle");
 }
 
 export function create_anims(scene: Phaser.Scene) {
@@ -219,6 +238,31 @@ export function create_anims(scene: Phaser.Scene) {
     frameRate: 10,
     repeat: -1,
   });
+
+  let key = "";
+  for (let i = 1; i <= 5; i++) {
+    key = "mine_proximity" + i.toString();
+    scene.anims.create({
+      key: key,
+      frames: scene.anims.generateFrameNumbers(key, {start: 0, end: 3}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    key = "mine_remote" + i.toString();
+    scene.anims.create({
+      key: key,
+      frames: scene.anims.generateFrameNumbers(key, {start: 0, end: 2}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    key = "mine_timed" + i.toString();
+    scene.anims.create({
+      key: key,
+      frames: scene.anims.generateFrameNumbers(key, {start: 0, end: 1}),
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
 }
 
 function load_image(scene: Phaser.Scene, name: string) {

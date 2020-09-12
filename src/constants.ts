@@ -30,7 +30,14 @@ export const ENEMY_VISION: number = 8;
 
 // LIQUID
 
-export const LIQUID_RADIUS: number = 4;
+export const BARREL_RADIUS: number = 4;
+export const VIAL_RADIUS: number = 3;
+
 export const BURN_DURATION: number = 5;
 export const CHILL_DURATION: number = 5;
 export const NAUSEOUS_DURATION: number = 10;
+
+// MINES
+
+export const MINE_RADIUS: number = 5;
+export const TIMED_MINE_DURATION: number = 6;

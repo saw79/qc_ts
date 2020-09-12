@@ -1,4 +1,4 @@
-import {TILE_SIZE, LIQUID_RADIUS} from "./constants";
+import {TILE_SIZE, BARREL_RADIUS, VIAL_RADIUS} from "./constants";
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {rand_int} from "./util";
@@ -95,22 +95,22 @@ export function damage_actor(
       scene.scene.start("DeathScene", {killed_by: src_name});
     }
     else if (dst_actor.is_barrel) {
-      create_liquid(scene, dst_actor.tx, dst_actor.ty);
+      create_liquid(scene, dst_actor.tx, dst_actor.ty, BARREL_RADIUS);
     }
   }
 }
 
-export function create_liquid(scene: MainScene, xc: number, yc: number): void {
+export function create_liquid(scene: MainScene, xc: number, yc: number, radius: number): void {
   let xs = [];
   let ys = [];
-  for (let x = xc - LIQUID_RADIUS; x <= xc + LIQUID_RADIUS; x++) {
-    for (let y = yc - LIQUID_RADIUS; y <= yc + LIQUID_RADIUS; y++) {
+  for (let x = xc - radius; x <= xc + radius; x++) {
+    for (let y = yc - radius; y <= yc + radius; y++) {
       if ((x != xc || y != yc) && line_blocked(scene.grid, xc, yc, x, y)) {
         continue
       }
 
       let dist = Math.abs(x - xc) + Math.abs(y - yc);
-      if (dist < rand_int(LIQUID_RADIUS + 2)) {
+      if (dist < rand_int(radius + 2)) {
         xs.push(x);
         ys.push(y);
       }

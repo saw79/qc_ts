@@ -157,10 +157,10 @@ export class MainScene extends Phaser.Scene {
 
     this.actors.unshift(player);
 
-    let num_enemies = this.level_num*3 + 1;
+    let num_enemies = this.level_num*3 + 3;
     let num_barrels = 15;
     let num_orbs = 6;
-    let num_items = 1;
+    let num_items = 13;
 
     if (!loaded_level) {
       for (let i = 0; i < num_enemies; i++) {
@@ -181,15 +181,15 @@ export class MainScene extends Phaser.Scene {
     if (!loaded_level) {
       for (let i = 0; i < num_orbs; i++) {
         let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
-        this.items.push(factory.create_item(this, "health_orb", x, y));
+        this.items.push(new Item(this, "health_orb", x, y));
       }
       for (let i = 0; i < num_orbs; i++) {
         let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
-        this.items.push(factory.create_item(this, "cognition_orb", x, y));
+        this.items.push(new Item(this, "cognition_orb", x, y));
       }
       for (let i = 0; i < 2; i++) {
         let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
-        this.items.push(factory.create_item(this, "rejuvination_orb", x, y));
+        this.items.push(new Item(this, "rejuvination_orb", x, y));
       }
 
       for (let i = 0; i < num_items; i++) {
