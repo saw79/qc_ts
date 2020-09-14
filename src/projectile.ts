@@ -1,11 +1,12 @@
-import {THROW_SPEED, BULLET_SPEED, ITEM_DEPTH, TIMED_MINE_DURATION} from "./constants";
+import {THROW_SPEED, BULLET_SPEED, ITEM_DEPTH, TIMED_MINE_DURATION, VIAL_RADIUS} from "./constants";
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {Item} from "./item";
-import {calc_combat, damage_actor} from "./combat_logic";
+import {calc_combat, damage_actor, create_liquid} from "./combat_logic";
 import {line, line_to_wall} from "./bresenham";
 import {tile_to_render_coords, actor_at} from "./util";
 import {TileType} from "./tile_grid";
+import {LiquidColor} from "./liquid";
 
 export class Projectile {
   scene: MainScene;
@@ -84,22 +85,10 @@ export class Projectile {
       }
 
       if (this.item.name.indexOf("mine") != -1) {
-        this.item.active = true;
-
-        this.item.sub_textures[0].x = this.item.rx;
-        this.item.sub_textures[0].y = this.item.ry;
-        this.item.sub_textures[0].visible = true;
-
-        if (this.item.name.indexOf("timed") != -1) {
-          this.item.turns_left = TIMED_MINE_DURATION;
-        } else {
-          if (this.item.name.indexOf("remote") != -1) {
-            this.scene.hud.buttons2_base[4].visible = true;
-            this.scene.hud.buttons2_skin[4].visible = true;
-          }
-
-          this.item.turns_left = 1000;
-        }
+        this.stop_mine(rx, ry);
+      }
+      else if (this.item.name.indexOf("vial") != -1) {
+        this.stop_vial(rx, ry);
       }
     }
     else {
@@ -111,6 +100,45 @@ export class Projectile {
         calc_combat(this.scene, this.src_actor, this.dst_actor);
       }
     }
+  }
+
+  stop_mine(rx: number, ry: number): void {
+    this.item.active = true;
+
+    this.item.render_comp.anims.play(this.item.name);
+    this.item.sub_textures[0].x = this.item.rx;
+    this.item.sub_textures[0].y = this.item.ry;
+    this.item.sub_textures[0].visible = true;
+
+    if (this.item.name.indexOf("timed") != -1) {
+      this.item.turns_left = TIMED_MINE_DURATION;
+    } else {
+      if (this.item.name.indexOf("remote") != -1) {
+        this.scene.hud.buttons2_base[4].visible = true;
+        this.scene.hud.buttons2_skin[4].visible = true;
+      }
+
+      this.item.turns_left = 1000;
+    }
+  }
+
+  stop_vial(rx: number, ry: number): void {
+    this.item.alive = false;
+    let color = LiquidColor.BLUE;
+    if (this.item.name.indexOf("blue") != -1) {
+      color = LiquidColor.BLUE;
+    }
+    else if (this.item.name.indexOf("red") != -1) {
+      color = LiquidColor.RED;
+    }
+    else if (this.item.name.indexOf("green") != -1) {
+      color = LiquidColor.GREEN;
+    }
+    else {
+      color = LiquidColor.YELLOW;
+    }
+
+    create_liquid(this.scene, this.item.tx, this.item.ty, color, VIAL_RADIUS);
   }
 
   destroy_textures(): void {

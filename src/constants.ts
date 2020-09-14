@@ -33,6 +33,9 @@ export const ENEMY_VISION: number = 8;
 export const BARREL_RADIUS: number = 4;
 export const VIAL_RADIUS: number = 3;
 
+export const GAS_DURATION: number = 10;
+export const GAS_DAMAGE: number = 1;
+
 export const BURN_DURATION: number = 5;
 export const CHILL_DURATION: number = 5;
 export const NAUSEOUS_DURATION: number = 10;

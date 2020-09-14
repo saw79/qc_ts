@@ -67,6 +67,21 @@ export function rand_tile(scene: MainScene, excludes: Array<[number, number]> = 
   return [x, y];
 }
 
+export function rand_tile_no_item_or_actor(scene: MainScene, excludes: Array<[number, number]> = []): [number, number] {
+  let x = 0;
+  let y = 0;
+  do {
+    x = rand_int(scene.grid.width-2) + 1;
+    y = rand_int(scene.grid.height-2) + 1;
+  } while (
+    scene.grid.at(x, y) != TileType.FLOOR ||
+    item_at(scene.items, x, y) != null ||
+    actor_at(scene.actors, x, y) != null ||
+    tile_in_list([x, y], excludes));
+
+  return [x, y];
+}
+
 export function rand_tile_no_item(scene: MainScene, excludes: Array<[number, number]> = []): [number, number] {
   let x = 0;
   let y = 0;

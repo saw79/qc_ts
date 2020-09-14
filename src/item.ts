@@ -72,11 +72,16 @@ export class Item {
     if (this.name.indexOf("mine") != -1) {
       let circle = scene.add.image(this.rx, this.ry, "mine_circle");
       circle.depth = ITEM_DEPTH - 1;
-      circle.alpha = 0.5;
+      circle.alpha = 0.3;
       circle.visible = false;
       let size = (MINE_RADIUS*2 + 1)*TILE_SIZE;
       circle.setDisplaySize(size, size);
       this.sub_textures.push(circle);
+
+      if (this.active) {
+        this.render_comp.anims.play(this.name);
+        circle.visible = true;
+      }
     }
   }
 

@@ -49,12 +49,15 @@ export function create_enemy(scene: MainScene, name: string, x: number, y: numbe
 }
 
 export function create_random_item(scene: MainScene, x: number, y: number): Item {
-  let num = rand_int(10);
-  if (num < 2) {
+  let num = rand_int(3);
+  if (num == 0) {
     return create_random_combat_item(scene, x, y);
   }
-  else {
+  else if (num == 1) {
     return create_random_mine(scene, x, y);
+  }
+  else if (num == 2) {
+    return create_random_vial(scene, x, y);
   }
 }
 
@@ -80,9 +83,15 @@ export function create_random_mine(scene: MainScene, x: number, y: number): Item
   // Math.max is only needed because we haven't implemented level 0 yet
   let mine_num = Math.max(1, Math.ceil(scene.level_num / 10));
   let type = ["proximity", "remote", "timed"][rand_int(3)];
-  console.log("creating mine", type);
 
   return create_mine(scene, "mine_" + type + mine_num.toString(), x, y);
+}
+
+export function create_random_vial(scene: MainScene, x: number, y: number): Item {
+  let color = ["red", "blue", "green", "yellow"][rand_int(4)];
+  let name = color + "_vial";
+  let item = new Item(scene, name, x, y);
+  return item;
 }
 
 export function create_mine(scene: MainScene, name: string, x: number, y: number): Item {

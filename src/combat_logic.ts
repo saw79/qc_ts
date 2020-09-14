@@ -2,7 +2,7 @@ import {TILE_SIZE, BARREL_RADIUS, VIAL_RADIUS} from "./constants";
 import {MainScene} from "./main_scene";
 import {Actor} from "./actor";
 import {rand_int} from "./util";
-import {Liquid, LiquidColor} from "./liquid";
+import {Liquid, LiquidColor, Gas} from "./liquid";
 import {line} from "./bresenham";
 import {TileGrid, TileType} from "./tile_grid";
 import {BuffType, has_buff} from "./buff";
@@ -95,12 +95,20 @@ export function damage_actor(
       scene.scene.start("DeathScene", {killed_by: src_name});
     }
     else if (dst_actor.is_barrel) {
-      create_liquid(scene, dst_actor.tx, dst_actor.ty, BARREL_RADIUS);
+      let num = rand_int(4);
+      let color = LiquidColor.GREY;
+      switch (num) {
+        case 0: color = LiquidColor.RED; break;
+        case 1: color = LiquidColor.BLUE; break;
+        case 2: color = LiquidColor.GREEN; break;
+        default: color = LiquidColor.YELLOW; break;
+      }
+      create_liquid(scene, dst_actor.tx, dst_actor.ty, color, BARREL_RADIUS);
     }
   }
 }
 
-export function create_liquid(scene: MainScene, xc: number, yc: number, radius: number): void {
+export function create_liquid(scene: MainScene, xc: number, yc: number, color: LiquidColor, radius: number): void {
   let xs = [];
   let ys = [];
   for (let x = xc - radius; x <= xc + radius; x++) {
@@ -117,19 +125,111 @@ export function create_liquid(scene: MainScene, xc: number, yc: number, radius: 
     }
   }
 
-  let num = rand_int(4);
-  let color = LiquidColor.GREY;
-  switch (num) {
-    case 0: color = LiquidColor.RED; break;
-    case 1: color = LiquidColor.BLUE; break;
-    case 2: color = LiquidColor.GREEN; break;
-    default: color = LiquidColor.YELLOW; break;
-  }
-
   for (let i = 0; i < xs.length; i++) {
     let [num, rot] = get_frame_num(xs, ys, xs[i], ys[i]);
     let liquid = new Liquid(scene, xs[i], ys[i], color, num, rot);
     scene.liquids.push(liquid);
+  }
+
+  check_liquid_effects(scene);
+}
+
+function check_liquid_effects(scene: MainScene): void {
+  let cancel_ids = [];
+  let explode_ids = []
+
+  for (let i = 0; i < scene.liquids.length; i++) {
+    if (!scene.liquids[i].alive)
+      continue;
+    for (let j = 0; j < scene.liquids.length; j++) {
+      if (i == j)
+        continue;
+
+      if (!scene.liquids[j].alive)
+        continue;
+
+      if (scene.liquids[i].tx == scene.liquids[j].tx &&
+          scene.liquids[i].ty == scene.liquids[j].ty) {
+
+        if (scene.liquids[i].color == scene.liquids[j].color)
+          continue
+
+        let cancel = false;
+        let explode = false;
+        switch (scene.liquids[i].color) {
+          case LiquidColor.BLUE:
+            if (scene.liquids[j].color == LiquidColor.RED)
+              cancel = true;
+            else
+              explode = true;
+            break;
+          case LiquidColor.RED:
+            if (scene.liquids[j].color == LiquidColor.BLUE)
+              cancel = true;
+            else
+              explode = true;
+            break;
+          case LiquidColor.GREEN:
+            if (scene.liquids[j].color == LiquidColor.YELLOW)
+              cancel = true;
+            else
+              explode = true;
+            break;
+          case LiquidColor.YELLOW:
+            if (scene.liquids[j].color == LiquidColor.GREEN)
+              cancel = true;
+            else
+              explode = true;
+            break;
+        }
+
+        if (cancel) {
+          cancel_ids.push(i);
+          cancel_ids.push(j);
+        }
+        if (explode) {
+          explode_ids.push(i);
+          explode_ids.push(j);
+        }
+      }
+    }
+  }
+
+  for (let i of cancel_ids) {
+    cancel_liquid(scene, scene.liquids[i].tx, scene.liquids[i].ty);
+  }
+  for (let i of explode_ids) {
+    explode_liquid(scene, scene.liquids[i].tx, scene.liquids[i].ty);
+  }
+}
+
+function cancel_liquid(scene: MainScene, x0: number, y0: number): void {
+  for (let i = 0; i < scene.liquids.length; i++) {
+    if (scene.liquids[i].tx == x0 + 1 && scene.liquids[i].ty == y0 ||
+        scene.liquids[i].tx == x0 - 1 && scene.liquids[i].ty == y0 ||
+        scene.liquids[i].tx == x0 && scene.liquids[i].ty == y0 + 1 ||
+        scene.liquids[i].tx == x0 && scene.liquids[i].ty == y0 - 1) {
+      if (scene.liquids[i].color != LiquidColor.GREY) {
+        scene.liquids[i].color = LiquidColor.GREY;
+        scene.liquids[i].init_textures(scene);
+        cancel_liquid(scene, scene.liquids[i].tx, scene.liquids[i].ty);
+      }
+    }
+  }
+}
+
+function explode_liquid(scene: MainScene, x0: number, y0: number): void {
+  for (let i = 0; i < scene.liquids.length; i++) {
+    if (scene.liquids[i].tx == x0 + 1 && scene.liquids[i].ty == y0 ||
+        scene.liquids[i].tx == x0 - 1 && scene.liquids[i].ty == y0 ||
+        scene.liquids[i].tx == x0 && scene.liquids[i].ty == y0 + 1 ||
+        scene.liquids[i].tx == x0 && scene.liquids[i].ty == y0 - 1) {
+      if (scene.liquids[i].alive) {
+        scene.liquids[i].alive = false;
+        scene.gases.push(new Gas(scene, scene.liquids[i].tx, scene.liquids[i].ty));
+        explode_liquid(scene, scene.liquids[i].tx, scene.liquids[i].ty);
+      }
+    }
   }
 }
 

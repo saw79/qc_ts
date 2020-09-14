@@ -189,6 +189,23 @@ export function load_all(scene: Phaser.Scene) {
   load_any_spritesheet(scene, "mine_timed5", 64, 64);
 
   load_image(scene, "mine_circle");
+
+  load_image(scene, "blue_vial");
+  load_image(scene, "red_vial");
+  load_image(scene, "green_vial");
+  load_image(scene, "yellow_vial");
+
+  scene.load.image("cloud", "assets/particles/cloud.png");
+  scene.load.image("lit-smoke", "assets/particles/lit-smoke.png");
+  scene.load.image("blue", "assets/particles/blue.png");
+  scene.load.image("bubble", "assets/particles/bubble.png");
+  scene.load.image("fire1", "assets/particles/fire1.png");
+  scene.load.image("fire2", "assets/particles/fire2.png");
+  scene.load.image("fire3", "assets/particles/fire3.png");
+  scene.load.image("flame1", "assets/particles/flame1.png");
+  scene.load.image("flame2", "assets/particles/flame2.png");
+  scene.load.image("smoke", "assets/particles/smoke-puff.png");
+  scene.load.image("yellow", "assets/particles/yellow.png");
 }
 
 export function create_anims(scene: Phaser.Scene) {
@@ -245,21 +262,21 @@ export function create_anims(scene: Phaser.Scene) {
     scene.anims.create({
       key: key,
       frames: scene.anims.generateFrameNumbers(key, {start: 0, end: 3}),
-      frameRate: 10,
+      frameRate: 2,
       repeat: -1,
     });
     key = "mine_remote" + i.toString();
     scene.anims.create({
       key: key,
       frames: scene.anims.generateFrameNumbers(key, {start: 0, end: 2}),
-      frameRate: 10,
+      frameRate: 2,
       repeat: -1,
     });
     key = "mine_timed" + i.toString();
     scene.anims.create({
       key: key,
       frames: scene.anims.generateFrameNumbers(key, {start: 0, end: 1}),
-      frameRate: 10,
+      frameRate: 2,
       repeat: -1,
     });
   }

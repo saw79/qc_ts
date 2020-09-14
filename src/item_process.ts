@@ -58,5 +58,20 @@ export function explode_mine(scene: MainScene, item: Item) {
     }
   }
 
+  create_explosion(scene, item.rx, item.ry);
+
   item.alive = false;
+}
+
+export function create_explosion(scene: MainScene, rx: number, ry: number): void {
+  let particles = scene.add.particles("fire1");
+  let emitter = particles.createEmitter({
+    x: rx,
+    y: ry,
+    scale: 0.5,
+    speed: 600,
+    lifespan: 400,
+    blendMode: "ADD"
+  });
+  emitter.explode(100, rx, ry);
 }

@@ -16,7 +16,7 @@ import * as factory from "./factory";
 import {Projectile, initiate_shot} from "./projectile";
 import {item_stats} from "./stats";
 import {HUDScene} from "./hud_scene";
-import {Liquid} from "./liquid";
+import {Liquid, Gas} from "./liquid";
 import {Buff} from "./buff";
 
 export enum InputMode {
@@ -30,6 +30,7 @@ export class LevelInfo {
   items: Array<Item>;
   enemies: Array<Actor>;
   liquids: Array<Liquid>;
+  gases: Array<Gas>;
 }
 
 export class MainScene extends Phaser.Scene {
@@ -38,6 +39,7 @@ export class MainScene extends Phaser.Scene {
   grid: TileGrid;
   items: Array<Item>;
   liquids: Array<Liquid>;
+  gases: Array<Gas>;
   projectiles: Array<Projectile>;
 
   floating_texts: Array<FloatingText>;
@@ -97,12 +99,14 @@ export class MainScene extends Phaser.Scene {
       this.items = [];
       this.actors = [];
       this.liquids = [];
+      this.gases = [];
     } else {
       console.log("LOADING level " + this.level_num);
       this.grid = this.level_store[this.level_num].grid;
       this.items = this.level_store[this.level_num].items;
       this.actors = this.level_store[this.level_num].enemies;
       this.liquids = this.level_store[this.level_num].liquids;
+      this.gases = this.level_store[this.level_num].gases;
 
       for (let item of this.items) {
         item.init_textures(this);
@@ -112,6 +116,9 @@ export class MainScene extends Phaser.Scene {
       }
       for (let liquid of this.liquids) {
         liquid.init_textures(this);
+      }
+      for (let gas of this.gases) {
+        gas.init_textures(this);
       }
 
       loaded_level = true;
@@ -160,7 +167,7 @@ export class MainScene extends Phaser.Scene {
     let num_enemies = this.level_num*3 + 3;
     let num_barrels = 15;
     let num_orbs = 6;
-    let num_items = 13;
+    let num_items = 40;
 
     if (!loaded_level) {
       for (let i = 0; i < num_enemies; i++) {
@@ -180,20 +187,20 @@ export class MainScene extends Phaser.Scene {
 
     if (!loaded_level) {
       for (let i = 0; i < num_orbs; i++) {
-        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        let [x, y] = util.rand_tile_no_item_or_actor(this, excludes=excludes);
         this.items.push(new Item(this, "health_orb", x, y));
       }
       for (let i = 0; i < num_orbs; i++) {
-        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        let [x, y] = util.rand_tile_no_item_or_actor(this, excludes=excludes);
         this.items.push(new Item(this, "cognition_orb", x, y));
       }
       for (let i = 0; i < 2; i++) {
-        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        let [x, y] = util.rand_tile_no_item_or_actor(this, excludes=excludes);
         this.items.push(new Item(this, "rejuvination_orb", x, y));
       }
 
       for (let i = 0; i < num_items; i++) {
-        let [x, y] = util.rand_tile_no_item(this, excludes=excludes);
+        let [x, y] = util.rand_tile_no_item_or_actor(this, excludes=excludes);
         this.items.push(factory.create_random_item(this, x, y));
       }
     }
@@ -533,6 +540,16 @@ export class MainScene extends Phaser.Scene {
         item.destroy_textures();
       }
     }
+    for (let liquid of this.liquids) {
+      if (!liquid.alive) {
+        liquid.destroy_textures();
+      }
+    }
+    for (let gas of this.gases) {
+      if (!gas.alive) {
+        gas.destroy_textures();
+      }
+    }
     for (let proj of this.projectiles) {
       if (!proj.alive) {
         proj.destroy_textures();
@@ -542,6 +559,8 @@ export class MainScene extends Phaser.Scene {
     this.actors = this.actors.filter((actor: Actor) => { return actor.alive; });
     this.floating_texts = this.floating_texts.filter((ft: FloatingText) => { return ft.alive; });
     this.items = this.items.filter((item: Item) => { return item.alive; });
+    this.liquids = this.liquids.filter((liquid: Liquid) => { return liquid.alive; });
+    this.gases = this.gases.filter((gas: Gas) => { return gas.alive; });
     this.projectiles = this.projectiles.filter((proj: Projectile) => { return proj.alive; });
   }
 }

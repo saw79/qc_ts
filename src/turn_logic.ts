@@ -8,7 +8,7 @@ import {TileType, TileGrid} from "./tile_grid";
 import {calc_combat, damage_actor} from "./combat_logic";
 import {LiquidColor} from "./liquid";
 import {BuffType, add_buff, has_buff, get_buff_texture} from "./buff";
-import {BURN_DURATION, CHILL_DURATION, NAUSEOUS_DURATION, BUFF_ICONS, TILE_SIZE} from "./constants";
+import * as constants from "./constants";
 import {process_mine} from "./item_process";
 
 export interface Wait {
@@ -85,6 +85,10 @@ export function process_turns(scene: MainScene): void {
         if (item.name.indexOf("mine") != -1 && item.active) {
           process_mine(scene, item);
         }
+      }
+
+      for (let gas of scene.gases) {
+        gas.tick();
       }
     }
 
@@ -207,33 +211,34 @@ function quick_process(scene: MainScene, actors: Array<Actor>, curr_turn: number
       break;
   }
 
-  process_buffs(scene, actors, curr_turn);
+  process_buffs(scene, actors[curr_turn]);
+  process_gases(scene, actors[curr_turn]);
 }
 
-function process_buffs(scene: MainScene, actors: Array<Actor>, curr_turn: number): void {
-  for (let i = 0; i < actors[curr_turn].buffs.length; i++) {
-    if (actors[curr_turn].buffs[i].type == BuffType.BURN) {
-      damage_actor(scene, "Red Liquid", actors[curr_turn], 1, 0);
+function process_buffs(scene: MainScene, actor: Actor): void {
+  for (let i = 0; i < actor.buffs.length; i++) {
+    if (actor.buffs[i].type == BuffType.BURN) {
+      damage_actor(scene, "Red Liquid", actor, 1, 0);
     }
-    actors[curr_turn].buffs[i].tick();
+    actor.buffs[i].tick();
   }
 
-  let tx = actors[curr_turn].tx;
-  let ty = actors[curr_turn].ty;
+  let tx = actor.tx;
+  let ty = actor.ty;
   for (let i = 0; i < scene.liquids.length; i++) {
     if (tx == scene.liquids[i].tx && ty == scene.liquids[i].ty) {
       switch (scene.liquids[i].color) {
         case LiquidColor.RED:
-          add_buff(actors[curr_turn], BuffType.BURN, BURN_DURATION);
+          add_buff(actor, BuffType.BURN, constants.BURN_DURATION);
           break;
         case LiquidColor.BLUE:
-          add_buff(actors[curr_turn], BuffType.CHILL, CHILL_DURATION);
+          add_buff(actor, BuffType.CHILL, constants.CHILL_DURATION);
           break;
         case LiquidColor.YELLOW:
-          add_buff(actors[curr_turn], BuffType.NAUSEOUS, NAUSEOUS_DURATION);
+          add_buff(actor, BuffType.NAUSEOUS, constants.NAUSEOUS_DURATION);
           break;
         case LiquidColor.GREEN:
-          damage_actor(scene, "Green Liquid", actors[curr_turn], 3, 0);
+          damage_actor(scene, "Green Liquid", actor, 3, 0);
           break;
       }
 
@@ -241,9 +246,9 @@ function process_buffs(scene: MainScene, actors: Array<Actor>, curr_turn: number
     }
   }
 
-  if (curr_turn == 0) {
-    for (let i = 0; i < BUFF_ICONS; i++) {
-      if (i >= actors[0].buffs.length) {
+  if (actor.is_player) {
+    for (let i = 0; i < constants.BUFF_ICONS; i++) {
+      if (i >= actor.buffs.length) {
         scene.hud.buff_bgs[i].visible = false;
         scene.hud.buff_icons[i].visible = false;
         scene.hud.buff_shades[i].visible = false;
@@ -254,11 +259,21 @@ function process_buffs(scene: MainScene, actors: Array<Actor>, curr_turn: number
       scene.hud.buff_icons[i].visible = true;
       scene.hud.buff_shades[i].visible = true;
 
-      scene.hud.buff_icons[i].setTexture(get_buff_texture(actors[0].buffs[i].type));
+      scene.hud.buff_icons[i].setTexture(get_buff_texture(actor.buffs[i].type));
 
-      let shade_height = TILE_SIZE * actors[0].buffs[i].curr_turn / actors[0].buffs[i].duration;
-      scene.hud.buff_shades[i].y = TILE_SIZE/2 + i*1.5*TILE_SIZE + shade_height/2;
+      let shade_height = constants.TILE_SIZE * actor.buffs[i].curr_turn / actor.buffs[i].duration;
+      scene.hud.buff_shades[i].y = constants.TILE_SIZE/2 + i*1.5*constants.TILE_SIZE + shade_height/2;
       scene.hud.buff_shades[i].displayHeight = shade_height;
+    }
+  }
+}
+
+function process_gases(scene: MainScene, actor: Actor): void {
+  let tx = actor.tx;
+  let ty = actor.ty;
+  for (let i = 0; i < scene.gases.length; i++) {
+    if (tx == scene.gases[i].tx && ty == scene.gases[i].ty) {
+      damage_actor(scene, "Toxic Gas", actor, constants.GAS_DAMAGE, 0);
     }
   }
 }

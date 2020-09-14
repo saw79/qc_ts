@@ -2,7 +2,7 @@ import "phaser";
 
 import {MainScene} from "./main_scene";
 import {tile_to_render_coords} from "./util";
-import {LIQUID_DEPTH} from "./constants";
+import {LIQUID_DEPTH, GAS_DURATION} from "./constants";
 
 export enum LiquidColor {
   GREY,
@@ -15,6 +15,7 @@ export enum LiquidColor {
 export class Liquid {
   tx: number;
   ty: number;
+  alive: boolean;
   color: LiquidColor;
   frame_num: number;
   rotate: number;
@@ -23,6 +24,7 @@ export class Liquid {
   constructor(scene: MainScene, x: number, y: number, color: LiquidColor, frame_num: number, rotate: number) {
     this.tx = x;
     this.ty = y;
+    this.alive = true;
     this.color = color;
     this.frame_num = frame_num;
     this.rotate = rotate;
@@ -44,5 +46,54 @@ export class Liquid {
     this.render_comp.depth = LIQUID_DEPTH;
     this.render_comp.setScale(0.5);
     this.render_comp.setRotation(this.rotate);
+  }
+
+  destroy_textures(): void {
+    this.render_comp.destroy();
+  }
+}
+
+export class Gas {
+  tx: number;
+  ty: number;
+  alive: boolean;
+  particles: Phaser.GameObjects.Particles.ParticleEmitterManager;
+
+  duration: number;
+  curr_turn: number;
+
+  constructor(scene: MainScene, x: number, y: number) {
+    this.tx = x;
+    this.ty = y;
+    this.alive = true;
+    this.duration = GAS_DURATION;
+    this.curr_turn = 0;
+    this.init_textures(scene);
+  }
+
+  init_textures(scene: MainScene): void {
+    let [rx, ry] = tile_to_render_coords(this.tx, this.ty);
+
+    this.particles = scene.add.particles("smoke");
+    this.particles.createEmitter({
+      x: rx,
+      y: ry,
+      scale: 0.2,
+      speed: 10,
+      lifespan: 500,
+      frequency: 50,
+      blendMode: "ADD"
+    });
+  }
+
+  tick(): void {
+    this.curr_turn++;
+    if (this.curr_turn >= this.duration) {
+      this.alive = false;
+    }
+  }
+
+  destroy_textures(): void {
+    this.particles.destroy();
   }
 }
